@@ -24,7 +24,7 @@ std::vector<float> QSynthi::generateSineWaveTable()
     
     for (auto i = 0; i < WAVETABLE_LENGTH; ++i) {
         //sineWaveTable[i] = std::sinf(juce::MathConstants<float>::twoPi * static_cast<float>(i) / static_cast<float>(WAVETABLE_LENGTH));
-        sineWaveTable[i] = 2 * std::expf(-0.001 * (i - 32) * (i - 32) ) - 1.35;
+        sineWaveTable[i] = 2 * std::expf(-0.01 * (i - 32) * (i - 32) ) - 1;
     }
     
     return sineWaveTable;
@@ -67,9 +67,16 @@ void QSynthi::handleMidiEvent(const MidiMessage& midiEvent)
 {
     if (midiEvent.isNoteOn())
     {
+        int noteNumber = midiEvent.getNoteNumber()
+        if (oscillators.contains(noteNumber))
+            return;
+        
+        oscillators.insert(midiEvent.getNoteNumber(), WavetableOscillator(/*WAVETABLE*/, noteNumber, sampleRate));
+        
         const auto oscillatorId = midiEvent.getNoteNumber();
         const auto frequency = midiNoteNumberToFrequency(oscillatorId);
         oscillators[oscillatorId].setFrequency(frequency);
+        
     }
     else if (midiEvent.isNoteOff())
     {
@@ -103,7 +110,7 @@ void QSynthi::render(AudioBuffer<float>& buffer, int startSample, int endSample)
         {
             for (auto sample = startSample; sample < endSample; ++sample)
             {
-                firstChannel[sample] += oscillator.getSample();
+                firstChannel[sample] += oscillator.getNextSample();
             }
         }
     }
