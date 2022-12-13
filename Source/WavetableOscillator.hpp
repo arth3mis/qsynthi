@@ -16,19 +16,17 @@
 class WavetableOscillator
 {
 public:
-    WavetableOscillator(std::vector<float> waveTable, double sampleRate);
+    WavetableOscillator(std::vector<float> waveTable, float frequency, double sampleRate);
     
-    void setFrequency(float frequency);
-    
-    float getSample();
+    float getNextSample();
     void stop();
     bool isPlaying();
     
 private:
     std::vector<float> waveTable;
+    float indexIncrement;
     double sampleRate;
-    float index = 0.f;
-    float indexIncrement = 0.f;
     
+    float index = 0.f;
     float interpolateLinearly();
 };

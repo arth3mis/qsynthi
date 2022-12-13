@@ -2,15 +2,20 @@
 
 <JUCERPROJECT id="bMU7um" name="QSynthi" projectType="audioplug" useAppConfig="0"
               addUsingNamespaceToJuceHeader="1" displaySplashScreen="1" jucerFormatVersion="1"
-              pluginAUMainType="'auou'" pluginCharacteristicsValue="pluginIsSynth,pluginProducesMidiOut,pluginWantsMidiIn">
+              pluginAUMainType="'auou'" pluginCharacteristicsValue="pluginIsSynth,pluginProducesMidiOut,pluginWantsMidiIn"
+              cppLanguageStandard="20">
   <MAINGROUP id="d0qst2" name="QSynthi">
     <GROUP id="{887AE7C2-BAAB-B9EB-6492-D6F32E89DA10}" name="Source">
-      <FILE id="ScbSIi" name="QSynthi.cpp" compile="1" resource="0" file="Source/QSynthi.cpp"/>
-      <FILE id="Xm0mDc" name="QSynthi.hpp" compile="0" resource="0" file="Source/QSynthi.hpp"/>
-      <FILE id="hpsyGe" name="WavetableOscillator.cpp" compile="1" resource="0"
-            file="Source/WavetableOscillator.cpp"/>
-      <FILE id="E5eCC2" name="WavetableOscillator.hpp" compile="0" resource="0"
-            file="Source/WavetableOscillator.hpp"/>
+      <GROUP id="{C1EBA87A-4A63-1B36-9C83-B6E205246D5E}" name="Synthesizer">
+        <FILE id="McwYht" name="Wavetables.cpp" compile="1" resource="0" file="Source/Wavetables.cpp"/>
+        <FILE id="UJG2Y6" name="Wavetables.h" compile="0" resource="0" file="Source/Wavetables.h"/>
+        <FILE id="ScbSIi" name="QSynthi.cpp" compile="1" resource="0" file="Source/QSynthi.cpp"/>
+        <FILE id="Xm0mDc" name="QSynthi.hpp" compile="0" resource="0" file="Source/QSynthi.hpp"/>
+        <FILE id="hpsyGe" name="WavetableOscillator.cpp" compile="1" resource="0"
+              file="Source/WavetableOscillator.cpp"/>
+        <FILE id="E5eCC2" name="WavetableOscillator.hpp" compile="0" resource="0"
+              file="Source/WavetableOscillator.hpp"/>
+      </GROUP>
       <FILE id="YnQ3Ov" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
       <FILE id="qvfm4C" name="PluginProcessor.h" compile="0" resource="0"

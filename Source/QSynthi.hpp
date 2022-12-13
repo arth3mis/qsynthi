@@ -10,6 +10,7 @@
 
 #include <stdio.h>
 #include <vector>
+#include <map>
 #include "JuceHeader.h"
 #include "WavetableOscillator.hpp"
 
@@ -24,7 +25,9 @@ public:
     
 private:
     double sampleRate;
-    std::vector<WavetableOscillator> oscillators;
+    // Map for all playing oscillators
+    // noteNumber -> playing Oscillator on this note
+    std::map<int, WavetableOscillator> oscillators;
     
     std::vector<float> generateSineWaveTable();
     void initializeOscillators();

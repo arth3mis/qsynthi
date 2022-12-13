@@ -9,20 +9,15 @@
 #include <cmath>
 
 
-WavetableOscillator::WavetableOscillator(std::vector<float> waveTable, double sampleRate) :
+WavetableOscillator::WavetableOscillator(std::vector<float> waveTable, float frequency, double sampleRate) :
     waveTable{ std::move(waveTable) },
+    indexIncrement{ frequency * (float)(waveTable.size() / sampleRate) },
     sampleRate{ sampleRate }
 {
     
 }
 
-
-void WavetableOscillator::setFrequency(float frequency)
-{
-    indexIncrement = frequency * static_cast<float>(waveTable.size() / sampleRate);
-}
-
-float WavetableOscillator::getSample()
+float WavetableOscillator::getNextSample()
 {
     const auto sample = interpolateLinearly();
     index = std::fmod(index + indexIncrement, static_cast<float>(waveTable.size()));
