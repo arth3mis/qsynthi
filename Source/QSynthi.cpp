@@ -46,6 +46,11 @@ void QSynthi::processBlock(AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
     
     auto currentSample = 0;
     
+    // Ask every playing oscillator if it's still playing
+    for (const auto& [note, oscillator] : oscillators)
+        if (oscillator.isStopped()) oscillators.erase(note);
+    
+    
     for (const auto midiMessage : midiMessages)
     {
         const auto midiEvent = midiMessage.getMessage();
@@ -72,13 +77,11 @@ void QSynthi::handleMidiEvent(const MidiMessage& midiEvent)
         
         oscillators.insert(midiEvent.getNoteNumber(), WavetableOscillator(/*WAVETABLE*/, noteNumber, sampleRate));
         
-        const auto oscillatorId = midiEvent.getNoteNumber();
-        const auto frequency = midiNoteNumberToFrequency(oscillatorId);
-        oscillators[oscillatorId].setFrequency(frequency);
-        
     }
     else if (midiEvent.isNoteOff())
     {
+        oscillators.erase(midiEvent);
+        
         const auto oscillatorId = midiEvent.getNoteNumber();
         oscillators[oscillatorId].stop();
     }
@@ -89,14 +92,6 @@ void QSynthi::handleMidiEvent(const MidiMessage& midiEvent)
             oscillator.stop();
         }
     }
-}
-
-float QSynthi::midiNoteNumberToFrequency(int midiNoteNumber)
-{
-    constexpr auto A4_FREQUENCY = 440.f;
-    constexpr auto A4_NOTE_NUMBER = 69.f;
-    constexpr auto SEMITONES_IN_AN_OCTAVE = 12.f;
-    return A4_FREQUENCY * std::powf(2.f, (midiNoteNumber - A4_NOTE_NUMBER) / SEMITONES_IN_AN_OCTAVE);
 }
 
 void QSynthi::render(AudioBuffer<float>& buffer, int startSample, int endSample)

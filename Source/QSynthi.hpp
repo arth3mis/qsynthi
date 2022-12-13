@@ -25,8 +25,14 @@ public:
     
 private:
     double sampleRate;
-    // Map for all playing oscillators
-    // noteNumber -> playing Oscillator on this note
+    /** Map for all playing oscillators
+        noteNumber -> playing Oscillator on this note
+     life-cycle of an Oscillator:
+        noteOnEvent in handleMidiEvent(...): gets created and inserted in map
+        noteOffEvent in handleMidiEvent(...): triggers the release state
+        getSample(...): releases the sound
+        processBlock(...) cleanup: checks for every oscillator if it thinks it's done with it's life cycle and removes if it's the case
+     */
     std::map<int, WavetableOscillator> oscillators;
     
     std::vector<float> generateSineWaveTable();

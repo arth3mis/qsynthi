@@ -8,10 +8,13 @@
 #include "WavetableOscillator.hpp"
 #include <cmath>
 
+constexpr auto A4_FREQUENCY = 440.f;
+constexpr auto A4_NOTE_NUMBER = 69.f;
+constexpr auto SEMITONES_IN_AN_OCTAVE = 12.f;
 
-WavetableOscillator::WavetableOscillator(std::vector<float> waveTable, float frequency, double sampleRate) :
+WavetableOscillator::WavetableOscillator(std::vector<float> waveTable, int midiNote, double sampleRate) :
     waveTable{ std::move(waveTable) },
-    indexIncrement{ frequency * (float)(waveTable.size() / sampleRate) },
+    indexIncrement{  },
     sampleRate{ sampleRate }
 {
     
@@ -42,7 +45,10 @@ void WavetableOscillator::stop()
     indexIncrement = 0.f;
 }
 
-bool WavetableOscillator::isPlaying()
+
+float WavetableOscillator::midiNoteNumberToIncrement(int midiNoteNumber)
 {
-    return indexIncrement != 0.f;
+    const float frequency = A4_FREQUENCY * std::powf(2.f, (midiNoteNumber - A4_NOTE_NUMBER) / SEMITONES_IN_AN_OCTAVE);
+    
+    return frequency * (float)(waveTable.size() / sampleRate);
 }
