@@ -6,12 +6,13 @@
 //
 
 #include "QSynthi.hpp"
+#include "list.hpp"
 
 
 void QSynthi::prepareToPlay(double sampleRate)
 {
     this->sampleRate = sampleRate;
-    
+
     initializeOscillators();
 }
 
