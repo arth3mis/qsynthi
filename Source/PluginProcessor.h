@@ -9,7 +9,7 @@
 #pragma once
 
 #include <JuceHeader.h>
-//#include "QSynthi.hpp"
+#include "QSynthi.hpp"
 
 //==============================================================================
 /**
@@ -62,7 +62,7 @@ private:
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (QSynthiAudioProcessor)
     
-    //QSynthi synth;
+    QSynthi synth;
     
     // Parameters
     static juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();

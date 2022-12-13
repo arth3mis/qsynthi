@@ -22,7 +22,8 @@ std::vector<float> QSynthi::generateSineWaveTable()
     std::vector<float> sineWaveTable(WAVETABLE_LENGTH);
     
     for (auto i = 0; i < WAVETABLE_LENGTH; ++i) {
-        sineWaveTable[i] = std::sinf(juce::MathConstants<float>::twoPi * static_cast<float>(i) / static_cast<float>(WAVETABLE_LENGTH));
+        //sineWaveTable[i] = std::sinf(juce::MathConstants<float>::twoPi * static_cast<float>(i) / static_cast<float>(WAVETABLE_LENGTH));
+        sineWaveTable[i] = 2 * std::expf(-0.001 * (i - 32) * (i - 32) ) - 1.35;
     }
     
     return sineWaveTable;

@@ -94,7 +94,7 @@ void QSynthiAudioProcessor::changeProgramName (int index, const String& newName)
 void QSynthiAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
 
-    //synth.prepareToPlay(sampleRate);
+    synth.prepareToPlay(sampleRate);
 
 }
 
@@ -146,9 +146,9 @@ void QSynthiAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer
         buffer.clear (i, 0, buffer.getNumSamples());
     */
     
-    //buffer.clear();
+    buffer.clear();
     
-    //synth.processBlock(buffer, midiMessages);
+    synth.processBlock(buffer, midiMessages);
 }
 
 //==============================================================================
