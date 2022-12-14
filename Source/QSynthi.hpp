@@ -25,6 +25,7 @@ public:
     
 private:
     double sampleRate;
+    
     /** Map for all playing oscillators
         noteNumber -> playing Oscillator on this note
      life-cycle of an Oscillator:

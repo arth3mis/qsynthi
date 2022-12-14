@@ -10,19 +10,21 @@
 
 #include <stdio.h>
 #include <vector>
+#include "list.hpp"
 
 #endif /* WavetableOscillator_hpp */
 
 class WavetableOscillator
 {
 public:
-    WavetableOscillator(std::vector<float> waveTable, int midiNote, double sampleRate);
+    WavetableOscillator(list<float> waveTable, int midiNote, double sampleRate);
     
     /**
             Returns the next Sample and ajusts the phase accordingly.
      */
     float getNextSample();
-    void stop();
+    void noteOff();
+    bool isDone();
     
 private:
     std::vector<float> waveTable;

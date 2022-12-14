@@ -7,6 +7,7 @@
 
 #include "QSynthi.hpp"
 #include "list.hpp"
+#include "Wavetables.h"
 
 
 void QSynthi::prepareToPlay(double sampleRate)
@@ -37,9 +38,6 @@ void QSynthi::initializeOscillators()
     const auto waveTable = generateSineWaveTable();
     
     oscillators.clear();
-    for (auto i = 0; i < OSCILLATORS_COUNT; ++i) {
-        oscillators.emplace_back(waveTable, sampleRate);
-    }
 }
 
 void QSynthi::processBlock(AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
@@ -48,8 +46,8 @@ void QSynthi::processBlock(AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
     auto currentSample = 0;
     
     // Ask every playing oscillator if it's still playing
-    for (const auto& [note, oscillator] : oscillators)
-        if (oscillator.isStopped()) oscillators.erase(note);
+    for (auto const& [key, oscillator] : oscillators)
+        if (oscillator.isDone()) oscillators.erase(key);
     
     
     for (const auto midiMessage : midiMessages)
@@ -72,26 +70,20 @@ void QSynthi::handleMidiEvent(const MidiMessage& midiEvent)
 {
     if (midiEvent.isNoteOn())
     {
-        int noteNumber = midiEvent.getNoteNumber()
-        if (oscillators.contains(noteNumber))
-            return;
+        int noteNumber = midiEvent.getNoteNumber();
         
-        oscillators.insert(midiEvent.getNoteNumber(), WavetableOscillator(/*WAVETABLE*/, noteNumber, sampleRate));
+        if (oscillators.contains(noteNumber)) return;
+        
+        oscillators.insert(noteNumber, WavetableOscillator(wavetable::generate(0, 0, 0), noteNumber, sampleRate));
         
     }
     else if (midiEvent.isNoteOff())
     {
-        oscillators.erase(midiEvent);
-        
-        const auto oscillatorId = midiEvent.getNoteNumber();
-        oscillators[oscillatorId].stop();
+        oscillators[midiEvent.getNoteNumber()].noteOff();
     }
     else if (midiEvent.isAllNotesOff())
     {
-        for (auto& oscillator : oscillators)
-        {
-            oscillator.stop();
-        }
+        for (auto const& [_, oscillator] : oscillators) oscillator.noteOff();
     }
 }
 
@@ -101,12 +93,9 @@ void QSynthi::render(AudioBuffer<float>& buffer, int startSample, int endSample)
     
     for (auto& oscillator: oscillators)
     {
-        if (oscillator.isPlaying())
+        for (auto sample = startSample; sample < endSample; ++sample)
         {
-            for (auto sample = startSample; sample < endSample; ++sample)
-            {
-                firstChannel[sample] += oscillator.getNextSample();
-            }
+            firstChannel[sample] += oscillator.getNextSample();
         }
     }
     
