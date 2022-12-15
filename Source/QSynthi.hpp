@@ -8,10 +8,10 @@
 #ifndef QSynthi_hpp
 #define QSynthi_hpp
 
+#include "JuceHeader.h"
 #include <stdio.h>
 #include <vector>
 #include <map>
-#include "JuceHeader.h"
 #include "WavetableOscillator.hpp"
 
 #endif /* QSynthi_hpp */
@@ -34,7 +34,7 @@ private:
         getSample(...): releases the sound
         processBlock(...) cleanup: checks for every oscillator if it thinks it's done with it's life cycle and removes if it's the case
      */
-    std::map<int, WavetableOscillator*> oscillators;
+    std::map<int, WavetableOscillator> oscillators;
     
     std::vector<float> generateSineWaveTable();
     void initializeOscillators();

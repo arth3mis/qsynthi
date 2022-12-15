@@ -7,7 +7,8 @@
 
 #include "WavetableOscillator.hpp"
 #include <cmath>
-#include "Wavetables.h"
+#include "Wavetables.hpp"
+
 // Sowas geht
 //namespace wvt = wavetable;
 
@@ -17,16 +18,25 @@ constexpr auto SEMITONES_IN_AN_OCTAVE = 12.f;
 
 
 WavetableOscillator::WavetableOscillator(int waveType, float waveShift, float waveScale, int midiNote, float sampleRate) :
-    waveTable{ wavetable::generate(waveType, waveShift, waveScale) },
-    phaseIncrement{ wavetable::midiNoteToIncrement(midiNote, sampleRate) }
+    waveTable{ Wavetable::generate(waveType, waveShift, waveScale) },
+    phaseIncrement{ Wavetable::midiNoteToIncrement(midiNote, sampleRate) }
 {
-    
 }
 
-inline float WavetableOscillator::getNextSample()
+float WavetableOscillator::getNextSample()
 {
     const auto sample = waveTable.getLinearInterpolation(phase);
-    phase = std::fmod(phase + phaseIncrement, wavetable::SIZE_F);
+    phase = std::fmod(phase + phaseIncrement, Wavetable::SIZE_F);
     
     return sample;
+}
+
+
+void WavetableOscillator::noteOff()
+{
+}
+
+bool WavetableOscillator::isDone() const
+{
+    return true;
 }

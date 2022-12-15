@@ -29,12 +29,12 @@ protected:
 
 	public:
 		pair_list(list a, list b) 
-			: ls{ a.length() != b.length() ? list<std::pair<T, U>>() : 
-                list<size_t>::range(0, a.length()).mapTo<std::pair<T, U>>([&a, &b](size_t i) {
+			: ls{ a.length != b.length ? list<std::pair<T, U>>() : 
+                list<size_t>::range(0, a.length).mapTo<std::pair<T, U>>([&a, &b](size_t i) {
 						return std::make_pair(a[i], b[i]);
 				}) }
 		{
-			if (a.length() != b.length())
+			if (a.len != b.len)
 				throw std::runtime_error("Pairing error: list sizes differ");
 		}
 
@@ -68,21 +68,23 @@ protected:
 
 
 public:
-	list()								: ls{ }
+	const size_t len;
+
+	list()								: ls{ }, len{ 0 }
 	{}
-	list(std::initializer_list<T> il)	: ls{ std::vector<T>(il) }
+	list(std::initializer_list<T> il)	: ls{ std::vector<T>(il) }, len{ std::vector<T>(il).size() }
 	{}
-	list(std::vector<T> v)				: ls{ v }
+	list(std::vector<T> v)				: ls{ v }, len{ v.size() }
 	{}
-	list(size_t size)					: ls{ std::vector<T>(size) }
+	list(size_t size)					: ls{ std::vector<T>(size) }, len{ size }
 	{}
-	list(size_t size, T value)			: ls{ std::vector<T>(size, value) }
+	list(size_t size, T value)			: ls{ std::vector<T>(size, value) }, len{ size }
 	{}
 	list(std::vector<T>::const_iterator it1, std::vector<T>::const_iterator it2)
-										: ls{ std::vector<T>(it1, it2) }
+										: ls{ std::vector<T>(it1, it2) }, len{ it2 - it1 }
 	{}
 	list(size_t size, std::function<T(size_t)> f)
-										: ls{ rangePos(0, size).mapTo<T>([&f](size_t i) { return f(i); }).toVector() }
+										: ls{ rangePos(0, size).mapTo<T>([&f](size_t i) { return f(i); }).toVector() }, len{ size }
 	{}
 
 	// list containing incremented numbers
@@ -101,7 +103,7 @@ public:
 	}
 
 	// size queries
-	size_t length() const { return ls.size(); }
+	inline size_t length() const { return len; }
 	size_t empty()  const { return ls.size() == 0; }
 
 	// iterators
@@ -110,7 +112,8 @@ public:
 
 	// access function
 	T get(size_t i) const { return ls[i]; }
-	T getLinearInterpolation(float i) const { return ls[floor(i)] + (ls[ceil(i)] - ls[floor(i)]) * (i - floor(i)); }  // a + b*x
+	T getAny() const { return ls[len]; }
+	inline T getLinearInterpolation(float i) const { return ls[floor(i)] + (ls[(size_t)ceil(i)%len] - ls[floor(i)]) * (i - floor(i)); }  // a + b*x
 
 	// access operator
 	T operator[](size_t index) const { return get(index); }
@@ -154,7 +157,7 @@ public:
 	// moves values through list (end-start/start-end transfer)
 	list rotate(long long n=1) const
 	{
-		n = abs(n) % length() * /*sign function -->*/ (!signbit(n) * 2 - 1);
+		n = abs(n) % len * /*sign function -->*/ (!signbit(n) * 2 - 1);
 		std::vector<T> v = ls;
 		if (n > 0)
 		{
@@ -184,7 +187,7 @@ public:
 	// map each value to new value
 	list map(std::function<T(T)> f) const
 	{
-		std::vector<T> v(length());
+		std::vector<T> v(len);
 		std::transform(begin(), end(), v.begin(), f);
 		return list(v);
 	}
@@ -202,7 +205,7 @@ public:
 	template<typename U>
 	list<U> mapTo(std::function<U(T)> f) const
 	{
-		std::vector<U> v(length());
+		std::vector<U> v(len);
 		std::transform(begin(), end(), v.begin(), f);
 		return list<U>(v);
 	}
@@ -236,7 +239,7 @@ public:
 	// reduces all values to one (starting from first value)
 	T reduce(std::function<T(T, T)> f) const
 	{
-		if (length() == 0)
+		if (len == 0)
 			throw std::runtime_error("Error: reducing empty list");
 
 		T result = *begin();
@@ -262,7 +265,7 @@ public:
 	// comparison
 	bool equals(const list other) const
 	{
-		if (length() != other.length())
+		if (len != other.len)
 			return false;
 		return zip(other)
 			.mapTo<bool>([](T a, T b) { return a == b; })
@@ -298,10 +301,10 @@ template<class T>
 std::ostream& operator<<(std::ostream& os, const list<T>& l)
 {
 	os << "[";
-	for (size_t i = 0; i < l.length(); i++)
+	for (size_t i = 0; i < l.len; i++)
 	{
 		os << l[i];
-		if (i + 1 < l.length())
+		if (i + 1 < l.len)
 			os << ",";
 	}
 	os << "]";

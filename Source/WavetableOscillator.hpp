@@ -18,14 +18,14 @@ class WavetableOscillator
 {
 public:
     WavetableOscillator(int waveType, float waveShift, float waveScale, int midiNote, float sampleRate);
-    //WavetableOscillator() {}
+    WavetableOscillator() {}
     
     /**
             Returns the next Sample and ajusts the phase accordingly.
      */
     float getNextSample();
     void noteOff();
-    bool isDone();
+    bool isDone() const;
     
 private:
     list<float> waveTable;
