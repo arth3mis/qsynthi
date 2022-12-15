@@ -14,7 +14,7 @@ void QSynthi::prepareToPlay(float sampleRate)
 {
     this->sampleRate = sampleRate;
 
-    oscillators = {};
+    oscillators.clear();
 }
 
 /**
@@ -27,7 +27,13 @@ void QSynthi::processBlock(AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
     
     // Ask every playing oscillator if it's still playing
     for (auto& [key, oscillator] : oscillators)
-        if (oscillator.isDone()) oscillators.erase(key);
+    {
+        if (oscillator->isDone()) 
+        {
+            delete oscillator;
+            oscillators.erase(key);
+        }
+    }
     
     
     for (const auto midiMessage : midiMessages)
@@ -56,16 +62,16 @@ void QSynthi::handleMidiEvent(const MidiMessage& midiEvent)
         if (oscillators.contains(noteNumber)) return;
         
         
-        oscillators.emplace(noteNumber, WavetableOscillator(0, 0, 0, noteNumber, sampleRate));
+        oscillators.emplace(noteNumber, new WavetableOscillator(0, 0, 0, noteNumber, sampleRate));
         
     }
     else if (midiEvent.isNoteOff())
     {
-        oscillators[midiEvent.getNoteNumber()].noteOff();
+        oscillators[midiEvent.getNoteNumber()]->noteOff();
     }
     else if (midiEvent.isAllNotesOff())
     {
-        for (auto& [_, oscillator] : oscillators) oscillator.noteOff();
+        for (auto& [_, oscillator] : oscillators) oscillator->noteOff();
     }
 }
 
@@ -77,7 +83,7 @@ void QSynthi::render(AudioBuffer<float>& buffer, int startSample, int endSample)
     {
         for (auto sample = startSample; sample < endSample; ++sample)
         {
-            firstChannel[sample] += oscillator.getNextSample();
+            firstChannel[sample] += oscillator->getNextSample();
         }
     }
 
