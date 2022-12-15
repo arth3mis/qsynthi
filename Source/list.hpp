@@ -82,7 +82,7 @@ public:
 										: ls{ std::vector<T>(it1, it2) }
 	{}
 	list(size_t size, std::function<T(size_t)> f)
-										: ls{ rangePos(0, size).map([&f](size_t i) { return f(i); }) }
+										: ls{ rangePos(0, size).mapTo<T>([&f](size_t i) { return f(i); }).toVector() }
 	{}
 
 	// list containing incremented numbers

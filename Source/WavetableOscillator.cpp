@@ -15,6 +15,7 @@ constexpr auto A4_FREQUENCY = 440.f;
 constexpr auto A4_NOTE_NUMBER = 69.f;
 constexpr auto SEMITONES_IN_AN_OCTAVE = 12.f;
 
+
 WavetableOscillator::WavetableOscillator(int waveType, float waveShift, float waveScale, int midiNote, float sampleRate) :
     waveTable{ wavetable::generate(waveType, waveShift, waveScale) },
     phaseIncrement{ wavetable::midiNoteToIncrement(midiNote, sampleRate) }
