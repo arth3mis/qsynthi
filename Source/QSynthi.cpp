@@ -55,7 +55,8 @@ void QSynthi::handleMidiEvent(const MidiMessage& midiEvent)
         
         if (oscillators.contains(noteNumber)) return;
         
-        oscillators.emplace(noteNumber, WavetableOscillator(wavetable::generate(0, 0, 0), noteNumber, sampleRate));
+        
+        oscillators.emplace(noteNumber, WavetableOscillator(0, 0, 0, noteNumber, sampleRate));
         
     }
     else if (midiEvent.isNoteOff())
@@ -80,7 +81,7 @@ void QSynthi::render(AudioBuffer<float>& buffer, int startSample, int endSample)
         }
     }
 
-    // Fill other channels
+    // Copy rendered signal to all other channels
     for (auto channel = 1; channel < buffer.getNumChannels(); ++channel)
     {
         std::copy(firstChannel + startSample, firstChannel + endSample, buffer.getWritePointer(channel) + startSample);
