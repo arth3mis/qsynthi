@@ -17,7 +17,7 @@
 class WavetableOscillator
 {
 public:
-    WavetableOscillator(list<float> waveTable, int midiNote, double sampleRate);
+    WavetableOscillator(int waveType, float waveShift, float waveScale, int midiNote, float sampleRate);
     
     /**
             Returns the next Sample and ajusts the phase accordingly.
@@ -27,12 +27,12 @@ public:
     bool isDone();
     
 private:
-    std::vector<float> waveTable;
-    float indexIncrement;
-    double sampleRate;
+    list<float> waveTable;
+    float phaseIncrement;
     
-    float index = 0.f;
-    float interpolateLinearly();
-    
-    float midiNoteNumberToIncrement(int midiNoteNumber);
+    /**
+    phase from 0 to wavetable::SIZE
+     */
+    float phase = 0.f;
+
 };

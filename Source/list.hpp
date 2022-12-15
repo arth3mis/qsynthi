@@ -30,7 +30,7 @@ protected:
 	public:
 		pair_list(list a, list b) 
 			: ls{ a.length() != b.length() ? list<std::pair<T, U>>() : 
-				list<size_t>::range(0, a.length()).mapTo<std::pair<T, U>>([&a, &b](size_t i) {
+                list<size_t>::range(0, a.length()).mapTo<std::pair<T, U>>([&a, &b](size_t i) {
 						return std::make_pair(a[i], b[i]);
 				}) }
 		{

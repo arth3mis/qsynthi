@@ -20,11 +20,11 @@
 class QSynthi
 {
 public:
-    void prepareToPlay(double sampleRate);
+    void prepareToPlay(float sampleRate);
     void processBlock(AudioBuffer<float>& buffer, MidiBuffer& midiMessages);
     
 private:
-    double sampleRate;
+    float sampleRate;
     
     /** Map for all playing oscillators
         noteNumber -> playing Oscillator on this note
@@ -40,6 +40,5 @@ private:
     void initializeOscillators();
     
     void handleMidiEvent(const MidiMessage& midiEvent);
-    float midiNoteNumberToFrequency(int midiNoteNumber);
     void render(AudioBuffer<float>& buffer, int startSample, int endSample);
 };

@@ -94,7 +94,7 @@ void QSynthiAudioProcessor::changeProgramName (int index, const String& newName)
 void QSynthiAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
 
-    synth.prepareToPlay(sampleRate);
+    synth.prepareToPlay((float) sampleRate);
 
 }
 

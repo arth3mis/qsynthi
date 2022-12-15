@@ -11,25 +11,67 @@
 #pragma once
 #include "list.hpp"
 #include <functional>
+#include "JuceHeader.h"
 
 namespace wavetable {
 
+// Important Constants
+constexpr size_t SIZE = 128;            // Number of Samples per Wavetable
+constexpr float A4_FREQUENCY = 440.f;
+constexpr float A4_NOTE_NUMBER = 69.f;
+constexpr float SEMITONES_PER_OCTAVE = 12.f;
+
+
+
+// Constants for easy access
+constexpr float SIZE_F = static_cast<float>(SIZE);
+constexpr float TWO_PI = MathConstants<float>::twoPi;
+
 juce::StringArray names = {
-    "saw",
-    "saw2"
+    "Gaussian",
+    "Sine",
+    "Cosine"
 };
 
-constexpr size_t SIZE = 64;
 
-inline list<float> generate(size_t type, float a, float b) {
+inline list<float> generate(size_t type, float shift, float scale) {
+    // Assert that the wavetype is defined
+    jassert(type >= 0 && type < names.size());
+    
     switch (type)
     {
-        case 0: return list<float>(SIZE, [a,b](size_t i) { return a + b*i; });
+        // GAUSSIAN
+        case 0: return list<float>(SIZE, [shift, scale](size_t i) {
+            float scaling = (15 + 13*scale) * (i/SIZE_F - 0.5f - 0.5f*shift);
+            return 2 * std::expf(-scaling * scaling) - 1;
+        });
+            
+        // SINE
+        case 1: return list<float>(SIZE, [shift, scale](size_t i) {
+            float scaling = 2 * (1.1-scale) * (i/SIZE_F - 0.5f - 0.5f*shift);
+            if (scaling < 0.5f || scaling > 0.5f) return 0.f;
+            return std::sin(TWO_PI * scaling);
+            // Hehe die Keks denken das wäre Sinus hehe
+        });
+            
+        // COSINE
+        case 2: return list<float>(SIZE, [shift, scale](size_t i) {
+            float scaling = 2 * (1.1-scale) * (i/SIZE_F - 0.5f - 0.5f*shift);
+            if (scaling < 0.5f || scaling > 0.5f) return 0.f;
+            return std::cos(TWO_PI * scaling);
+            // Hehe die Keks denken das wäre Sinus hehe
+        });
     }
     return {};
 }
 
 
+const float midiNoteToIncrement(int noteNumber, float sampleRate)
+{
+    const float frequency = A4_FREQUENCY * std::powf(2.f, (noteNumber - A4_NOTE_NUMBER) / SEMITONES_PER_OCTAVE);
+    
+    return frequency * (float)(wavetable::SIZE / sampleRate);
 }
 
-//list<float> l = wavetable::generate(0, 1, 1);
+
+}

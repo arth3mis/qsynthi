@@ -10,43 +10,23 @@
 #include "Wavetables.h"
 
 
-void QSynthi::prepareToPlay(double sampleRate)
+void QSynthi::prepareToPlay(float sampleRate)
 {
     this->sampleRate = sampleRate;
 
-    initializeOscillators();
+    oscillators = {};
 }
 
-std::vector<float> QSynthi::generateSineWaveTable()
-{
-    constexpr auto WAVETABLE_LENGTH = 64;
-    
-    std::vector<float> sineWaveTable(WAVETABLE_LENGTH);
-    
-    for (auto i = 0; i < WAVETABLE_LENGTH; ++i) {
-        //sineWaveTable[i] = std::sinf(juce::MathConstants<float>::twoPi * static_cast<float>(i) / static_cast<float>(WAVETABLE_LENGTH));
-        sineWaveTable[i] = 2 * std::expf(-0.01 * (i - 32) * (i - 32) ) - 1;
-    }
-    
-    return sineWaveTable;
-}
-
-void QSynthi::initializeOscillators()
-{
-    constexpr auto OSCILLATORS_COUNT = 128;
-    
-    const auto waveTable = generateSineWaveTable();
-    
-    oscillators.clear();
-}
-
+/**
+ Coordinates handleMidiEvent(...) and render(...) to process the midiMessages and fill the buffer
+ */
 void QSynthi::processBlock(AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
 {
     
     auto currentSample = 0;
     
     // Ask every playing oscillator if it's still playing
-    for (auto const& [key, oscillator] : oscillators)
+    for (auto& [key, oscillator] : oscillators)
         if (oscillator.isDone()) oscillators.erase(key);
     
     
@@ -55,13 +35,14 @@ void QSynthi::processBlock(AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
         const auto midiEvent = midiMessage.getMessage();
         const auto midiEventSample = static_cast<int>(midiEvent.getTimeStamp());
         
+        // Render everything before the event and handle it
         render(buffer, currentSample, midiEventSample);
         handleMidiEvent(midiEvent);
         
-    
         currentSample = midiEventSample;
     }
     
+    // Render everything after the last midiEvent in this block
     render(buffer, currentSample, buffer.getNumSamples());
     
 }
@@ -74,7 +55,7 @@ void QSynthi::handleMidiEvent(const MidiMessage& midiEvent)
         
         if (oscillators.contains(noteNumber)) return;
         
-        oscillators.insert(noteNumber, WavetableOscillator(wavetable::generate(0, 0, 0), noteNumber, sampleRate));
+        oscillators.emplace(noteNumber, WavetableOscillator(wavetable::generate(0, 0, 0), noteNumber, sampleRate));
         
     }
     else if (midiEvent.isNoteOff())
@@ -83,7 +64,7 @@ void QSynthi::handleMidiEvent(const MidiMessage& midiEvent)
     }
     else if (midiEvent.isAllNotesOff())
     {
-        for (auto const& [_, oscillator] : oscillators) oscillator.noteOff();
+        for (auto& [_, oscillator] : oscillators) oscillator.noteOff();
     }
 }
 
@@ -91,14 +72,15 @@ void QSynthi::render(AudioBuffer<float>& buffer, int startSample, int endSample)
 {
     auto* firstChannel = buffer.getWritePointer(0);
     
-    for (auto& oscillator: oscillators)
+    for (auto& [_, oscillator] : oscillators)
     {
         for (auto sample = startSample; sample < endSample; ++sample)
         {
             firstChannel[sample] += oscillator.getNextSample();
         }
     }
-    
+
+    // Fill other channels
     for (auto channel = 1; channel < buffer.getNumChannels(); ++channel)
     {
         std::copy(firstChannel + startSample, firstChannel + endSample, buffer.getWritePointer(channel) + startSample);
