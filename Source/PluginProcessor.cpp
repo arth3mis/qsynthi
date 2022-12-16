@@ -10,9 +10,9 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-QSynthiAudioProcessor::QSynthiAudioProcessor()
+QSynthiAudioProcessor::QSynthiAudioProcessor() :
 #ifndef JucePlugin_PreferredChannelConfigurations
-     : AudioProcessor (BusesProperties()
+     AudioProcessor (BusesProperties()
                      #if ! JucePlugin_IsMidiEffect
                       #if ! JucePlugin_IsSynth
                        .withInput  ("Input",  AudioChannelSet::stereo(), true)
@@ -20,8 +20,11 @@ QSynthiAudioProcessor::QSynthiAudioProcessor()
                        .withOutput ("Output", AudioChannelSet::stereo(), true)
                      #endif
                        )
+    ,
 #endif
+synth(parameter)
 {
+
 }
 
 QSynthiAudioProcessor::~QSynthiAudioProcessor()

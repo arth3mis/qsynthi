@@ -11,6 +11,11 @@
 #include <JuceHeader.h>
 #include "QSynthi.hpp"
 
+
+struct Parameter {
+    int todo;
+};
+
 //==============================================================================
 /**
 */
@@ -20,6 +25,7 @@ class QSynthiAudioProcessor  : public AudioProcessor
                             #endif
 {
 public:
+
     //==============================================================================
     QSynthiAudioProcessor();
     ~QSynthiAudioProcessor() override;
@@ -65,6 +71,7 @@ private:
     QSynthi synth;
     
     // Parameters
+    struct Parameter parameter;
     static juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
     // Tree state in dem alle Parameter drin gespeichert sind
     juce::AudioProcessorValueTreeState treeState {

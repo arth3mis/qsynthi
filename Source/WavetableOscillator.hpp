@@ -5,35 +5,48 @@
 //  Created by Jannis Müller on 12.12.22.
 //
 
-#ifndef WavetableOscillator_hpp
-#define WavetableOscillator_hpp
+#pragma once
 
 #include <stdio.h>
 #include <vector>
 #include "list.hpp"
+#include "PluginProcessor.h"
 
-#endif /* WavetableOscillator_hpp */
+enum State {
+    SLEEP,
+    ATTACK,
+    DECAY,
+    SUSTAIN,
+    RELEASE
+};
+
+constexpr float ENVELOPE_THRESHOLD = 0.05f;
 
 class WavetableOscillator
 {
 public:
-    WavetableOscillator(int waveType, float waveShift, float waveScale, int midiNote, float sampleRate);
-    WavetableOscillator() {}
+    WavetableOscillator(struct Parameter& parameter);
     
-    /**
-            Returns the next Sample and ajusts the phase accordingly.
-     */
-    float getNextSample();
+    // Initializer
+    void prepareToPlay(int midiNote, float sampleRate);
+    
+    // MIDI
+    void noteOn(int velocity);
     void noteOff();
-    bool isDone() const;
+    
+    // Important Components of
+    bool isPlaying();
+    float getNextSample();
     
 private:
+    struct Parameter parameter;
     list<float> waveTable;
-    float phaseIncrement;
     
-    /**
-    phase from 0 to wavetable::SIZE
-     */
-    float phase = 0.f;
+    State state;
+    float envelopeLevel;
+    float velocityLevel;
+
+    float phase;
+    float phaseIncrement;
 
 };

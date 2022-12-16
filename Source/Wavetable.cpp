@@ -1,4 +1,4 @@
-#include "Wavetables.hpp"
+#include "Wavetable.hpp"
 
 
 const juce::StringArray Wavetable::names = {
@@ -6,7 +6,6 @@ const juce::StringArray Wavetable::names = {
         "Sine",
         "Cosine"
 };
-
 
 list<float> Wavetable::generate(size_t type, float shift, float scale)
 {

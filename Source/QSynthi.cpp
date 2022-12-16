@@ -6,26 +6,20 @@
 //
 
 #include "QSynthi.hpp"
-//#include "Wavetables.hpp"
-#include "list.hpp"
 
+QSynthi::QSynthi(struct Parameter& parameter) : parameter{ parameter }
+{
+    // TODO: Maybe in an extra constant
+    oscillators = list<WavetableOscillator>(128, [parameter](size_t _){
+        WavetableOscillator(parameter);
+    });
+}
 
 void QSynthi::prepareToPlay(float sampleRate)
 {
     this->sampleRate = sampleRate;
-
-    oscillators.clear();
+    
 }
-
-std::vector<float> QSynthi::generateSineWaveTable()
-{
-    return {};
-}
-
-void QSynthi::initializeOscillators()
-{
-}
-
 /**
  Coordinates handleMidiEvent(...) and render(...) to process the midiMessages and fill the buffer
  */
@@ -71,10 +65,7 @@ void QSynthi::handleMidiEvent(const MidiMessage& midiEvent)
     {
         int noteNumber = midiEvent.getNoteNumber();
         
-        if (oscillators.contains(noteNumber)) return;
-        
-        
-        oscillators.emplace(noteNumber, std::move(WavetableOscillator(0, 0, 0, noteNumber, sampleRate)));
+        oscillators[noteNumber].noteOn();
         
     }
     else if (midiEvent.isNoteOff())
@@ -83,7 +74,10 @@ void QSynthi::handleMidiEvent(const MidiMessage& midiEvent)
     }
     else if (midiEvent.isAllNotesOff())
     {
-        for (const auto& [_, oscillator] : oscillators) oscillator.noteOff();
+    
+        oscillators.forEach([](auto oscillator) {
+            oscillator.noteOff();
+        });
     }
 }
 
@@ -91,13 +85,12 @@ void QSynthi::render(AudioBuffer<float>& buffer, int startSample, int endSample)
 {
     auto* firstChannel = buffer.getWritePointer(0);
     
-    for (const auto& [_, oscillator] : oscillators)
-    {
-        for (auto sample = startSample; sample < endSample; ++sample)
+    oscillators.forEach([startSample, endSample, firstChannel](auto oscillator) {
+        for (int sample = startSample; sample < endSample; ++sample)
         {
             firstChannel[sample] += oscillator.getNextSample();
         }
-    }
+    });
 
     // Copy rendered signal to all other channels
     for (auto channel = 1; channel < buffer.getNumChannels(); ++channel)

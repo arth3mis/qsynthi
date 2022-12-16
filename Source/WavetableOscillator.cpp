@@ -5,38 +5,55 @@
 //  Created by Jannis Müller on 12.12.22.
 //
 
+
 #include "WavetableOscillator.hpp"
 #include <cmath>
-#include "Wavetables.hpp"
+#include "Wavetable.hpp"
 
 // Sowas geht
 //namespace wvt = wavetable;
 
-constexpr auto A4_FREQUENCY = 440.f;
-constexpr auto A4_NOTE_NUMBER = 69.f;
-constexpr auto SEMITONES_IN_AN_OCTAVE = 12.f;
-
-
-WavetableOscillator::WavetableOscillator(int waveType, float waveShift, float waveScale, int midiNote, float sampleRate) :
-    waveTable{ Wavetable::generate(waveType, waveShift, waveScale) },
-    phaseIncrement{ Wavetable::midiNoteToIncrement(midiNote, sampleRate) }
+WavetableOscillator::WavetableOscillator(struct Parameter& parameter) : parameter{ parameter }
 {
+    
+}
+
+void WavetableOscillator::prepareToPlay(int midiNote, float sampleRate)
+{
+    phaseIncrement = Wavetable::midiNoteToIncrement(midiNote, sampleRate);
+}
+
+void WavetableOscillator::noteOn(int velocity) {
+    waveTable = Wavetable::generate(0, 0, 0);
+    
+    state = State::ATTACK;
+    envelopeLevel = 0.f;
+    velocityLevel = velocity / 127.f; // TODO: Rethink velocity sensitivity
+    
+    phase = 0.f; // Not necessary for the sound, but helpful for null-tests
+    // phaseIncrement is set by prepareToPlay
+}
+
+void WavetableOscillator::noteOff() {
+    state = State::RELEASE;
+}
+
+
+bool WavetableOscillator::isPlaying() {
+    if (state == State::SLEEP) return true;
+    
+    // If done with playing
+    if (state == State::RELEASE && envelopeLevel < ENVELOPE_THRESHOLD) {
+        state = State::SLEEP;
+        return true;
+    }
 }
 
 float WavetableOscillator::getNextSample()
 {
-    const auto sample = waveTable.getLinearInterpolation(phase);
+    const auto sample = envelopeLevel * velocityLevel * waveTable.getLinearInterpolation(phase);
+    
     phase = std::fmod(phase + phaseIncrement, Wavetable::SIZE_F);
     
     return sample;
-}
-
-
-void WavetableOscillator::noteOff()
-{
-}
-
-bool WavetableOscillator::isDone() const
-{
-    return true;
 }
