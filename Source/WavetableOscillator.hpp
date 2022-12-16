@@ -20,7 +20,9 @@ enum State {
     RELEASE
 };
 
-constexpr float ENVELOPE_THRESHOLD = 0.05f;
+constexpr float ATTACK_THRESHOLD = 1 - 0.05f;
+constexpr float DECAY_THRESHOLD = 0.05f;
+constexpr float RELEASE_THRESHOLD = 0.005f;
 
 class WavetableOscillator
 {
@@ -48,5 +50,7 @@ private:
 
     float phase;
     float phaseIncrement;
+    
+    void updateState();
 
 };

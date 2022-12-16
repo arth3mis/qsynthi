@@ -32,14 +32,6 @@ void QSynthi::processBlock(AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
     // idea 1: create all, keep all always, ask everyone for isPlaying
     // idea 2: make list with playing oscis' references, maybe self-updating
     
-    // Ask every playing oscillator if it's still playing
-    /*for (const auto& [key, oscillator] : oscillators)
-    {
-        if (oscillator.isDone())
-        {
-            
-        }
-    }*/
     
     
     for (const auto midiMessage : midiMessages)
@@ -65,7 +57,7 @@ void QSynthi::handleMidiEvent(const MidiMessage& midiEvent)
     {
         int noteNumber = midiEvent.getNoteNumber();
         
-        oscillators[noteNumber].noteOn();
+        oscillators[noteNumber].noteOn(midiEvent.getVelocity());
         
     }
     else if (midiEvent.isNoteOff())

@@ -39,14 +39,8 @@ void WavetableOscillator::noteOff() {
 }
 
 
-bool WavetableOscillator::isPlaying() {
-    if (state == State::SLEEP) return true;
-    
-    // If done with playing
-    if (state == State::RELEASE && envelopeLevel < ENVELOPE_THRESHOLD) {
-        state = State::SLEEP;
-        return true;
-    }
+inline bool WavetableOscillator::isPlaying() {
+    return state == State::SLEEP;
 }
 
 float WavetableOscillator::getNextSample()
@@ -55,5 +49,39 @@ float WavetableOscillator::getNextSample()
     
     phase = std::fmod(phase + phaseIncrement, Wavetable::SIZE_F);
     
+    updateState();
+    
     return sample;
+}
+
+void WavetableOscillator::updateState() {
+    switch (state) {
+        case State::SLEEP:
+            // Noch weniger als bei Sustain hehe
+            break;
+            
+        case State::ATTACK:
+            envelopeLevel += parameter.attackFactor * (1 - envelopeLevel);
+            if (envelopeLevel > ATTACK_THRESHOLD) state = State::DECAY;
+            break;
+            
+        case State::DECAY:
+            float difference = (envelopeLevel - parameter.sustainLevel);
+            envelopeLevel -= parameter.decayFactor * difference;
+            if (difference < DECAY_THRESHOLD) state = State::SUSTAIN;
+            break;
+        
+        case State::SUSTAIN:
+            // Nothing hehe
+            break;
+        
+        case State::RELEASE:
+            envelopeLevel *= parameter.releaseFactor;
+            // Is done playing?
+            if (envelopeLevel < RELEASE_THRESHOLD) {
+                state = State::SLEEP;
+                envelopeLevel = 0;
+            }
+
+    }
 }

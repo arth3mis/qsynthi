@@ -13,7 +13,9 @@
 
 
 struct Parameter {
-    int todo;
+    float attackFactor{ 0.005f }, decayFactor{ 0.004f }, releaseFactor { 0.002f };
+    float sustainLevel{ 0.5f };
+
 };
 
 //==============================================================================
