@@ -7,25 +7,26 @@
 
 #pragma once
 
-#include "PluginProcessor.h"
 #include "JuceHeader.h"
 #include <stdio.h>
 #include <vector>
 #include "list.hpp"
 #include "WavetableOscillator.hpp"
+#include "Parameter.h"
 
 
 
 class QSynthi
 {
 public:
-    QSynthi(struct Parameter& parameter);
+    QSynthi(Parameter *parameter);
+    QSynthi() {}
     
     void prepareToPlay(float sampleRate);
     void processBlock(AudioBuffer<float>& buffer, MidiBuffer& midiMessages);
     
 private:
-    struct Parameter parameter;
+    Parameter *parameter;
     float sampleRate;
     
     /** Map for all playing oscillators
@@ -36,7 +37,7 @@ private:
         getSample(...): releases the sound
         processBlock(...) cleanup: checks for every oscillator if it thinks it's done with it's life cycle and removes if it's the case
      */
-    list<WavetableOscillator> oscillators;
+    mutable_list<WavetableOscillator> oscillators;
     
     void handleMidiEvent(const MidiMessage& midiEvent);
     void render(AudioBuffer<float>& buffer, int startSample, int endSample);

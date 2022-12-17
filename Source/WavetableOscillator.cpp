@@ -13,9 +13,10 @@
 // Sowas geht
 //namespace wvt = wavetable;
 
-WavetableOscillator::WavetableOscillator(struct Parameter& parameter) : parameter{ parameter }
+WavetableOscillator::WavetableOscillator(Parameter *parameter) 
+    : parameter{ parameter }
+    , state{ State::SLEEP }
 {
-    
 }
 
 void WavetableOscillator::prepareToPlay(int midiNote, float sampleRate)
@@ -38,14 +39,9 @@ void WavetableOscillator::noteOff() {
     state = State::RELEASE;
 }
 
-
-inline bool WavetableOscillator::isPlaying() {
-    return state == State::SLEEP;
-}
-
 float WavetableOscillator::getNextSample()
 {
-    const auto sample = envelopeLevel * velocityLevel * waveTable.getLinearInterpolation(phase);
+    const auto sample = /*envelopeLevel * */velocityLevel * waveTable.getLinearInterpolation(phase);
     
     phase = std::fmod(phase + phaseIncrement, Wavetable::SIZE_F);
     
@@ -61,22 +57,23 @@ void WavetableOscillator::updateState() {
             break;
             
         case State::ATTACK:
-            envelopeLevel += parameter.attackFactor * (1 - envelopeLevel);
+            envelopeLevel += parameter->attackFactor * (1 - envelopeLevel);
             if (envelopeLevel > ATTACK_THRESHOLD) state = State::DECAY;
             break;
             
         case State::DECAY:
-            float difference = (envelopeLevel - parameter.sustainLevel);
-            envelopeLevel -= parameter.decayFactor * difference;
+        {
+            float difference = (envelopeLevel - parameter->sustainLevel);
+            envelopeLevel -= parameter->decayFactor * difference;
             if (difference < DECAY_THRESHOLD) state = State::SUSTAIN;
-            break;
+        } break;
         
         case State::SUSTAIN:
             // Nothing hehe
             break;
         
         case State::RELEASE:
-            envelopeLevel *= parameter.releaseFactor;
+            envelopeLevel *= parameter->releaseFactor;
             // Is done playing?
             if (envelopeLevel < RELEASE_THRESHOLD) {
                 state = State::SLEEP;

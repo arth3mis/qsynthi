@@ -24,8 +24,8 @@ list<float> Wavetable::generate(size_t type, float shift, float scale)
         // SINE
     case 1: return list<float>(SIZE, [shift, scale](size_t i)
         {
-            float scaling = 2 * (1.1 - scale) * (i / SIZE_F - 0.5f - 0.5f * shift);
-            if (scaling < 0.5f || scaling > 0.5f) return 0.f;
+            float scaling = 2 * (1.1f - scale) * (i / SIZE_F - 0.5f - 0.5f * shift);
+            if (scaling < 0.5f || scaling > 0.5f) return 0.0f;
             return std::sin(TWO_PI * scaling);
             // Hehe die Keks denken das wäre Sinus hehe
         });
@@ -33,8 +33,8 @@ list<float> Wavetable::generate(size_t type, float shift, float scale)
         // COSINE
     case 2: return list<float>(SIZE, [shift, scale](size_t i)
         {
-            float scaling = 2 * (1.1 - scale) * (i / SIZE_F - 0.5f - 0.5f * shift);
-            if (scaling < 0.5f || scaling > 0.5f) return 0.f;
+            float scaling = 2 * (1.1f - scale) * (i / SIZE_F - 0.5f - 0.5f * shift);
+            if (scaling < 0.5f || scaling > 0.5f) return 0.0f;
             return std::cos(TWO_PI * scaling);
             // Hehe die Keks denken das wäre Sinus hehe
         });
@@ -45,7 +45,7 @@ list<float> Wavetable::generate(size_t type, float shift, float scale)
 
 float Wavetable::midiNoteToIncrement(int noteNumber, float sampleRate)
 {
-    const float frequency = A4_FREQUENCY * std::powf(2.f, (noteNumber - A4_NOTE_NUMBER) / SEMITONES_PER_OCTAVE);
+    const float frequency = A4_FREQUENCY * std::pow(2.f, (noteNumber - A4_NOTE_NUMBER) / SEMITONES_PER_OCTAVE);
 
     return frequency * (float)(SIZE / sampleRate);
 }

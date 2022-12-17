@@ -10,9 +10,9 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-QSynthiAudioProcessor::QSynthiAudioProcessor() :
+QSynthiAudioProcessor::QSynthiAudioProcessor() 
 #ifndef JucePlugin_PreferredChannelConfigurations
-     AudioProcessor (BusesProperties()
+    : AudioProcessor (BusesProperties()
                      #if ! JucePlugin_IsMidiEffect
                       #if ! JucePlugin_IsSynth
                        .withInput  ("Input",  AudioChannelSet::stereo(), true)
@@ -20,15 +20,16 @@ QSynthiAudioProcessor::QSynthiAudioProcessor() :
                        .withOutput ("Output", AudioChannelSet::stereo(), true)
                      #endif
                        )
-    ,
 #endif
-synth(parameter)
 {
-
+    parameter = new Parameter(0.005f, 0.004f, 0.002f, 0.5f);
+    synth = new QSynthi(parameter);
 }
 
 QSynthiAudioProcessor::~QSynthiAudioProcessor()
 {
+    delete synth;       synth = nullptr;
+    delete parameter;   parameter = nullptr;
 }
 
 //==============================================================================
@@ -97,7 +98,7 @@ void QSynthiAudioProcessor::changeProgramName (int index, const String& newName)
 void QSynthiAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
 
-    synth.prepareToPlay((float) sampleRate);
+    synth->prepareToPlay((float) sampleRate);
 
 }
 
@@ -151,7 +152,7 @@ void QSynthiAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer
     
     buffer.clear();
     
-    synth.processBlock(buffer, midiMessages);
+    synth->processBlock(buffer, midiMessages);
 }
 
 //==============================================================================

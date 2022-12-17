@@ -10,9 +10,9 @@
 #include <stdio.h>
 #include <vector>
 #include "list.hpp"
-#include "PluginProcessor.h"
+#include "Parameter.h"
 
-enum State {
+enum class State {
     SLEEP,
     ATTACK,
     DECAY,
@@ -27,7 +27,8 @@ constexpr float RELEASE_THRESHOLD = 0.005f;
 class WavetableOscillator
 {
 public:
-    WavetableOscillator(struct Parameter& parameter);
+    WavetableOscillator(Parameter *parameter);
+    WavetableOscillator() {} // muss anscheinend noch
     
     // Initializer
     void prepareToPlay(int midiNote, float sampleRate);
@@ -37,11 +38,12 @@ public:
     void noteOff();
     
     // Important Components of
-    bool isPlaying();
+    inline bool isPlaying() { return state != State::SLEEP; }
+
     float getNextSample();
     
 private:
-    struct Parameter parameter;
+    Parameter *parameter;
     list<float> waveTable;
     
     State state;

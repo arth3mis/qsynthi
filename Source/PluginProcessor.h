@@ -10,13 +10,8 @@
 
 #include <JuceHeader.h>
 #include "QSynthi.hpp"
+#include "Parameter.h"
 
-
-struct Parameter {
-    float attackFactor{ 0.005f }, decayFactor{ 0.004f }, releaseFactor { 0.002f };
-    float sustainLevel{ 0.5f };
-
-};
 
 //==============================================================================
 /**
@@ -70,10 +65,11 @@ private:
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (QSynthiAudioProcessor)
     
-    QSynthi synth;
+
+    QSynthi *synth;
+    Parameter *parameter;
     
-    // Parameters
-    struct Parameter parameter;
+
     static juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
     // Tree state in dem alle Parameter drin gespeichert sind
     juce::AudioProcessorValueTreeState treeState {

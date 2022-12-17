@@ -7,18 +7,25 @@
 
 #include "QSynthi.hpp"
 
-QSynthi::QSynthi(struct Parameter& parameter) : parameter{ parameter }
+QSynthi::QSynthi(Parameter *parameter) : parameter{ parameter }
 {
     // TODO: Maybe in an extra constant
-    oscillators = list<WavetableOscillator>(128, [parameter](size_t _){
-        WavetableOscillator(parameter);
+    oscillators = mutable_list<WavetableOscillator>(128, [parameter](size_t _){
+        return std::move(WavetableOscillator(parameter));
     });
+
+
+    /*
+    mutable_list<int> test(2);
+    test[0] = 3;
+    test.forEach([](int& a) { a++; });
+    auto t2 = test;
+    //*/
 }
 
 void QSynthi::prepareToPlay(float sampleRate)
 {
     this->sampleRate = sampleRate;
-    
 }
 /**
  Coordinates handleMidiEvent(...) and render(...) to process the midiMessages and fill the buffer
@@ -57,6 +64,7 @@ void QSynthi::handleMidiEvent(const MidiMessage& midiEvent)
     {
         int noteNumber = midiEvent.getNoteNumber();
         
+        oscillators[noteNumber].prepareToPlay(noteNumber, sampleRate);// is calling here correct? was not called at all before
         oscillators[noteNumber].noteOn(midiEvent.getVelocity());
         
     }
@@ -66,7 +74,6 @@ void QSynthi::handleMidiEvent(const MidiMessage& midiEvent)
     }
     else if (midiEvent.isAllNotesOff())
     {
-    
         oscillators.forEach([](auto oscillator) {
             oscillator.noteOff();
         });
@@ -77,12 +84,18 @@ void QSynthi::render(AudioBuffer<float>& buffer, int startSample, int endSample)
 {
     auto* firstChannel = buffer.getWritePointer(0);
     
-    oscillators.forEach([startSample, endSample, firstChannel](auto oscillator) {
-        for (int sample = startSample; sample < endSample; ++sample)
-        {
-            firstChannel[sample] += oscillator.getNextSample();
-        }
-    });
+    oscillators
+        //.filter([](auto oscillator) { return oscillator.isPlaying(); })
+        .forEach([startSample, endSample, firstChannel](auto& oscillator) {
+            // skip sleeping oscis
+            if (!oscillator.isPlaying())
+                return;
+            // 
+            for (int sample = startSample; sample < endSample; ++sample)
+            {
+                firstChannel[sample] += oscillator.getNextSample();
+            }
+        });
 
     // Copy rendered signal to all other channels
     for (auto channel = 1; channel < buffer.getNumChannels(); ++channel)
