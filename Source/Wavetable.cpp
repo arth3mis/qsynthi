@@ -45,7 +45,7 @@ list<float> Wavetable::generate(size_t type, float shift, float scale)
 
 float Wavetable::midiNoteToIncrement(int noteNumber, float sampleRate)
 {
-    const float frequency = A4_FREQUENCY * std::pow(2.f, (noteNumber - A4_NOTE_NUMBER) / SEMITONES_PER_OCTAVE);
+    const float frequency = A3_FREQUENCY * std::pow(2.f, (noteNumber - A3_NOTE_NUMBER) / SEMITONES_PER_OCTAVE);
 
     return frequency * (float)(SIZE / sampleRate);
 }

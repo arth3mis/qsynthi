@@ -17,8 +17,8 @@ class Wavetable
 public:
     // Important Constants
     constexpr static size_t SIZE = 128;            // Number of Samples per Wavetable
-    constexpr static float A4_FREQUENCY = 440.f;
-    constexpr static float A4_NOTE_NUMBER = 69.f;
+    constexpr static float A3_FREQUENCY = 440.f;
+    constexpr static float A3_NOTE_NUMBER = 69.f;
     constexpr static float SEMITONES_PER_OCTAVE = 12.f;
 
     // Constants for easy access

@@ -21,16 +21,16 @@ protected:
 	std::vector<T> ls;
 
 
-	template<typename T, typename U>
+	template<typename V, typename U>
 	class pair_list
 	{
 	private:
-		const list<std::pair<T, U>> ls;
+		const list<std::pair<V, U>> ls;
 
 	public:
 		pair_list(list a, list b) 
-			: ls{ a.length != b.length ? list<std::pair<T, U>>() : 
-                list<size_t>::range(0, a.length).mapTo<std::pair<T, U>>([&a, &b](size_t i) {
+			: ls{ a.length != b.length ? list<std::pair<V, U>>() :
+                list<size_t>::range(0, a.length).template mapTo<std::pair<V, U>>([&a, &b](size_t i) {
 						return std::make_pair(a[i], b[i]);
 				}) }
 		{
@@ -39,27 +39,27 @@ protected:
 		}
 
 		pair_list(list a, list b, size_t s) 
-			: ls{ list<size_t>::range(0, s).mapTo<std::pair<T, U>>([&a, &b](size_t i) {
+			: ls{ list<size_t>::range(0, s).mapTo<std::pair<V, U>>([&a, &b](size_t i) {
 						return std::make_pair(a[i], b[i]);
 				}) }
 		{}
 
-		list<T> map(std::function<T(T, U)> f) const
+		list<V> map(std::function<V(V, U)> f) const
 		{
-			std::vector<T> v;
+			std::vector<V> v;
 			std::transform(ls.begin(), ls.end(), std::back_inserter(v),
-				[&f](std::pair<T, U> p) {
+				[&f](std::pair<V, U> p) {
 					return f(p.first, p.second);
 				});
 			return list(v);
 		}
 
 		template<typename R>
-		list<R> mapTo(std::function<R(T, U)> f) const
+		list<R> mapTo(std::function<R(V, U)> f) const
 		{
 			std::vector<R> v;
 			std::transform(ls.begin(), ls.end(), std::back_inserter(v),
-				[&f](std::pair<T, U> p) {
+				[&f](std::pair<V, U> p) {
 					return f(p.first, p.second);
 				});
 			return list<R>(v);
@@ -78,7 +78,7 @@ public:
 	{}
 	list(size_t size, T value)			: ls{ std::vector<T>(size, value) }
 	{}
-	list(std::vector<T>::const_iterator it1, std::vector<T>::const_iterator it2)
+    list(typename std::vector<T>::const_iterator it1, typename std::vector<T>::const_iterator it2)
 										: ls{ std::vector<T>(it1, it2) }
 	{}
 	list(size_t size, std::function<T(size_t)> f)
@@ -105,8 +105,8 @@ public:
 	size_t empty()  const { return ls.size() == 0; }
 
 	// iterators
-	inline std::vector<T>::const_iterator begin() const { return ls.begin(); }
-	inline std::vector<T>::const_iterator end()   const { return ls.end(); }
+    inline typename std::vector<T>::const_iterator begin() const { return ls.begin(); }
+    inline typename std::vector<T>::const_iterator end()   const { return ls.end(); }
 
 	// access function
 	inline T get(size_t i) const { return ls[i]; }
@@ -278,7 +278,7 @@ public:
 		if (length() != other.length())
 			return false;
 		return zip(other)
-			.mapTo<bool>([](T a, T b) { return a == b; })
+            .template mapTo<bool>([](T a, T b) { return a == b; })
 			.reduce([](bool a, bool b) { return a && b; });
 	}
 	bool operator==(const list& right) const
@@ -349,7 +349,7 @@ public:
 	{
 		ls = list<T>::toVector();
 	}
-	mutable_list(std::vector<T>::const_iterator it1, std::vector<T>::const_iterator it2)
+    mutable_list(typename std::vector<T>::const_iterator it1, typename std::vector<T>::const_iterator it2)
 		: list<T>(it1, it2)
 	{
 		ls = list<T>::toVector();

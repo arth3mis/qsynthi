@@ -22,7 +22,7 @@ QSynthiAudioProcessor::QSynthiAudioProcessor()
                        )
 #endif
 {
-    parameter = new Parameter(0.005f, 0.004f, 0.002f, 0.5f);
+    parameter = new Parameter(0.002f, 0.001f, 0.9995f, 0.5f);
     synth = new QSynthi(parameter);
 }
 

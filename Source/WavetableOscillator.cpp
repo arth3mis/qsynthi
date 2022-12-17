@@ -41,7 +41,7 @@ void WavetableOscillator::noteOff() {
 
 float WavetableOscillator::getNextSample()
 {
-    const auto sample = /*envelopeLevel * */velocityLevel * waveTable.getLinearInterpolation(phase);
+    const auto sample = envelopeLevel * velocityLevel * waveTable.getLinearInterpolation(phase);
     
     phase = std::fmod(phase + phaseIncrement, Wavetable::SIZE_F);
     
