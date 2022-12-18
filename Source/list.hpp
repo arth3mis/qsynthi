@@ -323,53 +323,101 @@ std::ostream& operator<<(std::ostream& os, const list<T>& l)
 
 
 template<typename T>
-class mutable_list : public list<T>
+class mutable_list : private list<T>
 {
 private:
-	std::vector<T> ls;
 
 public:
 	mutable_list() : list<T>()
 	{
-		ls = list<T>::toVector();
+		//ls = std::vector<T>(list<T>::toVector());
 	}
 	mutable_list(std::initializer_list<T> il) : list<T>(il)
 	{
-		ls = list<T>::toVector();
+		//ls = std::vector<T>(list<T>::toVector());
 	}
 	mutable_list(std::vector<T> v) : list<T>(v)
 	{
-		ls = list<T>::toVector();
+		//ls = std::vector<T>(list<T>::toVector());
 	}
 	mutable_list(size_t size) : list<T>(size)
 	{
-		ls = list<T>::toVector();
+		//ls = std::vector<T>(list<T>::toVector());
 	}
 	mutable_list(size_t size, T value) : list<T>(size, value)
 	{
-		ls = list<T>::toVector();
+		//ls = std::vector<T>(list<T>::toVector());
 	}
     mutable_list(typename std::vector<T>::const_iterator it1, typename std::vector<T>::const_iterator it2)
 		: list<T>(it1, it2)
 	{
-		ls = list<T>::toVector();
+		//ls = std::vector<T>(list<T>::toVector());
 	}
 	mutable_list(size_t size, std::function<T(size_t)> f)
 		: list<T>(size, f)
 	{
-		ls = list<T>::toVector();
+		//ls = std::vector<T>(list<T>::toVector());
 	}
 
-	inline T& get(size_t i) { return ls.at(i); }
-	inline T& getWrap(long long i) { return ls.at((i + length()) % length()); }
-	T& operator[](size_t index) { return ls[index]; }
+	~mutable_list()
+	{
+	}
 
-	inline size_t length() const { return ls.size(); }
+	inline T& get(size_t i) { return list<T>::ls.at(i); }
+	inline T& getWrap(long long i) { return list<T>::ls.at((i + length()) % length()); }
+	T& operator[](size_t index) { return list<T>::ls.at(index); }
 
+	inline size_t length() const { return list<T>::ls.size(); }
+
+	// add value to list end
+	mutable_list append(T x)
+	{
+		list<T>::ls.push_back(x);
+		return *this;
+	}
+
+	// add list to list end
+	mutable_list append(typename list<T> l)
+	{
+		list<T>::ls.insert(list<T>::end(), l.begin(), l.end());
+		return *this;
+	}
+
+	// append value operator
+	mutable_list operator+(const T& right)
+	{
+		return append(right);
+	}
+	mutable_list& operator+=(const T& right)
+	{
+		append(right);
+		return *this;
+	}
+
+	// append list operator
+	mutable_list operator+(const typename list<T>& right) 
+	{
+		return append(right);
+	}
+	mutable_list& operator+=(const typename list<T>& right)
+	{
+		append(right);
+		return *this;
+	}
+
+	// executes f on each element, returns this list
 	void forEach(std::function<void(T&)> f)
 	{
 		for (size_t i = 0; i < length(); i++)
-			f(ls.at(i));
+			f(list<T>::ls.at(i));
 	}
+
+	// returns new list with references to matching values from this list
+	/*typename mutable_list<T&> filter(std::function<void(T&)> f)
+	{
+		std::vector<T&> v;
+
+		return mutable_list<T&>(v); // does this need independent constructors from list?
+	}*/
 };
 
