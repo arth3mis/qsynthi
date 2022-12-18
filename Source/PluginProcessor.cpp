@@ -193,6 +193,10 @@ AudioProcessorValueTreeState::ParameterLayout QSynthiAudioProcessor::createParam
 {
     AudioProcessorValueTreeState::ParameterLayout layout;
     
+    list<AudioProcessorParameter> parameterList = parameter->processorParameters();
+    
+    parameterList.forEach([layout](auto p) {layout.add(p);});
+    
     layout.add(std::make_unique<AudioParameterFloat>(
                                                      ParameterID { "Test", 1 },
                                                      "TEST",
