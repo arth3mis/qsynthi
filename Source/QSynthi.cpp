@@ -21,6 +21,7 @@ QSynthi::QSynthi(Parameter *parameter) : parameter{ parameter }
     test += 41;
     test.forEach([](int& a) { a++; });
     auto t2 = test;
+    t2 += {1,2,3};  // does not change test anymore
     //*/
 }
 
