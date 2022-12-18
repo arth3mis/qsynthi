@@ -18,6 +18,7 @@ QSynthi::QSynthi(Parameter *parameter) : parameter{ parameter }
     /*
     mutable_list<int> test(2);
     test[0] = 3;
+    test += 41;
     test.forEach([](int& a) { a++; });
     auto t2 = test;
     //*/
