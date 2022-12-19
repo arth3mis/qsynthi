@@ -98,6 +98,7 @@ void QSynthiAudioProcessor::changeProgramName (int index, const String& newName)
 void QSynthiAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
 
+
     synth->prepareToPlay((float) sampleRate);
 
 }
@@ -149,6 +150,7 @@ void QSynthiAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
     */
+    parameter->update(treeState, (float) getSampleRate());
     
     buffer.clear();
     
@@ -187,22 +189,4 @@ void QSynthiAudioProcessor::setStateInformation (const void* data, int sizeInByt
 AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
     return new QSynthiAudioProcessor();
-}
-
-AudioProcessorValueTreeState::ParameterLayout QSynthiAudioProcessor::createParameterLayout()
-{
-    AudioProcessorValueTreeState::ParameterLayout layout;
-    
-    list<AudioProcessorParameter> parameterList = parameter->processorParameters();
-    
-    parameterList.forEach([layout](auto p) {layout.add(p);});
-    
-    layout.add(std::make_unique<AudioParameterFloat>(
-                                                     ParameterID { "Test", 1 },
-                                                     "TEST",
-                                                     NormalisableRange<float>(20.f, 20000.f, 0.1f, 0.5f),
-                                                     20.f));
-
-    return layout;
-
 }

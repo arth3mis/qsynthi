@@ -22,13 +22,15 @@ WavetableOscillator::WavetableOscillator(Parameter *parameter)
 void WavetableOscillator::prepareToPlay(int midiNote, float sampleRate)
 {
     phaseIncrement = Wavetable::midiNoteToIncrement(midiNote, sampleRate);
+    envelopeLevel = 0.f;
 }
 
 void WavetableOscillator::noteOn(int velocity) {
     waveTable = Wavetable::generate(0, 0, 0);
     
+    // Do not set envelopeLevel = 0 here, to enable smooth retriggers of one note
+    
     state = State::ATTACK;
-    envelopeLevel = 0.f;
     velocityLevel = velocity / 127.f; // TODO: Rethink velocity sensitivity
     
     phase = 0.f; // Not necessary for the sound, but helpful for null-tests
@@ -58,14 +60,14 @@ void WavetableOscillator::updateState() {
             
         case State::ATTACK:
             envelopeLevel += parameter->attackFactor * (1 - envelopeLevel);
-            if (envelopeLevel > ATTACK_THRESHOLD) state = State::DECAY;
+            if (envelopeLevel > Parameter::ATTACK_THRESHOLD) state = State::DECAY;
             break;
             
         case State::DECAY:
         {
             float difference = (envelopeLevel - parameter->sustainLevel);
             envelopeLevel -= parameter->decayFactor * difference;
-            if (difference < DECAY_THRESHOLD) state = State::SUSTAIN;
+            if (difference < Parameter::DECAY_THRESHOLD) state = State::SUSTAIN;
         } break;
         
         case State::SUSTAIN:
@@ -75,7 +77,8 @@ void WavetableOscillator::updateState() {
         case State::RELEASE:
             envelopeLevel *= parameter->releaseFactor;
             // Is done playing?
-            if (envelopeLevel < RELEASE_THRESHOLD) {
+            // Make threshold even smaller to keep playing super quietly after the set release time
+            if (envelopeLevel < (Parameter::RELEASE_THRESHOLD * 0.01f)) {
                 state = State::SLEEP;
                 envelopeLevel = 0;
             }

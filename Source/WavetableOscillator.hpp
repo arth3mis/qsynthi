@@ -17,12 +17,8 @@ enum class State {
     ATTACK,
     DECAY,
     SUSTAIN,
-    RELEASE
+    RELEASE,
 };
-
-constexpr float ATTACK_THRESHOLD = 1 - 0.05f;
-constexpr float DECAY_THRESHOLD = 0.05f;
-constexpr float RELEASE_THRESHOLD = 0.005f;
 
 class WavetableOscillator
 {
@@ -47,7 +43,7 @@ private:
     list<float> waveTable;
     
     State state;
-    float envelopeLevel;
+    float envelopeLevel = 0;
     float velocityLevel;
 
     float phase;

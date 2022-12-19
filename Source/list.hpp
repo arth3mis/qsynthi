@@ -377,7 +377,7 @@ public:
 	}
 
 	// add list to list end
-	mutable_list append(typename list<T> l)
+	mutable_list append(list<T> l)
 	{
 		list<T>::ls.insert(list<T>::end(), l.begin(), l.end());
 		return *this;
@@ -395,11 +395,11 @@ public:
 	}
 
 	// append list operator
-	mutable_list operator+(const typename list<T>& right) 
+	mutable_list operator+(const list<T>& right)
 	{
 		return append(right);
 	}
-	mutable_list& operator+=(const typename list<T>& right)
+	mutable_list& operator+=(const list<T>& right)
 	{
 		append(right);
 		return *this;

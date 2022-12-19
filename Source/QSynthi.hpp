@@ -39,6 +39,6 @@ private:
      */
     mutable_list<WavetableOscillator> oscillators;
     
-    void handleMidiEvent(const MidiMessage& midiEvent);
+    void ahandleMidiEvent(const MidiMessage& midiEvent);
     void render(AudioBuffer<float>& buffer, int startSample, int endSample);
 };

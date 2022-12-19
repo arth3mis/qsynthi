@@ -68,14 +68,12 @@ private:
 
     QSynthi *synth;
     Parameter *parameter;
-    
 
-    static juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
     // Tree state in dem alle Parameter drin gespeichert sind
-    juce::AudioProcessorValueTreeState treeState {
+    AudioProcessorValueTreeState treeState {
         *this,
         nullptr,
         "Parameters",
-        createParameterLayout()
+        Parameter::createParameterLayout()
     };
 };

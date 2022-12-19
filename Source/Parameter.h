@@ -12,22 +12,33 @@
 #include "list.hpp"
 #include <JuceHeader.h>
 
+#define PARAM_VERSION 1
+
 #define GAIN "Gain"
 
-#define ATTACK "Attack"
-#define DECAY "Decay"
-#define SUSTAIN "Sustain"
-#define RELEASE "Release"
+#define ATTACK_TIME "Attack"
+#define DECAY_TIME "Decay"
+#define RELEASE_TIME "Release"
+#define SUSTAIN_LEVEL "Sustain"
 
-#define ACCURACY "Accuracy"
-#define SIMULATION_SPEED "Simulation Speed"
+#define ACCURACY "Timesteps / Simulated sec"
+#define SIMULATION_SPEED "Simulated sec / Real sec"
 #define SHOW_FFT "FFT"
+
+
+
 
 /**
  struct to communicate Parameter between Front- and Backend. General Idea:  struct "Parameter" contains only processed values which not necessarily correspond 1:1 to the Parameters of the Front-End
  */
 class Parameter
 {
+public:
+    // Envelope Constants
+    static constexpr float ATTACK_THRESHOLD = 1 - 0.05f;
+    static constexpr float DECAY_THRESHOLD = 0.01f;
+    static constexpr float RELEASE_THRESHOLD = 0.005f;
+    
     // general
     float gainFactor;
     
@@ -42,8 +53,8 @@ class Parameter
     float timestepDelta;        // Time duration of each timestep
     bool showFFT;               // True if the FFT of the waveform should be played
 
-    list<AudioProcessorParameter> processorParameters();
-    void update(std::function<float(StringRef)> getParameter);
+    static AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
+    void update(AudioProcessorValueTreeState& getParameter, float sampleRate);
     
     Parameter(float attackFactor,
               float decayFactor,
@@ -55,5 +66,5 @@ class Parameter
     releaseFactor{ releaseFactor }
     {}
     
-    
+  
 };
