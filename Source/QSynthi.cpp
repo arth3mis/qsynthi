@@ -9,9 +9,8 @@
 
 QSynthi::QSynthi(Parameter *parameter) : parameter{ parameter }
 {
-    // TODO: Maybe in an extra constant
     oscillators = mutable_list<WavetableOscillator>(128, [parameter](size_t _){
-        return std::move(WavetableOscillator(parameter));
+        return WavetableOscillator(parameter);
     });
 
 
@@ -35,7 +34,7 @@ void QSynthi::prepareToPlay(float sampleRate)
 void QSynthi::processBlock(AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
 {
     
-    auto currentSample = 0;
+    int currentSample = 0;
 
 
     // idea 1: create all, keep all always, ask everyone for isPlaying
@@ -98,6 +97,11 @@ void QSynthi::render(AudioBuffer<float>& buffer, int startSample, int endSample)
                 firstChannel[sample] += oscillator.getNextSample();
             }
         });
+    
+    // Apply Gian
+    for (int sample = startSample; sample < endSample; ++sample) {
+        firstChannel[sample] *= parameter->gainFactor;
+    }
 
     // Copy rendered signal to all other channels
     for (auto channel = 1; channel < buffer.getNumChannels(); ++channel)
