@@ -10,6 +10,10 @@
 #include <cmath>
 #include "Wavetable.hpp"
 
+#define POCKETFFT_CACHE_SIZE 1
+#define POCKETFFT_NO_MULTITHREADING
+#include "pocketfft_hdronly.h"
+
 // Sowas geht
 //namespace wvt = wavetable;
 
@@ -43,10 +47,13 @@ void WavetableOscillator::noteOff() {
 
 float WavetableOscillator::getNextSample()
 {
-    const auto sample = envelopeLevel * velocityLevel * waveTable.getLinearInterpolation(phase);
+    const auto sample = 
+          envelopeLevel 
+        * velocityLevel 
+        * waveTable.getLinearInterpolation(phase, getSampleConversion(parameter->sampleType));
     
     phase = std::fmod(phase + phaseIncrement, Wavetable::SIZE_F);
-    
+
     updateState();
     
     return sample;

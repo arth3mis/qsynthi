@@ -6,7 +6,7 @@
 //
 
 #include "QSynthi.hpp"
-
+#include <complex>
 QSynthi::QSynthi(Parameter *parameter) : parameter{ parameter }
 {
     oscillators = mutable_list<WavetableOscillator>(128, [parameter](size_t _){
@@ -22,6 +22,10 @@ QSynthi::QSynthi(Parameter *parameter) : parameter{ parameter }
     auto t2 = test;
     t2 += {1,2,3};  // does not change test anymore
     //*/
+
+    //using namespace std::complex_literals;
+    //list<std::complex<float>> psiTest = {1.f+1if, 3.f};
+    //float x = psiTest.getLinearInterpolation<float>(0.5f, [](std::complex<float> z) { return std::norm(z); });
 }
 
 void QSynthi::prepareToPlay(float sampleRate)

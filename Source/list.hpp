@@ -113,10 +113,16 @@ public:
 	inline T getWrap(long long i) const { return ls[(i + length()) % length()]; }
 
 	// a + b*x
-	inline T getLinearInterpolation(float i) const 
+	inline T getLinearInterpolation(double i) const 
 	{ 
 		return ls[floor(i)] + (ls[(size_t)ceil(i) % length()] - ls[floor(i)]) * (i - floor(i)); 
 	}  
+	// a + b*x (with previous conversion)
+	template<typename R>
+	inline R getLinearInterpolation(double i, const std::function<R(T)> f) const
+	{
+		return f(ls[floor(i)]) + (f(ls[(size_t)ceil(i) % length()]) - f(ls[floor(i)])) * (i - floor(i));
+	}
 
 	// access operator
 	T operator[](size_t index) const { return ls[index]; }

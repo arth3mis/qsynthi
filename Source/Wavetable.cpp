@@ -7,7 +7,7 @@ const juce::StringArray Wavetable::names = {
         "Cosine"
 };
 
-list<float> Wavetable::generate(size_t type, float shift, float scale)
+list<std::complex<float>> Wavetable::generate(const size_t type, const float shift, const float scale)
 {
     // Assert that the wavetype is defined
     jassert(type >= 0 && type < names.size());
@@ -15,15 +15,13 @@ list<float> Wavetable::generate(size_t type, float shift, float scale)
     switch (type)
     {
         // GAUSSIAN
-    case 0: return list<float>(SIZE, [shift, scale](size_t i)
-        {
+    case 0: return list<std::complex<float>>(SIZE, [shift, scale](size_t i) {
             float scaling = (15 + 13 * scale) * (i / SIZE_F - 0.5f - 0.5f * shift);
             return 2 * std::expf(-scaling * scaling) - 1;
         });
 
         // SINE
-    case 1: return list<float>(SIZE, [shift, scale](size_t i)
-        {
+    case 1: return list<std::complex<float>>(SIZE, [shift, scale](size_t i) {
             float scaling = 2 * (1.1f - scale) * (i / SIZE_F - 0.5f - 0.5f * shift);
             if (scaling < 0.5f || scaling > 0.5f) return 0.0f;
             return std::sin(TWO_PI * scaling);
@@ -31,8 +29,7 @@ list<float> Wavetable::generate(size_t type, float shift, float scale)
         });
 
         // COSINE
-    case 2: return list<float>(SIZE, [shift, scale](size_t i)
-        {
+    case 2: return list<std::complex<float>>(SIZE, [shift, scale](size_t i) {
             float scaling = 2 * (1.1f - scale) * (i / SIZE_F - 0.5f - 0.5f * shift);
             if (scaling < 0.5f || scaling > 0.5f) return 0.0f;
             return std::cos(TWO_PI * scaling);
@@ -43,7 +40,7 @@ list<float> Wavetable::generate(size_t type, float shift, float scale)
 }
 
 
-float Wavetable::midiNoteToIncrement(int noteNumber, float sampleRate)
+float Wavetable::midiNoteToIncrement(const int noteNumber, const float sampleRate)
 {
     const float frequency = A3_FREQUENCY * std::pow(2.f, (noteNumber - A3_NOTE_NUMBER) / SEMITONES_PER_OCTAVE);
 

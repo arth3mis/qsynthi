@@ -26,7 +26,12 @@
 #define SHOW_FFT "FFT"
 
 
-
+enum class SampleType
+{
+    REAL_VALUE,
+    IMAG_VALUE,
+    SQARED_ABS
+};
 
 /**
  struct to communicate Parameter between Front- and Backend. General Idea:  struct "Parameter" contains only processed values which not necessarily correspond 1:1 to the Parameters of the Front-End
@@ -40,31 +45,20 @@ public:
     static constexpr float RELEASE_THRESHOLD = 0.005f;
     
     // general
-    float gainFactor;
+    float gainFactor = 0;
     
     // Envelope
-    float attackFactor;
-    float decayFactor;
-    float sustainLevel;
-    float releaseFactor;
+    float attackFactor = 0;
+    float decayFactor = 0;
+    float sustainLevel = 0;
+    float releaseFactor = 0;
     
     // For Schroedinger
-    float timestepsPerSample;   // Number of timesteps which get performed after a sample is calculated. Always > 0, could get > 1
-    float timestepDelta;        // Time duration of each timestep
-    bool showFFT;               // True if the FFT of the waveform should be played
+    float timestepsPerSample = 0;   // Number of timesteps which get performed after a sample is calculated. Always > 0, could get > 1
+    float timestepDelta = 0;        // Time duration of each timestep
+    bool showFFT = false;           // True if the FFT of the waveform should be played
+    SampleType sampleType = SampleType::SQARED_ABS;
 
     static AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
     void update(AudioProcessorValueTreeState& getParameter, float sampleRate);
-    
-    Parameter(float attackFactor,
-              float decayFactor,
-              float releaseFactor,
-              float sustainLevel) :
-    attackFactor{ attackFactor },
-    decayFactor{ decayFactor },
-    sustainLevel{ sustainLevel },
-    releaseFactor{ releaseFactor }
-    {}
-    
-  
 };

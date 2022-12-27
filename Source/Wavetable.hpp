@@ -10,6 +10,7 @@
 
 #pragma once
 #include "JuceHeader.h"
+#include <complex>
 #include "list.hpp"
 
 class Wavetable
@@ -27,6 +28,6 @@ public:
 
     const static juce::StringArray names;
 
-    static list<float> generate(size_t type, float shift, float scale);
-    static float midiNoteToIncrement(int noteNumber, float sampleRate);
+    static list<std::complex<float>> generate(const size_t type, const float shift, const float scale);
+    static float midiNoteToIncrement(const int noteNumber, const float sampleRate);
 };

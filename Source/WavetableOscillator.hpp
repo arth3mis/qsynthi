@@ -8,7 +8,7 @@
 #pragma once
 
 #include <stdio.h>
-#include <vector>
+#include <complex>
 #include "list.hpp"
 #include "Parameter.h"
 
@@ -24,7 +24,7 @@ class WavetableOscillator
 {
 public:
     WavetableOscillator(Parameter *parameter);
-    WavetableOscillator() {} // muss anscheinend noch
+    WavetableOscillator() : state{ State::SLEEP } {}  // needed by list internals
     
     // Initializer
     void prepareToPlay(int midiNote, float sampleRate);
@@ -39,16 +39,28 @@ public:
     float getNextSample();
     
 private:
-    Parameter *parameter;
-    list<float> waveTable;
+    Parameter *parameter = nullptr;
+    list<std::complex<float>> waveTable;
+
+    static inline std::function<float(std::complex<float>)> getSampleConversion(const SampleType type)
+    {
+        if (type == SampleType::REAL_VALUE)
+            return [](std::complex<float> z) { return std::real(z); };
+        else if (type == SampleType::IMAG_VALUE)
+            return [](std::complex<float> z) { return std::imag(z); };
+        else if (type == SampleType::SQARED_ABS)
+            return [](std::complex<float> z) { return std::norm(z); };
+        else
+            return [](std::complex<float> z) { return 0; };
+    }
     
     State state;
     float envelopeLevel = 0;
-    float velocityLevel;
+    float velocityLevel = 0;
 
-    float phase;
-    float phaseIncrement;
-    
+    float phase = 0;
+    float phaseIncrement = 0;
+
     void updateState();
 
 };
