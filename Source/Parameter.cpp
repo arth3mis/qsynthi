@@ -10,9 +10,9 @@
 
 #include "Parameter.h"
 
-#define FLOAT_PARAM(paramName, range, baseValue) layout.add(std::make_unique<AudioParameterFloat>(ParameterID { paramName, PARAM_VERSION }, paramName, range, baseValue))
+#define FLOAT_PARAM(paramName, range, baseValue) layout.add(std::make_unique<AudioParameterFloat>(ParameterID { (paramName), PARAM_VERSION }, (paramName), (range), (baseValue)))
 
-#define BOOL_PARAM(paramName, baseValue) layout.add(std::make_unique<AudioParameterBool>(ParameterID { paramName, PARAM_VERSION }, paramName, baseValue))
+#define BOOL_PARAM(paramName, baseValue) layout.add(std::make_unique<AudioParameterBool>(ParameterID { (paramName), PARAM_VERSION }, (paramName), (baseValue)))
 
 
 #define GET(paramName) treeState.getRawParameterValue(paramName)->load()
@@ -21,6 +21,7 @@ AudioProcessorValueTreeState::ParameterLayout Parameter::createParameterLayout()
     AudioProcessorValueTreeState::ParameterLayout layout;
     
     // MAKROS SIND JA DOCH GANZ PRAKTISCH (in C++ zumindest)
+    // trotzdem Klammern nicht vergessen (mach ich auch imemr wieder)
     
     FLOAT_PARAM(GAIN, NormalisableRange<float>(-64.f, 0.f, 0.1f, 0.9f, true), -24.f);
     
@@ -31,6 +32,12 @@ AudioProcessorValueTreeState::ParameterLayout Parameter::createParameterLayout()
     
     FLOAT_PARAM(ACCURACY, NormalisableRange<float>(100.f, 10000.f, 1.f, 0.3f, false), 500.f);
     FLOAT_PARAM(SIMULATION_SPEED, NormalisableRange<float>(0.01f, 2.f, 1.f, 0.3f, false), 0.2f);
+
+    layout.add(std::make_unique<AudioParameterChoice>(ParameterID{ SAMPLE_TYPE, PARAM_VERSION }, SAMPLE_TYPE, StringArray({
+        "Real Value",
+        "Imaginary Value",
+        "Squared Absolute" }),
+        0 /*<-- default*/));
 
     BOOL_PARAM(SHOW_FFT, false);
     
@@ -56,5 +63,6 @@ void Parameter::update(AudioProcessorValueTreeState& treeState, float sampleRate
     timestepsPerSample = accuracy * simulationSpeed / sampleRate;
     timestepDelta = 1 / accuracy;
     
+    sampleType = static_cast<SampleType>(GET(SAMPLE_TYPE));
     showFFT = GET(SHOW_FFT);
 }

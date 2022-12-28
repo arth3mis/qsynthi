@@ -23,11 +23,13 @@
 
 #define ACCURACY "Timesteps / Simulated sec"
 #define SIMULATION_SPEED "Simulated sec / Real sec"
+#define SAMPLE_TYPE "Sample type"
 #define SHOW_FFT "FFT"
 
 
 enum class SampleType
 {
+    // on update: check strings in layout creation!
     REAL_VALUE,
     IMAG_VALUE,
     SQARED_ABS
