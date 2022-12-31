@@ -13,6 +13,7 @@
 #include "list.hpp"
 #include "WavetableOscillator.hpp"
 #include "Parameter.h"
+#include "WavetablePlot.h"
 
 
 
@@ -28,6 +29,10 @@ public:
 private:
     Parameter *parameter;
     float sampleRate;
+
+    WavetablePlot plot;
+    int noteOnCount;
+    int noteToDraw;
     
     /** Map for all playing oscillators
         noteNumber -> playing Oscillator on this note

@@ -36,8 +36,11 @@ public:
     // MIDI
     void noteOn(int velocity);
     void noteOff();
+
+    inline list<cfloat> getWavetable() { return waveTable; }
+    inline std::function<float(cfloat)> getConverter() { return getSampleConversion(parameter->sampleType); }
     
-    // Important Components of
+    // Important Components of                                          ja was
     inline bool isPlaying() { return state != State::SLEEP; }
 
     float getNextSample();

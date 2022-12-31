@@ -102,7 +102,7 @@ public:
 
 	// size queries
 	inline size_t length() const { return ls.size(); }
-	size_t empty()  const { return ls.size() == 0; }
+	inline bool empty() const { return ls.size() == 0; }
 
 	// iterators
     inline typename std::vector<T>::const_iterator begin() const { return ls.begin(); }

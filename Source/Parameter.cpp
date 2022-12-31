@@ -32,7 +32,7 @@ AudioProcessorValueTreeState::ParameterLayout Parameter::createParameterLayout()
     
     BOOL_PARAM(APPLY_WAVEFUNC, true);
     FLOAT_PARAM(ACCURACY, NormalisableRange<float>(100.f, 10000.f, 1.f, 0.3f, false), 500.f);
-    FLOAT_PARAM(SIMULATION_SPEED, NormalisableRange<float>(0.01f, 2.f, 1.f, 0.3f, false), 0.2f);
+    FLOAT_PARAM(SIMULATION_SPEED, NormalisableRange<float>(0.01f, 2.f, 0.01f, 0.3f, false), 0.1f);
 
     layout.add(std::make_unique<AudioParameterChoice>(ParameterID{ SAMPLE_TYPE, PARAM_VERSION }, SAMPLE_TYPE, StringArray({
         "Real Value",

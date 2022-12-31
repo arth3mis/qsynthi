@@ -89,7 +89,7 @@ float WavetableOscillator::getNextSample()
     const auto sample = 
           envelopeLevel 
         * velocityLevel 
-        * waveTable.getLinearInterpolation(phase, getSampleConversion(parameter->sampleType));
+        * waveTable.getLinearInterpolation(phase, getConverter());
     
     phase = std::fmod(phase + phaseIncrement, Wavetable::SIZE_F);
 

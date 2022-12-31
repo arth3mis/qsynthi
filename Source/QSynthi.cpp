@@ -7,12 +7,18 @@
 
 #include "QSynthi.hpp"
 #include <complex>
+
+
 QSynthi::QSynthi(Parameter *parameter) : parameter{ parameter }
 {
     oscillators = mutable_list<WavetableOscillator>(128, [parameter](size_t _){
         return WavetableOscillator(parameter);
     });
 
+    plot.setup(800,500);
+    plot.start();
+    noteOnCount = 0;
+    noteToDraw = -1;
 
     /*
     mutable_list<int> test(2);
@@ -57,6 +63,18 @@ void QSynthi::processBlock(AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
         
         currentSample = midiEventSample;
     }
+
+    if (noteToDraw > -1)
+    {
+        plot.setDrawData(oscillators[noteToDraw].getWavetable(), oscillators[noteToDraw].getConverter());
+        
+        // restart if window was closed by hand
+        if (plot.isInnerQuit())
+        {
+            plot.stop();
+            plot.start();
+        }
+    }
     
     // Render everything after the last midiEvent in this block
     render(buffer, currentSample, buffer.getNumSamples());
@@ -72,16 +90,26 @@ void QSynthi::handleMidiEvent(const MidiMessage& midiEvent)
         oscillators[noteNumber].prepareToPlay(noteNumber, sampleRate);// is calling here correct? was not called at all before
         oscillators[noteNumber].noteOn(midiEvent.getVelocity());
         
+        if (noteOnCount <= 0)
+            noteToDraw = noteNumber;
+        noteOnCount++;
     }
     else if (midiEvent.isNoteOff())
     {
         oscillators[midiEvent.getNoteNumber()].noteOff();
+
+        noteOnCount--;
+        if (noteOnCount <= 0)
+            noteToDraw = -1;
     }
     else if (midiEvent.isAllNotesOff())
     {
         oscillators.forEach([](auto oscillator) {
             oscillator.noteOff();
         });
+
+        noteOnCount = 0;
+        noteToDraw = -1;
     }
 }
 
