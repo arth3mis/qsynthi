@@ -14,6 +14,8 @@
 #define POCKETFFT_NO_MULTITHREADING
 #include "pocketfft_hdronly.h"
 
+#define PI 3.1415926f
+
 // Sowas geht
 //namespace wvt = wavetable;
 
@@ -31,6 +33,12 @@ void WavetableOscillator::prepareToPlay(int midiNote, float sampleRate)
 
 void WavetableOscillator::noteOn(int velocity) {
     waveTable = Wavetable::generate(0, 0, 0);
+
+    // FFT result as standard form?
+    if (parameter->showFFT)
+    {
+        waveTable = list(fft(waveTable.toVector()));
+    }
     
     // Do not set envelopeLevel = 0 here, to enable smooth retriggers of one note
     
@@ -47,6 +55,37 @@ void WavetableOscillator::noteOff() {
 
 float WavetableOscillator::getNextSample()
 {
+    // Schrödinger
+    // parameter changed?
+    if (1.0 / parameter->timestepsPerSample != timestepCountTo)
+    {
+        timestepCountTo = 1.0 / parameter->timestepsPerSample;
+        timestepCounter = 0;
+    }
+    // update counter/do timestep if active
+    else if (parameter->applyWavefunction)
+    {
+        // multiple timesteps per sample?
+        if (timestepCountTo < 1)
+        {
+            while (timestepCounter < 1)
+            {
+                timestepCounter += timestepCountTo;
+                doTimestep();
+            }
+        }
+        // multiple samples pass before timestep?
+        else
+        {
+            timestepCounter += 1;
+            if (timestepCounter >= timestepCountTo)
+                doTimestep();
+        }
+        timestepCounter = fmod(timestepCounter, timestepCountTo);
+    }
+
+    // Audio calculations
+    //
     const auto sample = 
           envelopeLevel 
         * velocityLevel 
@@ -57,6 +96,14 @@ float WavetableOscillator::getNextSample()
     updateState();
     
     return sample;
+}
+
+inline std::function<float(cfloat)> WavetableOscillator::getSampleConversion(const SampleType type)
+{
+    if (type == SampleType::REAL_VALUE)    return [](cfloat z) { return std::real(z); };
+    else if (type == SampleType::IMAG_VALUE)    return [](cfloat z) { return std::imag(z); };
+    else if (type == SampleType::SQARED_ABS)    return [](cfloat z) { return std::norm(z); };
+    else                                        return [](cfloat z) { return 0; };
 }
 
 void WavetableOscillator::updateState() {
@@ -91,4 +138,54 @@ void WavetableOscillator::updateState() {
             }
 
     }
+}
+
+
+inline cvec WavetableOscillator::fft(cvec in)
+{
+    // https://gitlab.mpcdf.mpg.de/mtr/pocketfft/-/blob/cpp/pocketfft_demo.cc
+    // args: sampleCount, byteOffsetIn, byteOffsetOut, direction, inputArray, outputArray, scaleFactor
+    //
+    cvec out(in.size());
+    pocketfft::c2c({ in.size() }, { sizeof(cfloat) }, { sizeof(cfloat) }, { 0 }, pocketfft::FORWARD, in.data(), out.data(), (float)(1.0 / sqrt(in.size())));
+    return out;
+}
+
+// based on: http://www.articlesbyaphysicist.com/quantum4prog.html
+void WavetableOscillator::doTimestep()
+{
+    // note: 2 FFTs are minimum, regardless of showFFT setting
+
+    cvec v = waveTable.toVector();
+    const size_t n = v.size();
+    const float dt = parameter->timestepDelta;
+
+    if (parameter->showFFT)
+        v = fft(v);
+    
+    // "timestepV"
+    for (size_t i = 1; i < n - 1; i++)
+    {
+        v[i] *= std::polar(1.f, dt * potential((float)i - n / 2.f));
+    }
+
+    v = fft(v);
+    
+    // "timestepT"
+    const float PRE = powf(2*PI/n, 2);
+    for (size_t i = 1; i < n / 2; i++)
+    {
+        v[i]   *= std::polar(1.f, PRE*i*i * dt);
+        v[n-i] *= std::polar(1.f, PRE*i*i * dt);
+    }
+    
+    if (!parameter->showFFT)
+        v = fft(v);
+
+    waveTable = list(v);
+}
+
+inline float WavetableOscillator::potential(const float x)
+{
+    return x * x * 0.0015f;
 }

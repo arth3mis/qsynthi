@@ -11,6 +11,10 @@
 #include <complex>
 #include "list.hpp"
 #include "Parameter.h"
+#include <vector>
+
+typedef std::complex<float> cfloat;
+typedef std::vector<cfloat> cvec;
 
 enum class State {
     SLEEP,
@@ -40,19 +44,9 @@ public:
     
 private:
     Parameter *parameter = nullptr;
-    list<std::complex<float>> waveTable;
+    list<cfloat> waveTable;
 
-    static inline std::function<float(std::complex<float>)> getSampleConversion(const SampleType type)
-    {
-        if (type == SampleType::REAL_VALUE)
-            return [](std::complex<float> z) { return std::real(z); };
-        else if (type == SampleType::IMAG_VALUE)
-            return [](std::complex<float> z) { return std::imag(z); };
-        else if (type == SampleType::SQARED_ABS)
-            return [](std::complex<float> z) { return std::norm(z); };
-        else
-            return [](std::complex<float> z) { return 0; };
-    }
+    inline std::function<float(cfloat)> getSampleConversion(const SampleType type);
     
     State state;
     float envelopeLevel = 0;
@@ -60,6 +54,13 @@ private:
 
     float phase = 0;
     float phaseIncrement = 0;
+
+    // Schrödinger
+    double timestepCounter = 0;
+    double timestepCountTo = 0;
+    void doTimestep();
+    inline float potential(const float x);
+    inline cvec fft(cvec in);
 
     void updateState();
 

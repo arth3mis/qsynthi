@@ -30,6 +30,7 @@ AudioProcessorValueTreeState::ParameterLayout Parameter::createParameterLayout()
     FLOAT_PARAM(RELEASE_TIME, NormalisableRange<float>(0.001f, 16.f, 0.001f, 0.4f, false), 0.4f);
     FLOAT_PARAM(SUSTAIN_LEVEL, NormalisableRange<float>(-64.f, 0.f, 0.1f, 0.9f, true), -12.f);
     
+    BOOL_PARAM(APPLY_WAVEFUNC, true);
     FLOAT_PARAM(ACCURACY, NormalisableRange<float>(100.f, 10000.f, 1.f, 0.3f, false), 500.f);
     FLOAT_PARAM(SIMULATION_SPEED, NormalisableRange<float>(0.01f, 2.f, 1.f, 0.3f, false), 0.2f);
 
@@ -37,7 +38,8 @@ AudioProcessorValueTreeState::ParameterLayout Parameter::createParameterLayout()
         "Real Value",
         "Imaginary Value",
         "Squared Absolute" }),
-        0 /*<-- default*/));
+        // default value (yes, enum class to int is - interesting, but I wanted to try it)
+        static_cast<typename std::underlying_type<SampleType>::type>(SampleType::REAL_VALUE)));
 
     BOOL_PARAM(SHOW_FFT, false);
     
@@ -58,6 +60,7 @@ void Parameter::update(AudioProcessorValueTreeState& treeState, float sampleRate
     sustainLevel = Decibels::decibelsToGain(GET(SUSTAIN_LEVEL));
     
     // Simulation
+    applyWavefunction = GET(APPLY_WAVEFUNC);
     float accuracy = GET(ACCURACY);
     float simulationSpeed = GET(SIMULATION_SPEED);
     timestepsPerSample = accuracy * simulationSpeed / sampleRate;

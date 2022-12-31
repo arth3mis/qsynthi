@@ -21,9 +21,10 @@
 #define RELEASE_TIME "Release"
 #define SUSTAIN_LEVEL "Sustain"
 
+#define APPLY_WAVEFUNC "Schroedinger"
 #define ACCURACY "Timesteps / Simulated sec"
 #define SIMULATION_SPEED "Simulated sec / Real sec"
-#define SAMPLE_TYPE "Sample type"
+#define SAMPLE_TYPE "Sample Type"
 #define SHOW_FFT "FFT"
 
 
@@ -56,10 +57,11 @@ public:
     float releaseFactor = 0;
     
     // For Schroedinger
+    bool applyWavefunction = false; // True if Schrödinger's equation should be applied to waveform
     float timestepsPerSample = 0;   // Number of timesteps which get performed after a sample is calculated. Always > 0, could get > 1
     float timestepDelta = 0;        // Time duration of each timestep
     bool showFFT = false;           // True if the FFT of the waveform should be played
-    SampleType sampleType = SampleType::SQARED_ABS;
+    SampleType sampleType = SampleType::SQARED_ABS; // for default value, go to layout creation
 
     static AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
     void update(AudioProcessorValueTreeState& getParameter, float sampleRate);
