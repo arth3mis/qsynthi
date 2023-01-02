@@ -61,7 +61,7 @@ private:
     // Schrödinger
     double timestepCounter = 0;
     double timestepCountTo = 0;
-    void doTimestep();
+    void doTimestep(const float dt);
     inline float potential(const float x);
     inline cvec fft(cvec in);
 

@@ -32,7 +32,7 @@ void WavetableOscillator::prepareToPlay(int midiNote, float sampleRate)
 }
 
 void WavetableOscillator::noteOn(int velocity) {
-    waveTable = Wavetable::generate(0, 0, 0);
+    waveTable = Wavetable::generate(0, -0.6f, 0.5f);
 
     // FFT result as standard form?
     if (parameter->showFFT)
@@ -71,7 +71,7 @@ float WavetableOscillator::getNextSample()
             while (timestepCounter < 1)
             {
                 timestepCounter += timestepCountTo;
-                doTimestep();
+                for (int i=0; i<2; ++i) doTimestep(parameter->timestepDelta / 2);
             }
         }
         // multiple samples pass before timestep?
@@ -79,7 +79,7 @@ float WavetableOscillator::getNextSample()
         {
             timestepCounter += 1;
             if (timestepCounter >= timestepCountTo)
-                doTimestep();
+                for (int i=0; i<2; ++i) doTimestep(parameter->timestepDelta / 2);
         }
         timestepCounter = fmod(timestepCounter, timestepCountTo);
     }
@@ -100,9 +100,9 @@ float WavetableOscillator::getNextSample()
 
 inline std::function<float(cfloat)> WavetableOscillator::getSampleConversion(const SampleType type)
 {
-    if (type == SampleType::REAL_VALUE)    return [](cfloat z) { return std::real(z); };
-    else if (type == SampleType::IMAG_VALUE)    return [](cfloat z) { return std::imag(z); };
-    else if (type == SampleType::SQARED_ABS)    return [](cfloat z) { return std::norm(z); };
+    if (type == SampleType::REAL_VALUE)         return [](cfloat z) { return std::real(z) * 2 - 1; };
+    else if (type == SampleType::IMAG_VALUE)    return [](cfloat z) { return std::imag(z) * 2 - 1; };
+    else if (type == SampleType::SQARED_ABS)    return [](cfloat z) { return std::norm(z) * 2 - 1; };
     else                                        return [](cfloat z) { return 0; };
 }
 
@@ -152,13 +152,12 @@ inline cvec WavetableOscillator::fft(cvec in)
 }
 
 // based on: http://www.articlesbyaphysicist.com/quantum4prog.html
-void WavetableOscillator::doTimestep()
+void WavetableOscillator::doTimestep(const float dt)
 {
     // note: 2 FFTs are minimum, regardless of showFFT setting
 
     cvec v = waveTable.toVector();
     const size_t n = v.size();
-    const float dt = parameter->timestepDelta;
 
     if (parameter->showFFT)
         v = fft(v);

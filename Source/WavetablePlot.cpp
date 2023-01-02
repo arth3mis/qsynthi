@@ -81,7 +81,7 @@ void WavetablePlot::drawLoop()
 				float min = v.reduce([](float a, float b) { return std::min(a, b); });
 				float max = v.reduce([](float a, float b) { return std::max(a, b); });
 				float p = std::max(std::abs(min), std::abs(max));
-				yView = 2.1 * p;
+				yView = 2.5f * p;
 			}
 
 			// draw
@@ -90,7 +90,7 @@ void WavetablePlot::drawLoop()
 			double xAxis = (double)height / 2;
 
 			// always keep two adjacent function values
-			double y0 = xAxis - v[0], y1;
+			double y0 = xAxis - v[0] * vy, y1;
 
 			// clear background
 			SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);

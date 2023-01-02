@@ -17,7 +17,8 @@ list<std::complex<float>> Wavetable::generate(const size_t type, const float shi
         // GAUSSIAN
     case 0: return list<std::complex<float>>(SIZE, [shift, scale](size_t i) {
             float scaling = (15 + 13 * scale) * (i / SIZE_F - 0.5f - 0.5f * shift);
-            return 2 * std::expf(-scaling * scaling) - 1;
+            //return 2 * std::expf(-scaling * scaling) - 1;
+            return std::expf(-scaling * scaling);
         });
 
         // SINE

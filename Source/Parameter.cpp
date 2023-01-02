@@ -31,15 +31,15 @@ AudioProcessorValueTreeState::ParameterLayout Parameter::createParameterLayout()
     FLOAT_PARAM(SUSTAIN_LEVEL, NormalisableRange<float>(-64.f, 0.f, 0.1f, 0.9f, true), -12.f);
     
     BOOL_PARAM(APPLY_WAVEFUNC, true);
-    FLOAT_PARAM(ACCURACY, NormalisableRange<float>(100.f, 10000.f, 1.f, 0.3f, false), 500.f);
-    FLOAT_PARAM(SIMULATION_SPEED, NormalisableRange<float>(0.01f, 2.f, 0.01f, 0.3f, false), 0.1f);
+    FLOAT_PARAM(ACCURACY, NormalisableRange<float>(10.f, 10000.f, 1.f, 0.3f, false), 50.f);
+    FLOAT_PARAM(SIMULATION_SPEED, NormalisableRange<float>(0.01f, 50.f, 0.01f, 0.3f, false), 20.f);
 
     layout.add(std::make_unique<AudioParameterChoice>(ParameterID{ SAMPLE_TYPE, PARAM_VERSION }, SAMPLE_TYPE, StringArray({
         "Real Value",
         "Imaginary Value",
         "Squared Absolute" }),
         // default value (yes, enum class to int is - interesting, but I wanted to try it)
-        static_cast<typename std::underlying_type<SampleType>::type>(SampleType::REAL_VALUE)));
+        static_cast<typename std::underlying_type<SampleType>::type>(SampleType::SQARED_ABS)));
 
     BOOL_PARAM(SHOW_FFT, false);
     
