@@ -11,8 +11,13 @@
 #include "WavetablePlot.h"
 #include <thread>
 #include <cmath>
+#include <chrono>
 
 #define rdi(n) (int)round(n)
+#define NANOS_5S	5000000000
+#define NANOS_1S	1000000000
+#define NANOS_500MS  500000000
+#define NANOS_250MS  250000000
 
 
 #if SDL_ACTIVE
@@ -45,6 +50,12 @@ void WavetablePlot::setDrawData(list<std::complex<float>> l, std::function<float
 	isNewData = true;
 }
 
+inline long long WavetablePlot::getTimestampNow()
+{
+	return std::chrono::steady_clock::now().time_since_epoch().count();
+}
+
+
 void WavetablePlot::drawLoop()
 {
 	// SDL boilerplate
@@ -52,6 +63,10 @@ void WavetablePlot::drawLoop()
 	window = SDL_CreateWindow("Wavetable Plot", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
 		width, height, SDL_WINDOW_HIDDEN);
 	renderer = SDL_CreateRenderer(window, -1, 0);
+	
+	// scaling
+	const float oversize = 2.5f;
+	lastRescale = getTimestampNow();
 
 	while (!quit)
 	{
@@ -75,13 +90,23 @@ void WavetablePlot::drawLoop()
 
 			list<float> v = data.mapTo(convert);
 
-			// scale? todo continous rescaling
-			if (yView == 0)
+			// scale?
+			const auto now = getTimestampNow();
+
+			//if (yView == 0 || now - lastRescale >= NANOS_250MS)
 			{
 				float min = v.reduce([](float a, float b) { return std::min(a, b); });
 				float max = v.reduce([](float a, float b) { return std::max(a, b); });
 				float p = std::max(std::abs(min), std::abs(max));
-				yView = 2.5f * p;
+				
+				float r = (p * oversize - yView) / yView;
+				if (yView == 0											// init view
+					|| r > 0.1f											// expand view
+					/*|| r < -0.2f && now - lastRescale >= NANOS_5S*/)		// shrink view (produces confusing visuals)
+				{
+					yView = p * oversize;
+					lastRescale = now;
+				}
 			}
 
 			// draw
@@ -103,7 +128,7 @@ void WavetablePlot::drawLoop()
 				y1 = xAxis - v[x] * vy;
 
 				// draw line
-				SDL_RenderDrawLine(renderer, rdi((x + 0.5) * vx), rdi(y0), rdi((x + 1.5) * vx), rdi(y1));
+				SDL_RenderDrawLine(renderer, rdi((x+1 - 0.5) * vx), rdi(y0), rdi((x+1 + 0.5) * vx), rdi(y1));
 
 				y0 = y1;
 			}

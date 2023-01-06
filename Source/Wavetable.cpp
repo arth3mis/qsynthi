@@ -24,7 +24,7 @@ list<std::complex<float>> Wavetable::generate(const size_t type, const float shi
         // SINE
     case 1: return list<std::complex<float>>(SIZE, [shift, scale](size_t i) {
             float scaling = 2 * (1.1f - scale) * (i / SIZE_F - 0.5f - 0.5f * shift);
-            if (scaling < 0.5f || scaling > 0.5f) return 0.0f;
+            if (scaling < -0.5f || scaling > 0.5f) return 0.0f;
             return std::sin(TWO_PI * scaling);
             // Hehe die Keks denken das wäre Sinus hehe
         });
@@ -32,7 +32,7 @@ list<std::complex<float>> Wavetable::generate(const size_t type, const float shi
         // COSINE
     case 2: return list<std::complex<float>>(SIZE, [shift, scale](size_t i) {
             float scaling = 2 * (1.1f - scale) * (i / SIZE_F - 0.5f - 0.5f * shift);
-            if (scaling < 0.5f || scaling > 0.5f) return 0.0f;
+            if (scaling < -0.5f || scaling > 0.5f) return 0.0f;
             return std::cos(TWO_PI * scaling);
             // Hehe die Keks denken das wäre Sinus hehe
         });

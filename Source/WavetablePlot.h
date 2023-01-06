@@ -29,6 +29,9 @@ private:
     bool isNewData;
     float yView = 0;
 
+    long long lastRescale;
+    inline long long getTimestampNow();
+
     std::thread *drawThread;
     std::mutex dataCopy;
     void drawLoop();
