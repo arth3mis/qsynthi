@@ -21,11 +21,16 @@
 #define RELEASE_TIME "Release"
 #define SUSTAIN_LEVEL "Sustain"
 
+#define WAVE_TYPE "Wave Type"
+#define WAVE_SHIFT "Wave Shift"
+#define WAVE_SCALE "Wave Scale"
+
 #define APPLY_WAVEFUNC "Schroedinger"
 #define ACCURACY "Timesteps / Simulated sec"
 #define SIMULATION_SPEED "Simulated sec / Real sec"
 #define SAMPLE_TYPE "Sample Type"
 #define SHOW_FFT "FFT"
+
 
 
 enum class SampleType
@@ -47,6 +52,8 @@ public:
     static constexpr float DECAY_THRESHOLD = 0.01f;
     static constexpr float RELEASE_THRESHOLD = 0.005f;
     
+    static const StringArray WAVE_TYPES;
+    
     // general
     float gainFactor = 0;
     
@@ -56,8 +63,15 @@ public:
     float sustainLevel = 0;
     float releaseFactor = 0;
     
+    // Waveforms
+    int waveTypeNumber = 0;
+    float waveShift = 0;
+    float waveScale = 0;
+    
+    
+    
     // For Schroedinger
-    bool applyWavefunction = false; // True if Schrödinger's equation should be applied to waveform
+    bool applyWavefunction = false; // True if SchrÃ¶dinger's equation should be applied to waveform
     float timestepsPerSample = 0;   // Number of timesteps which get performed after a sample is calculated. Always > 0, could get > 1
     float timestepDelta = 0;        // Time duration of each timestep
     bool showFFT = false;           // True if the FFT of the waveform should be played

@@ -32,7 +32,7 @@ void WavetableOscillator::prepareToPlay(int midiNote, float sampleRate)
 }
 
 void WavetableOscillator::noteOn(int velocity) {
-    waveTable = Wavetable::generate(0, -0.6f, 0.5f);
+    waveTable = Wavetable::generate(parameter->waveTypeNumber, parameter->waveShift, parameter->waveScale);
 
     // FFT result as standard form?
     if (parameter->showFFT)
@@ -109,7 +109,6 @@ inline std::function<float(cfloat)> WavetableOscillator::getSampleConversion(con
 void WavetableOscillator::updateState() {
     switch (state) {
         case State::SLEEP:
-            // Noch weniger als bei Sustain hehe
             break;
             
         case State::ATTACK:
@@ -125,7 +124,6 @@ void WavetableOscillator::updateState() {
         } break;
         
         case State::SUSTAIN:
-            // Nothing hehe
             break;
         
         case State::RELEASE:
