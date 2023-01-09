@@ -32,7 +32,21 @@ void WavetableOscillator::prepareToPlay(int midiNote, float sampleRate)
 }
 
 void WavetableOscillator::noteOn(int velocity) {
-    waveTable = Wavetable::generate(parameter->waveTypeNumber, parameter->waveShift, parameter->waveScale);
+    /*
+    
+    Interesting scenarios:
+
+    (0, -0.6f, 0.5f) with V(x) = 0.0015*x²
+    todo: linear potential?
+    (0, -0.6f, 0.5f) with V(x) = 0
+
+    (1, -0.4f, 0) with V(x) = 0.0015*x²
+    todo: other potentials?
+    
+    */
+
+    //waveTable = Wavetable::generate(0, -0.6f, 0.5f);
+    //waveTable = Wavetable::generate(1, -0.4f, 0.f);
 
     // FFT result as standard form?
     if (parameter->showFFT)
@@ -184,5 +198,9 @@ void WavetableOscillator::doTimestep(const float dt)
 
 inline float WavetableOscillator::potential(const float x)
 {
+    /*
     return x * x * 0.0015f;
+    /*/
+    return 0;
+    //*/
 }
