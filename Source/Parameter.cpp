@@ -14,7 +14,7 @@
 
 #define BOOL_PARAM(paramName, baseValue) layout.add(std::make_unique<AudioParameterBool>(ParameterID { (paramName), PARAM_VERSION }, (paramName), (baseValue)))
 
-#define CHOICE_PARAM(paramName, choices, baseValue) layout.add(std::make_unique<AudioParameterChoice>(ParameterID{ paramName, PARAM_VERSION }, paramName, choices, baseValue));
+#define CHOICE_PARAM(paramName, choices, baseValue) layout.add(std::make_unique<AudioParameterChoice>(ParameterID{ (paramName), PARAM_VERSION }, (paramName), (choices), (baseValue)));
 
 #define GET(paramName) treeState.getRawParameterValue(paramName)->load()
 

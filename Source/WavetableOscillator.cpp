@@ -35,12 +35,13 @@ void WavetableOscillator::noteOn(int velocity) {
     /*
     
     Interesting scenarios:
-
+    Gaussian:
     (0, -0.6f, 0.5f) with V(x) = 0.0015*x²
     todo: linear potential?
     (0, -0.6f, 0.5f) with V(x) = 0
 
-    (1, -0.4f, 0) with V(x) = 0.0015*x²
+    Sine:
+    (1, -0.4f, -0.6f) with V(x) = 0.0015*x²
     todo: other potentials?
     
     */
@@ -105,7 +106,7 @@ float WavetableOscillator::getNextSample()
     const auto sample = 
           envelopeLevel 
         * velocityLevel 
-        * waveTable.getLinearInterpolation(phase, getConverter());
+        * waveTable.getLinearInterpolation(phase, getSampleConversion(parameter->sampleType, 1, 0));
     
     phase = std::fmod(phase + phaseIncrement, Wavetable::SIZE_F);
 
@@ -114,12 +115,12 @@ float WavetableOscillator::getNextSample()
     return sample;
 }
 
-inline std::function<float(cfloat)> WavetableOscillator::getSampleConversion(const SampleType type)
+inline std::function<float(cfloat)> WavetableOscillator::getSampleConversion(const SampleType type, float scale, float yShift)
 {
-    if (type == SampleType::REAL_VALUE)         return [](cfloat z) { return std::real(z) * 2 - 1; };
-    else if (type == SampleType::IMAG_VALUE)    return [](cfloat z) { return std::imag(z) * 2 - 1; };
-    else if (type == SampleType::SQARED_ABS)    return [](cfloat z) { return std::norm(z) * 2 - 1; };
-    else                                        return [](cfloat z) { return 0; };
+    if (type == SampleType::REAL_VALUE)         return [scale, yShift](cfloat z) { return std::real(z) * scale + yShift; };
+    else if (type == SampleType::IMAG_VALUE)    return [scale, yShift](cfloat z) { return std::imag(z) * scale + yShift; };
+    else if (type == SampleType::SQARED_ABS)    return [scale, yShift](cfloat z) { return std::norm(z) * scale - yShift; };
+    else                                        return [scale, yShift](cfloat z) { return 0; };
 }
 
 void WavetableOscillator::updateState() {
@@ -179,7 +180,7 @@ void WavetableOscillator::doTimestep(const float dt)
     // "timestepV"
     for (size_t i = 1; i < n - 1; i++)
     {
-        v[i] *= std::polar(1.f, dt * potential((float)i - n / 2.f));
+        v[i] *= std::polar(1.f, dt * potential(i - n / 2.f));
     }
 
     v = fft(v);
@@ -198,7 +199,7 @@ void WavetableOscillator::doTimestep(const float dt)
     waveTable = list(v);
 }
 
-inline float WavetableOscillator::potential(const float x)
+inline float WavetableOscillator::potential(const int x)
 {
     /*
     return x * x * 0.0015f;
