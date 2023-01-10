@@ -114,9 +114,10 @@ public:
 
 	// a + b*x
 	inline T getLinearInterpolation(double i) const 
-	{ 
+	{
+		if (empty()) return 0;
 		return ls[floor(i)] + (ls[(size_t)ceil(i) % length()] - ls[floor(i)]) * (i - floor(i)); 
-	}  
+	} 
 	// a + b*x (with previous conversion)
 	template<typename R>
 	inline R getLinearInterpolation(double i, const std::function<R(T)> f) const

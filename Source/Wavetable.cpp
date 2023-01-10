@@ -33,7 +33,9 @@ list<float> Wavetable::generate(const size_t type, const float shift, const floa
             
         case WaveType::BARRIER: return list<float>(SIZE, [shift, scale](size_t i) {
             if (i == SIZE / 2) return 99.f;
-                else return 0.f;
+            // else parabola
+            float scaledX = i / SIZE_F - 0.5f - 0.5f * shift;
+            return 4 * scale / (1 + 3 * shift) * scaledX * scaledX;
         });
     }
     return {};
