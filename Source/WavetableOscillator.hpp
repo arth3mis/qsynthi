@@ -62,7 +62,7 @@ private:
     double timestepCounter = 0;
     double timestepCountTo = 0;
     void doTimestep(const float dt);
-    inline float potential(const float x);
+    inline float potential(const size_t x);
     inline cvec fft(cvec in);
 
     void updateState();
