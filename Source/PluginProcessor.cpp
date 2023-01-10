@@ -120,8 +120,8 @@ bool QSynthiAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) 
     // In this template code we only support mono or stereo.
     // Some plugin hosts, such as certain GarageBand versions, will only
     // load plugins that support stereo bus layouts.
-    if (layouts.getMainOutputChannelSet() != AudioChannelSet::mono()
-     && layouts.getMainOutputChannelSet() != AudioChannelSet::stereo())
+    if (/*layouts.getMainOutputChannelSet() != AudioChannelSet::mono()
+     && */layouts.getMainOutputChannelSet() != AudioChannelSet::stereo())
         return false;
 
     // This checks if the input layout matches the output layout

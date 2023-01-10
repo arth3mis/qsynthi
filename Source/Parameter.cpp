@@ -64,6 +64,8 @@ AudioProcessorValueTreeState::ParameterLayout Parameter::createParameterLayout()
 
     BOOL_PARAM(SHOW_FFT, false);
     
+    FLOAT_PARAM(STEREO_AMOUNT, NormalisableRange<float>(-1.f, 1.f, 0.01f, 1.f, true), 0.f);
+    
     
     
     
@@ -101,4 +103,9 @@ void Parameter::update(AudioProcessorValueTreeState& treeState, float sampleRate
     
     sampleType = static_cast<SampleType>(GET(SAMPLE_TYPE));
     showFFT = GET(SHOW_FFT);
+    
+    float stereoAmount = GET(STEREO_AMOUNT);
+    stereoList = list<float>(Wavetable::SIZE, [stereoAmount](size_t i){
+        return 1 - stereoAmount * 0.5f * (std::tanhf(8.f * (i / Wavetable::SIZE_F - 0.5f)) + 1);
+    });
 }

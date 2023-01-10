@@ -43,6 +43,7 @@ public:
     // Important Components of                                          ja was
     inline bool isPlaying() { return state != State::SLEEP; }
 
+    float getPhase();
     float getNextSample();
     
 private:

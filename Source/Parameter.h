@@ -35,6 +35,8 @@
 #define SAMPLE_TYPE "Sample Type"
 #define SHOW_FFT "FFT"
 
+#define STEREO_AMOUNT "Stereoize"
+
 
 enum WaveType
 {
@@ -96,4 +98,8 @@ public:
 
     static AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
     void update(AudioProcessorValueTreeState& getParameter, float sampleRate);
+    
+    
+    // Stereo
+    list<float> stereoList;
 };
