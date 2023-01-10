@@ -204,6 +204,7 @@ inline float WavetableOscillator::potential(const size_t x)
     /*
     return x * x * 0.0015f;
     /*/
+    
     return parameter->potential[x];
     //*/
 }

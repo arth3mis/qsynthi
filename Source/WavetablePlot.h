@@ -25,6 +25,7 @@ class WavetablePlot
 {
 private:
     list<std::complex<float>> data, newData;
+    list<float> data2, newData2;
     std::function<float(std::complex<float>)> convert;
     bool isNewData;
     float yView = 0;
@@ -50,7 +51,7 @@ public:
     WavetablePlot();
     ~WavetablePlot();
     void setup(int width, int height);
-    void setDrawData(list<std::complex<float>> l, std::function<float(std::complex<float>)> f);
+    void setDrawData(list<std::complex<float>> l, std::function<float(std::complex<float>)> f, list<float> l2 = {});
     void start();
     void stop();
     bool isQuit() { return quit; }
