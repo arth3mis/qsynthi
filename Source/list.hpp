@@ -232,6 +232,12 @@ public:
 	{
 		return U(*this);
 	}
+    
+    template<typename U>
+    list<U> to() const
+    {
+        return mapTo<U>([](T a) { return (U)a; });
+    }
 
 	// cast to std::vector
 	std::vector<T> toVector() const

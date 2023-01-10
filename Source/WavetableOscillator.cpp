@@ -49,7 +49,7 @@ void WavetableOscillator::noteOn(int velocity) {
     //waveTable = Wavetable::generate(0, -0.6f, 0.5f);
     //waveTable = Wavetable::generate(1, -0.4f, 0.f);
     
-    waveTable = Wavetable::generate(parameter->waveTypeNumber, parameter->waveShift, parameter->waveScale);
+    waveTable = Wavetable::generate(parameter->waveTypeNumber, parameter->waveShift, parameter->waveScale).to<cfloat>();
     
     // FFT result as standard form?
     if (parameter->showFFT)
@@ -180,7 +180,7 @@ void WavetableOscillator::doTimestep(const float dt)
     // "timestepV"
     for (size_t i = 1; i < n - 1; i++)
     {
-        v[i] *= std::polar(1.f, dt * potential(i - n / 2.f));
+        v[i] *= std::polar(1.f, dt * potential(i));
     }
 
     v = fft(v);
@@ -199,11 +199,11 @@ void WavetableOscillator::doTimestep(const float dt)
     waveTable = list(v);
 }
 
-inline float WavetableOscillator::potential(const int x)
+inline float WavetableOscillator::potential(const size_t x)
 {
     /*
     return x * x * 0.0015f;
     /*/
-    return 0;
+    return parameter->potential[x];
     //*/
 }
