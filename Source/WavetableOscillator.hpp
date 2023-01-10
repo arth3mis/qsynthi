@@ -38,7 +38,7 @@ public:
     void noteOff();
 
     inline list<cfloat> getWavetable() { return waveTable; }
-    inline std::function<float(cfloat)> getConverter() { return getSampleConversion(parameter->sampleType); }
+    inline std::function<float(cfloat)> getConverter() { return getSampleConversion(parameter->sampleType, 1, 0); }
     
     // Important Components of                                          ja was
     inline bool isPlaying() { return state != State::SLEEP; }
@@ -49,7 +49,7 @@ private:
     Parameter *parameter = nullptr;
     list<cfloat> waveTable;
 
-    inline std::function<float(cfloat)> getSampleConversion(const SampleType type);
+    inline std::function<float(cfloat)> getSampleConversion(const SampleType type, float scale, float yShift);
     
     State state;
     float envelopeLevel = 0;
