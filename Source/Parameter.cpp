@@ -45,14 +45,14 @@ AudioProcessorValueTreeState::ParameterLayout Parameter::createParameterLayout()
     FLOAT_PARAM(WAVE_SCALE, NormalisableRange<float>(-1.f, 1.f, 0.01f, 1.f, true), -0.4f);
     
     BOOL_PARAM(APPLY_WAVEFUNC, true);
-    
-    CHOICE_PARAM(POTENTIAL_TYPE, WAVE_TYPES, WaveType::PARABOLA);
-    FLOAT_PARAM(POTENTIAL_SHIFT, NormalisableRange<float>(-1.f, 1.f, 0.01f, 1.f, true), 0.f);
-    FLOAT_PARAM(POTENTIAL_SCALE, NormalisableRange<float>(-1.f, 1.f, 0.01f, 1.f, true), 0.f);
 
     FLOAT_PARAM(ACCURACY, NormalisableRange<float>(1.f, 100.f, 1.f, 0.3f, false), 10.f);
     FLOAT_PARAM(SIMULATION_SPEED, NormalisableRange<float>(0.1f, 100.f, 0.01f, 0.5f, false), 20.f);
 
+    CHOICE_PARAM(POTENTIAL_TYPE, WAVE_TYPES, WaveType::PARABOLA);
+    FLOAT_PARAM(POTENTIAL_SHIFT, NormalisableRange<float>(-1.f, 1.f, 0.01f, 1.f, true), 0.f);
+    FLOAT_PARAM(POTENTIAL_SCALE, NormalisableRange<float>(-1.f, 1.f, 0.01f, 1.f, true), 0.f);
+    
     CHOICE_PARAM(SAMPLE_TYPE, StringArray({
         "Real Value",
         "Imaginary Value",
@@ -87,13 +87,14 @@ void Parameter::update(AudioProcessorValueTreeState& treeState, float sampleRate
     
     // Simulation
     applyWavefunction = GET(APPLY_WAVEFUNC);
+    float accuracy = GET(ACCURACY);
+    float simulationSpeed = GET(SIMULATION_SPEED);
     
     // Potential
     // Potential is scaled
     potential = Wavetable::generate(GET(POTENTIAL_TYPE), GET(POTENTIAL_SHIFT), GET(POTENTIAL_SCALE)).map([](float v){return 10.f * v;});
     
-    float accuracy = GET(ACCURACY);
-    float simulationSpeed = GET(SIMULATION_SPEED);
+    
     timestepsPerSample = accuracy * simulationSpeed / sampleRate;
     timestepDelta = 1 / accuracy;
     
