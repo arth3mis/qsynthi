@@ -7,6 +7,7 @@
 
 #include "QSynthi.hpp"
 #include <complex>
+#include "Wavetable.hpp"
 
 
 QSynthi::QSynthi(Parameter *parameter) : parameter{ parameter }
@@ -72,6 +73,8 @@ void QSynthi::processBlock(AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
     // Render everything after the last midiEvent in this block
     render(buffer, currentSample, buffer.getNumSamples());
     
+    
+    
 }
 
 void QSynthi::handleMidiEvent(const MidiMessage& midiEvent)
@@ -108,29 +111,30 @@ void QSynthi::handleMidiEvent(const MidiMessage& midiEvent)
 
 void QSynthi::render(AudioBuffer<float>& buffer, int startSample, int endSample)
 {
-    auto* firstChannel = buffer.getWritePointer(0);
+    auto* left = buffer.getWritePointer(0);
+    auto* right = buffer.getWritePointer(1);
     
     oscillators
         //.filter([](auto oscillator) { return oscillator.isPlaying(); })
-        .forEach([startSample, endSample, firstChannel](auto& oscillator) {
+        .forEach([startSample, endSample, left, right, this](auto& oscillator) {
             // skip sleeping oscis
             if (!oscillator.isPlaying())
                 return;
             // 
             for (int sample = startSample; sample < endSample; ++sample)
             {
-                firstChannel[sample] += oscillator.getNextSample();
+                float phase = oscillator.getPhase();
+                float sampleData = oscillator.getNextSample();
+                
+                // Apply stereoize
+                left[sample] += sampleData * parameter->stereoList[phase];
+                right[sample] += sampleData * parameter->stereoList[Wavetable::SIZE - 1 - phase];
             }
         });
     
     // Apply Gian
     for (int sample = startSample; sample < endSample; ++sample) {
-        firstChannel[sample] *= parameter->gainFactor;
-    }
-
-    // Copy rendered signal to all other channels
-    for (auto channel = 1; channel < buffer.getNumChannels(); ++channel)
-    {
-        std::copy(firstChannel + startSample, firstChannel + endSample, buffer.getWritePointer(channel) + startSample);
+        left[sample] *= parameter->gainFactor;
+        right[sample] *= parameter->gainFactor;
     }
 }

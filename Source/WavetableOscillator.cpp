@@ -70,6 +70,11 @@ void WavetableOscillator::noteOff() {
     state = State::RELEASE;
 }
 
+float WavetableOscillator::getPhase()
+{
+    return phase;
+}
+
 float WavetableOscillator::getNextSample()
 {
     // Schrödinger
