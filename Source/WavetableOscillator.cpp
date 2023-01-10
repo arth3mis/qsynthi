@@ -179,7 +179,7 @@ void WavetableOscillator::doTimestep(const float dt)
     // "timestepV"
     for (size_t i = 1; i < n - 1; i++)
     {
-        v[i] *= std::polar(1.f, dt * potential(i - n / 2));
+        v[i] *= std::polar(1.f, dt * potential(i));
     }
 
     v = fft(v);
