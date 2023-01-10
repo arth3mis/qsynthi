@@ -41,7 +41,8 @@ enum WaveType
     GAUSSIAN,
     SINE,
     COSINE,
-    PARABOLA
+    PARABOLA,
+    BARRIER
 };
 
 enum SampleType
