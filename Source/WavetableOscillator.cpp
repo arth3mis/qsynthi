@@ -47,7 +47,9 @@ void WavetableOscillator::noteOn(int velocity) {
 
     //waveTable = Wavetable::generate(0, -0.6f, 0.5f);
     //waveTable = Wavetable::generate(1, -0.4f, 0.f);
-
+    
+    waveTable = Wavetable::generate(parameter->waveTypeNumber, parameter->waveShift, parameter->waveScale);
+    
     // FFT result as standard form?
     if (parameter->showFFT)
     {
