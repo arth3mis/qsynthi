@@ -24,7 +24,8 @@ const StringArray Parameter::WAVE_TYPES = {
     "Gaussian",
     "Sine",
     "Cosine",
-    "Parabola"
+    "Parabola",
+    "Barrier"
 };
 
 AudioProcessorValueTreeState::ParameterLayout Parameter::createParameterLayout() {
