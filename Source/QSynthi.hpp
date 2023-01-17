@@ -44,6 +44,8 @@ private:
      */
     mutable_list<WavetableOscillator> oscillators;
     
+    Reverb reverb;
+    
     void handleMidiEvent(const MidiMessage& midiEvent);
     void render(AudioBuffer<float>& buffer, int startSample, int endSample);
 };

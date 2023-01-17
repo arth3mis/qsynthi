@@ -47,8 +47,8 @@ AudioProcessorValueTreeState::ParameterLayout Parameter::createParameterLayout()
     
     BOOL_PARAM(APPLY_WAVEFUNC, true);
 
-    FLOAT_PARAM(ACCURACY, NormalisableRange<float>(1.f, 100.f, 1.f, 0.3f, false), 10.f);
-    FLOAT_PARAM(SIMULATION_SPEED, NormalisableRange<float>(0.1f, 100.f, 0.01f, 0.5f, false), 20.f);
+    FLOAT_PARAM(ACCURACY, NormalisableRange<float>(0.1f, 100.f, 0.1f, 0.25f, false), 1.f);
+    FLOAT_PARAM(SIMULATION_SPEED, NormalisableRange<float>(0.1f, 1000.f, 0.01f, 0.25f, false), 25.f);
 
     CHOICE_PARAM(POTENTIAL_TYPE, WAVE_TYPES, WaveType::PARABOLA);
     FLOAT_PARAM(POTENTIAL_SHIFT, NormalisableRange<float>(-1.f, 1.f, 0.01f, 1.f, true), 0.f);
@@ -64,7 +64,9 @@ AudioProcessorValueTreeState::ParameterLayout Parameter::createParameterLayout()
 
     BOOL_PARAM(SHOW_FFT, false);
     
-    FLOAT_PARAM(STEREO_AMOUNT, NormalisableRange<float>(-1.f, 1.f, 0.01f, 1.f, true), 0.f);
+    FLOAT_PARAM(STEREO_AMOUNT, NormalisableRange<float>(0.f, 1.f, 0.01f, 1.f, true), 0.f);
+    
+    FLOAT_PARAM(REVERB_MIX, NormalisableRange<float>(0.f, 1.f, 0.01f, 0.9f, false), 0.2f);
     
     
     
@@ -95,7 +97,7 @@ void Parameter::update(AudioProcessorValueTreeState& treeState, float sampleRate
     
     // Potential
     // Potential is scaled
-    potential = Wavetable::generate(GET(POTENTIAL_TYPE), GET(POTENTIAL_SHIFT), GET(POTENTIAL_SCALE)).map([](float v){return 10.f * v;});
+    potential = Wavetable::generate(GET(POTENTIAL_TYPE), GET(POTENTIAL_SHIFT), GET(POTENTIAL_SCALE)).map([](float v){return Wavetable::TWO_PI * v;});
     
     
     timestepsPerSample = accuracy * simulationSpeed / sampleRate;
@@ -104,8 +106,12 @@ void Parameter::update(AudioProcessorValueTreeState& treeState, float sampleRate
     sampleType = static_cast<SampleType>(GET(SAMPLE_TYPE));
     showFFT = GET(SHOW_FFT);
     
+    //Stereo
     float stereoAmount = GET(STEREO_AMOUNT);
     stereoList = list<float>(Wavetable::SIZE, [stereoAmount](size_t i){
         return 1 - stereoAmount * 0.5f * (std::tanhf(8.f * (i / Wavetable::SIZE_F - 0.5f)) + 1);
     });
+    
+    // FX
+    reverbMix = GET(REVERB_MIX);
 }

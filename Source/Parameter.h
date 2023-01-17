@@ -37,6 +37,7 @@
 
 #define STEREO_AMOUNT "Stereoize"
 
+#define REVERB_MIX "Reverb Mix"
 
 enum WaveType
 {
@@ -102,4 +103,7 @@ public:
     
     // Stereo
     list<float> stereoList;
+    
+    // FX
+    float reverbMix = 0;
 };

@@ -38,6 +38,7 @@ QSynthi::QSynthi(Parameter *parameter) : parameter{ parameter }
 void QSynthi::prepareToPlay(float sampleRate)
 {
     this->sampleRate = sampleRate;
+    reverb.setSampleRate((double) sampleRate);
 }
 /**
  Coordinates handleMidiEvent(...) and render(...) to process the midiMessages and fill the buffer
@@ -46,6 +47,8 @@ void QSynthi::processBlock(AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
 {
     
     int currentSample = 0;
+    
+    reverb.setParameters(Reverb::Parameters{0.5f + 0.45f * parameter->reverbMix * parameter->reverbMix, 0.4f, parameter->reverbMix, 0.8f * (1-parameter->reverbMix), 0.8f, 0.0f});
 
 
     // idea 1: create all, keep all always, ask everyone for isPlaying
@@ -73,7 +76,10 @@ void QSynthi::processBlock(AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
     // Render everything after the last midiEvent in this block
     render(buffer, currentSample, buffer.getNumSamples());
     
-    
+    // Apply Reverb
+    if (parameter->reverbMix != 0) {
+        reverb.processStereo(buffer.getWritePointer(0), buffer.getWritePointer(1), buffer.getNumSamples());
+    }
     
 }
 
@@ -108,6 +114,7 @@ void QSynthi::handleMidiEvent(const MidiMessage& midiEvent)
         noteToDraw = -1;
     }
 }
+
 
 void QSynthi::render(AudioBuffer<float>& buffer, int startSample, int endSample)
 {
