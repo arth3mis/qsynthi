@@ -88,7 +88,7 @@ void WavetableOscillator::prepareToPlay(int midiNote, float sampleRate)
 
 void WavetableOscillator::noteOn(int velocity) 
 {
-    // generate new wavetable ()
+    // generate new wavetable
     waveTable = Wavetable::generate(parameter->waveTypeNumber, parameter->waveShift, parameter->waveScale).to<cfloat>();
     
     // FFT result as standard form?
@@ -126,9 +126,9 @@ float WavetableOscillator::getNextSample()
 {
     // Schrödinger
     // parameter changed?
-    if (1.0 / parameter->timestepsPerSample != timestepCountTo)
+    if (parameter->samplesPerTimestep != timestepCountTo)
     {
-        timestepCountTo = 1.0 / parameter->timestepsPerSample;
+        timestepCountTo = parameter->samplesPerTimestep;
         timestepCounter = 0;
     }
     // update counter/do timestep if active

@@ -98,9 +98,9 @@ void Parameter::update(AudioProcessorValueTreeState& treeState, float sampleRate
     // Potential is scaled
     potential = Wavetable::generate(GET(POTENTIAL_TYPE), GET(POTENTIAL_SHIFT), GET(POTENTIAL_SCALE)).map([](float v){return 10.f * v;});
     
-    timestepsPerSample  = accuracy * simulationSpeed / sampleRate;
+    samplesPerTimestep  = sampleRate / (accuracy * simulationSpeed);
     timestepDelta       = 1.f / accuracy;
-    preStartTimesteps   = GET(SIMULATION_OFFSET) * accuracy;
+    preStartTimesteps   = round(GET(SIMULATION_OFFSET) * accuracy);
     
     sampleType  = static_cast<SampleType>(GET(SAMPLE_TYPE));
     showFFT     = GET(SHOW_FFT);

@@ -88,7 +88,7 @@ public:
     // For Schroedinger
     bool applyWavefunction = false; // True if Schrödinger's equation should be applied to waveform
     
-    float timestepsPerSample = 0;   // Number of timesteps which get performed after a sample is calculated. Always > 0, could get > 1
+    float samplesPerTimestep = 0;   // Number of timesteps which get performed after a sample is calculated. Always > 0, could get > 1
     float timestepDelta = 0;        // Time duration of each timestep
     size_t preStartTimesteps = 0;
 
