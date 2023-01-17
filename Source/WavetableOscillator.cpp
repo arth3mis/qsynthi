@@ -25,36 +25,83 @@ WavetableOscillator::WavetableOscillator(Parameter *parameter)
 {
 }
 
+// Schrödinger equation functions -------------------------------------------------------------------------------------------------
+//
+
+// based on: http://www.articlesbyaphysicist.com/quantum4prog.html
+void WavetableOscillator::doTimestep(const float dt)
+{
+    // note: 2 FFTs are minimum, regardless of showFFT setting
+
+    cvec v = waveTable.toVector();
+    const size_t n = v.size();
+
+    if (parameter->showFFT)
+        v = fft(v);
+
+    // "timestepV"
+    for (size_t i = 1; i < n - 1; i++)
+    {
+        v[i] *= std::polar(1.f, dt * potential(i));
+    }
+
+    v = fft(v);
+
+    // "timestepT"
+    const float PRE = powf(2 * PI / n, 2);
+    for (size_t i = 1; i < n / 2; i++)
+    {
+        v[i] *= std::polar(1.f, PRE * i * i * dt);
+        v[n - i] *= std::polar(1.f, PRE * i * i * dt);
+    }
+
+    if (!parameter->showFFT)
+        v = fft(v);
+
+    waveTable = list(v);
+}
+
+inline float WavetableOscillator::potential(const size_t x)
+{
+    return parameter->potential[x];
+}
+
+inline cvec WavetableOscillator::fft(cvec in)
+{
+    // https://gitlab.mpcdf.mpg.de/mtr/pocketfft/-/blob/cpp/pocketfft_demo.cc
+    // args: sampleCount, byteOffsetIn, byteOffsetOut, direction, inputArray, outputArray, scaleFactor
+    //
+    cvec out(in.size());
+    pocketfft::c2c({ in.size() }, { sizeof(cfloat) }, { sizeof(cfloat) }, { 0 }, pocketfft::FORWARD, in.data(), out.data(), (float)(1.0 / sqrt(in.size())));
+    return out;
+}
+
+
+// Note and sample processing ------------------------------------------------------------------------------------------------------
+//
+
 void WavetableOscillator::prepareToPlay(int midiNote, float sampleRate)
 {
     phaseIncrement = Wavetable::midiNoteToIncrement(midiNote, sampleRate);
     envelopeLevel = 0.f;
 }
 
-void WavetableOscillator::noteOn(int velocity) {
-    /*
-    
-    Interesting scenarios:
-    Gaussian:
-    (0, -0.6f, 0.5f) with V(x) = 0.0015*x²
-    todo: linear potential?
-    (0, -0.6f, 0.5f) with V(x) = 0
-
-    Sine:
-    (1, -0.4f, -0.6f) with V(x) = 0.0015*x²
-    todo: other potentials?
-    
-    */
-
-    //waveTable = Wavetable::generate(0, -0.6f, 0.5f);
-    //waveTable = Wavetable::generate(1, -0.4f, 0.f);
-    
+void WavetableOscillator::noteOn(int velocity) 
+{
+    // generate new wavetable
     waveTable = Wavetable::generate(parameter->waveTypeNumber, parameter->waveShift, parameter->waveScale).to<cfloat>();
     
     // FFT result as standard form?
     if (parameter->showFFT)
     {
         waveTable = list(fft(waveTable.toVector()));
+    }
+
+    // pre-start simulation
+    const size_t steps = parameter->preStartTimesteps * 2;  // two timesteps with halved delta because a single timestep mirrors the resulting vector
+    for (size_t i = 0; i < steps; i++)
+    {
+        doTimestep(parameter->timestepDelta / 2);
     }
     
     // Do not set envelopeLevel = 0 here, to enable smooth retriggers of one note
@@ -79,9 +126,9 @@ float WavetableOscillator::getNextSample()
 {
     // Schrödinger
     // parameter changed?
-    if (1.0 / parameter->timestepsPerSample != timestepCountTo)
+    if (parameter->samplesPerTimestep != timestepCountTo)
     {
-        timestepCountTo = 1.0 / parameter->timestepsPerSample;
+        timestepCountTo = parameter->samplesPerTimestep;
         timestepCounter = 0;
     }
     // update counter/do timestep if active
@@ -93,7 +140,7 @@ float WavetableOscillator::getNextSample()
             while (timestepCounter < 1)
             {
                 timestepCounter += timestepCountTo;
-                for (int i=0; i<2; ++i) doTimestep(parameter->timestepDelta / 2);
+                for (int i=0; i<2; i++) doTimestep(parameter->timestepDelta / 2);  // two timesteps with halved delta because a single timestep mirrors the resulting vector
             }
         }
         // multiple samples pass before timestep?
@@ -101,7 +148,7 @@ float WavetableOscillator::getNextSample()
         {
             timestepCounter += 1;
             if (timestepCounter >= timestepCountTo)
-                for (int i=0; i<2; ++i) doTimestep(parameter->timestepDelta / 2);
+                for (int i=0; i<2; i++) doTimestep(parameter->timestepDelta / 2);  // two timesteps with halved delta because a single timestep mirrors the resulting vector
         }
         timestepCounter = fmod(timestepCounter, timestepCountTo);
     }
@@ -158,58 +205,4 @@ void WavetableOscillator::updateState() {
             }
 
     }
-}
-
-
-inline cvec WavetableOscillator::fft(cvec in)
-{
-    // https://gitlab.mpcdf.mpg.de/mtr/pocketfft/-/blob/cpp/pocketfft_demo.cc
-    // args: sampleCount, byteOffsetIn, byteOffsetOut, direction, inputArray, outputArray, scaleFactor
-    //
-    cvec out(in.size());
-    pocketfft::c2c({ in.size() }, { sizeof(cfloat) }, { sizeof(cfloat) }, { 0 }, pocketfft::FORWARD, in.data(), out.data(), (float)(1.0 / sqrt(in.size())));
-    return out;
-}
-
-// based on: http://www.articlesbyaphysicist.com/quantum4prog.html
-void WavetableOscillator::doTimestep(const float dt)
-{
-    // note: 2 FFTs are minimum, regardless of showFFT setting
-
-    cvec v = waveTable.toVector();
-    const size_t n = v.size();
-
-    if (parameter->showFFT)
-        v = fft(v);
-    
-    // "timestepV"
-    for (size_t i = 1; i < n - 1; i++)
-    {
-        v[i] *= std::polar(1.f, dt * potential(i));
-    }
-
-    v = fft(v);
-    
-    // "timestepT"
-    const float PRE = powf(2*PI/n, 2);
-    for (size_t i = 1; i < n / 2; i++)
-    {
-        v[i]   *= std::polar(1.f, PRE*i*i * dt);
-        v[n-i] *= std::polar(1.f, PRE*i*i * dt);
-    }
-    
-    if (!parameter->showFFT)
-        v = fft(v);
-
-    waveTable = list(v);
-}
-
-inline float WavetableOscillator::potential(const size_t x)
-{
-    /*
-    return x * x * 0.0015f;
-    /*/
-    
-    return parameter->potential[x];
-    //*/
 }
