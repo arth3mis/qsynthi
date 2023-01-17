@@ -49,6 +49,7 @@ AudioProcessorValueTreeState::ParameterLayout Parameter::createParameterLayout()
 
     FLOAT_PARAM(ACCURACY, NormalisableRange<float>(1.f, 100.f, 1.f, 0.3f, false), 10.f);
     FLOAT_PARAM(SIMULATION_SPEED, NormalisableRange<float>(0.1f, 100.f, 0.01f, 0.5f, false), 20.f);
+    FLOAT_PARAM(SIMULATION_OFFSET, NormalisableRange<float>(0.f, 1000.f, 1.f, 0.5f, false), 0.f);
 
     CHOICE_PARAM(POTENTIAL_TYPE, WAVE_TYPES, WaveType::PARABOLA);
     FLOAT_PARAM(POTENTIAL_SHIFT, NormalisableRange<float>(-1.f, 1.f, 0.01f, 1.f, true), 0.f);
@@ -63,8 +64,8 @@ AudioProcessorValueTreeState::ParameterLayout Parameter::createParameterLayout()
     
 
     BOOL_PARAM(SHOW_FFT, false);
-    
-    FLOAT_PARAM(STEREO_AMOUNT, NormalisableRange<float>(-1.f, 1.f, 0.01f, 1.f, true), 0.f);
+     
+    FLOAT_PARAM(STEREO_AMOUNT, NormalisableRange<float>(0.f, 1.f, 0.01f, 1.f, true), 0.f);
     
     
     
@@ -89,20 +90,20 @@ void Parameter::update(AudioProcessorValueTreeState& treeState, float sampleRate
 
     
     // Simulation
-    applyWavefunction = GET(APPLY_WAVEFUNC);
-    float accuracy = GET(ACCURACY);
-    float simulationSpeed = GET(SIMULATION_SPEED);
+    applyWavefunction       = GET(APPLY_WAVEFUNC);
+    float accuracy          = GET(ACCURACY);
+    float simulationSpeed   = GET(SIMULATION_SPEED);
     
     // Potential
     // Potential is scaled
     potential = Wavetable::generate(GET(POTENTIAL_TYPE), GET(POTENTIAL_SHIFT), GET(POTENTIAL_SCALE)).map([](float v){return 10.f * v;});
     
+    timestepsPerSample  = accuracy * simulationSpeed / sampleRate;
+    timestepDelta       = 1.f / accuracy;
+    preStartTimesteps   = GET(SIMULATION_OFFSET) * accuracy;
     
-    timestepsPerSample = accuracy * simulationSpeed / sampleRate;
-    timestepDelta = 1 / accuracy;
-    
-    sampleType = static_cast<SampleType>(GET(SAMPLE_TYPE));
-    showFFT = GET(SHOW_FFT);
+    sampleType  = static_cast<SampleType>(GET(SAMPLE_TYPE));
+    showFFT     = GET(SHOW_FFT);
     
     float stereoAmount = GET(STEREO_AMOUNT);
     stereoList = list<float>(Wavetable::SIZE, [stereoAmount](size_t i){
