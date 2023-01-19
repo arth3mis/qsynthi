@@ -25,9 +25,14 @@
 #define WAVE_SHIFT "Wave Shift"
 #define WAVE_SCALE "Wave Scale"
 
-#define POTENTIAL_TYPE "Potential Type"
-#define POTENTIAL_SHIFT "Potential Shift"
-#define POTENTIAL_SCALE "Potential Scale"
+#define POTENTIAL_TYPE1 "Potential Type 1"
+#define POTENTIAL_SHIFT1 "Potential Shift 1"
+#define POTENTIAL_SCALE1 "Potential Scale 1"
+#define POTENTIAL_AMOUNT1 "Potential Amount 1"
+#define POTENTIAL_TYPE2 "Potential Type 2"
+#define POTENTIAL_SHIFT2 "Potential Shift 2"
+#define POTENTIAL_SCALE2 "Potential Scale 2"
+#define POTENTIAL_AMOUNT2 "Potential Amount 2"
 
 #define APPLY_WAVEFUNC "Schroedinger"
 #define ACCURACY "Timesteps / Simulated sec"
