@@ -33,30 +33,36 @@ void WavetableOscillator::doTimestep(const float dt)
 {
     // note: 2 FFTs are minimum, regardless of showFFT setting
 
+    // do 2 timesteps with half delta each, because after a single timestep, the output is mirrored (cause unknown, probably FFT function)
+    //
     cvec v = waveTable.toVector();
     const size_t n = v.size();
+    const float dtHalf = dt / 2;
 
-    if (parameter->showFFT)
+    for (int i = 0; i < 2; i++)
+    {
+        if (parameter->showFFT)
+            v = fft(v);
+
+        // "timestepV"
+        for (size_t i = 1; i < n - 1; i++)
+        {
+            v[i] *= std::polar(1.f, dtHalf * potential(i));
+        }
+
         v = fft(v);
 
-    // "timestepV"
-    for (size_t i = 1; i < n - 1; i++)
-    {
-        v[i] *= std::polar(1.f, dt * potential(i));
+        // "timestepT"
+        const float PRE = powf(2 * PI / n, 2);
+        for (size_t i = 1; i < n / 2; i++)
+        {
+            v[i] *= std::polar(1.f, PRE * i * i * dtHalf);
+            v[n - i] *= std::polar(1.f, PRE * i * i * dtHalf);
+        }
+
+        if (!parameter->showFFT)
+            v = fft(v);
     }
-
-    v = fft(v);
-
-    // "timestepT"
-    const float PRE = powf(2 * PI / n, 2);
-    for (size_t i = 1; i < n / 2; i++)
-    {
-        v[i] *= std::polar(1.f, PRE * i * i * dt);
-        v[n - i] *= std::polar(1.f, PRE * i * i * dt);
-    }
-
-    if (!parameter->showFFT)
-        v = fft(v);
 
     waveTable = list(v);
 }
@@ -98,10 +104,10 @@ void WavetableOscillator::noteOn(int velocity)
     }
 
     // pre-start simulation
-    const size_t steps = parameter->preStartTimesteps * 2;  // two timesteps with halved delta because a single timestep mirrors the resulting vector
+    const size_t steps = parameter->preStartTimesteps;
     for (size_t i = 0; i < steps; i++)
     {
-        doTimestep(parameter->timestepDelta / 2);
+        doTimestep(parameter->timestepDelta);
     }
     
     // Do not set envelopeLevel = 0 here, to enable smooth retriggers of one note
@@ -140,7 +146,7 @@ float WavetableOscillator::getNextSample()
             while (timestepCounter < 1)
             {
                 timestepCounter += timestepCountTo;
-                for (int i=0; i<2; i++) doTimestep(parameter->timestepDelta / 2);  // two timesteps with halved delta because a single timestep mirrors the resulting vector
+                doTimestep(parameter->timestepDelta);
             }
         }
         // multiple samples pass before timestep?
@@ -148,7 +154,7 @@ float WavetableOscillator::getNextSample()
         {
             timestepCounter += 1;
             if (timestepCounter >= timestepCountTo)
-                for (int i=0; i<2; i++) doTimestep(parameter->timestepDelta / 2);  // two timesteps with halved delta because a single timestep mirrors the resulting vector
+                doTimestep(parameter->timestepDelta);
         }
         timestepCounter = fmod(timestepCounter, timestepCountTo);
     }
@@ -171,7 +177,7 @@ inline std::function<float(cfloat)> WavetableOscillator::getSampleConversion(con
 {
     if (type == SampleType::REAL_VALUE)         return [scale, yShift](cfloat z) { return std::real(z) * scale + yShift; };
     else if (type == SampleType::IMAG_VALUE)    return [scale, yShift](cfloat z) { return std::imag(z) * scale + yShift; };
-    else if (type == SampleType::SQARED_ABS)    return [scale, yShift](cfloat z) { return std::norm(z) * scale - yShift; };
+    else if (type == SampleType::SQARED_ABS)    return [scale, yShift](cfloat z) { return std::norm(z) * scale + yShift; };
     else                                        return [scale, yShift](cfloat z) { return 0; };
 }
 
