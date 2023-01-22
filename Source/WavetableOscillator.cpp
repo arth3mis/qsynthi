@@ -33,7 +33,7 @@ void WavetableOscillator::doTimestep(const float dt)
 {
     // note: 2 FFTs are minimum, regardless of showFFT setting
 
-    cvec v = waveTable.toVector();
+    cvec v = std::vector(waveTable.toVector());
     const size_t n = v.size();
 
     if (parameter->showFFT)

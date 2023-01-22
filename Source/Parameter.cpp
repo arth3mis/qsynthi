@@ -28,6 +28,12 @@ const StringArray Parameter::WAVE_TYPES = {
     "Barrier"
 };
 
+const StringArray Parameter::SAMPLE_TYPES = {
+    "Real Value",
+    "Imaginary Value",
+    "Squared Absolute"
+};
+
 AudioProcessorValueTreeState::ParameterLayout Parameter::createParameterLayout() {
     AudioProcessorValueTreeState::ParameterLayout layout;
     
@@ -47,8 +53,8 @@ AudioProcessorValueTreeState::ParameterLayout Parameter::createParameterLayout()
     
     BOOL_PARAM(APPLY_WAVEFUNC, true);
 
-    FLOAT_PARAM(ACCURACY, NormalisableRange<float>(0.1f, 100.f, 0.1f, 0.25f, false), 1.f);
-    FLOAT_PARAM(SIMULATION_SPEED, NormalisableRange<float>(0.1f, 1000.f, 0.01f, 0.25f, false), 25.f);
+    FLOAT_PARAM(ACCURACY, NormalisableRange<float>(0.1f, 100.f, 0.1f, 0.25f, false), .5f);
+    FLOAT_PARAM(SIMULATION_SPEED, NormalisableRange<float>(0.1f, 1000.f, 0.01f, 0.25f, false), 42.f);
     FLOAT_PARAM(SIMULATION_OFFSET, NormalisableRange<float>(0.f, 1000.f, 1.f, 0.5f, false), 0.f);
 
     // Potential
@@ -61,19 +67,14 @@ AudioProcessorValueTreeState::ParameterLayout Parameter::createParameterLayout()
     FLOAT_PARAM(POTENTIAL_SCALE2, NormalisableRange<float>(-1.f, 1.f, 0.01f, 1.f, true), 0.f);
     FLOAT_PARAM(POTENTIAL_AMOUNT2, NormalisableRange<float>(-1.f, 1.f, 0.01f, 1.f, true), 0.f);
     
-    CHOICE_PARAM(SAMPLE_TYPE, StringArray({
-        "Real Value",
-        "Imaginary Value",
-        "Squared Absolute" }),
-         // default value (yes, enum class to int is - interesting, but I wanted to try it)
-        SampleType::SQARED_ABS);
+    CHOICE_PARAM(SAMPLE_TYPE, SAMPLE_TYPES, SampleType::SQARED_ABS);
     
 
     BOOL_PARAM(SHOW_FFT, false);
 
     FLOAT_PARAM(STEREO_AMOUNT, NormalisableRange<float>(0.f, 1.f, 0.01f, 1.f, true), 0.f);
     
-    FLOAT_PARAM(REVERB_MIX, NormalisableRange<float>(0.f, 1.f, 0.01f, 0.9f, false), 0.2f);
+    FLOAT_PARAM(REVERB_MIX, NormalisableRange<float>(0.f, 1.f, 0.01f, 0.9f, false), 0.15f);
     
     
     

@@ -48,7 +48,7 @@ void QSynthi::processBlock(AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
     
     int currentSample = 0;
     
-    reverb.setParameters(Reverb::Parameters{0.5f + 0.45f * parameter->reverbMix * parameter->reverbMix, 0.4f, parameter->reverbMix, 0.8f * (1-parameter->reverbMix), 0.8f, 0.0f});
+    reverb.setParameters(Reverb::Parameters{0.4f + 0.5f * parameter->reverbMix * parameter->reverbMix, 0.4f, 0.35f * parameter->reverbMix, (1-parameter->reverbMix), 0.8f, 0.0f});
 
 
     // idea 1: create all, keep all always, ask everyone for isPlaying
@@ -95,14 +95,19 @@ void QSynthi::handleMidiEvent(const MidiMessage& midiEvent)
         if (noteOnCount <= 0)
             noteToDraw = noteNumber;
         noteOnCount++;
+        
+        if (displayedOscillator == nullptr) displayedOscillator = &oscillators[noteNumber];
     }
     else if (midiEvent.isNoteOff())
     {
-        oscillators[midiEvent.getNoteNumber()].noteOff();
+        int noteNumber = midiEvent.getNoteNumber();
+        oscillators[noteNumber].noteOff();
 
         noteOnCount--;
         if (noteOnCount <= 0)
             noteToDraw = -1;
+        
+        if (displayedOscillator == &oscillators[noteNumber]) displayedOscillator = nullptr;
     }
     else if (midiEvent.isAllNotesOff())
     {
@@ -112,6 +117,8 @@ void QSynthi::handleMidiEvent(const MidiMessage& midiEvent)
 
         noteOnCount = 0;
         noteToDraw = -1;
+        displayedOscillator = nullptr;
+        
     }
 }
 

@@ -74,6 +74,7 @@ public:
     static constexpr float RELEASE_THRESHOLD = 0.005f;
     
     static const StringArray WAVE_TYPES;
+    static const StringArray SAMPLE_TYPES;
     
     // general
     float gainFactor = 0;

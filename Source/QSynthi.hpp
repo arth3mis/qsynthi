@@ -23,6 +23,8 @@ public:
     QSynthi(Parameter *parameter);
     QSynthi() {}
     
+    WavetableOscillator* displayedOscillator;
+    
     void prepareToPlay(float sampleRate);
     void processBlock(AudioBuffer<float>& buffer, MidiBuffer& midiMessages);
     

@@ -165,9 +165,11 @@ bool QSynthiAudioProcessor::hasEditor() const
 
 AudioProcessorEditor* QSynthiAudioProcessor::createEditor()
 {
-    // TODO: Entferne den Generischen
-    // return new QSynthiAudioProcessorEditor (*this);
-    return new GenericAudioProcessorEditor(*this);
+    // Our frontend
+    return new QSynthiAudioProcessorEditor (*this);
+    
+    // Generic frontend for testing purpuses
+    // return new GenericAudioProcessorEditor(*this);
 }
 
 //==============================================================================
