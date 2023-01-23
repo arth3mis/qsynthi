@@ -18,13 +18,14 @@
 class CustomSlider : public Slider
 {
 public:
-    CustomSlider(QSynthiAudioProcessor& p, const String parameter) : Slider(Slider::SliderStyle::LinearHorizontal, Slider::TextEntryBoxPosition::TextBoxRight),
+    CustomSlider(QSynthiAudioProcessor& p, const String parameter, const String suffix) : Slider(Slider::SliderStyle::LinearHorizontal, Slider::TextEntryBoxPosition::TextBoxRight),
     attachmentToParameter(p.treeState, parameter, *this)
     {
-        
+        setTextValueSuffix(suffix);
     }
     
     AudioProcessorValueTreeState::SliderAttachment attachmentToParameter;
+
 };
 
 class CustomComboBox : public ComboBox
@@ -106,6 +107,8 @@ private:
     CustomSlider stereoize;
     CustomSlider reverbMix;
     
+    ImageComponent waveTypeImage;
+    
     
     list<Component*> waveComponents{
         &waveType,
@@ -138,7 +141,7 @@ private:
         &reverbMix
     };
     
-    list<Component*> components = list<Component*>{&waveTable} + waveComponents + potentialComponents + synthiComponents;
+    list<Component*> components = list<Component*>{&waveTable, &waveTypeImage} + waveComponents + potentialComponents + synthiComponents;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (QSynthiAudioProcessorEditor)
 };
