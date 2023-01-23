@@ -104,10 +104,11 @@ void Parameter::update(AudioProcessorValueTreeState& treeState, float sampleRate
     float simulationSpeed   = GET(SIMULATION_SPEED);
     
     // Potential
-    // Potential is scaled
     // TODO: Implement second potential
     float potentialAmount1 = GET(POTENTIAL_AMOUNT1);
-    potential = Wavetable::generate(GET(POTENTIAL_TYPE1), GET(POTENTIAL_SHIFT1), GET(POTENTIAL_SCALE1)).map([potentialAmount1](float v){return 10.f * potentialAmount1 * v;});
+    potential = Wavetable::generate(GET(POTENTIAL_TYPE1), GET(POTENTIAL_SHIFT1), GET(POTENTIAL_SCALE1))
+        .mapTo<float>([potentialAmount1](cfloat v){
+            return 10.f * potentialAmount1 * std::real(v);});
     
     samplesPerTimestep  = sampleRate / (accuracy * simulationSpeed);
     timestepDelta       = 1.f / accuracy;

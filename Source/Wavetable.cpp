@@ -2,36 +2,36 @@
 #include "Parameter.h"
 
 
-list<float> Wavetable::generate(const size_t type, const float shift, const float scale)
+list<cfloat> Wavetable::generate(const size_t type, const float shift, const float scale)
 {
     // Assert that the wavetype is defined
     jassert(type >= 0 && type < Parameter::WAVE_TYPES.size());
 
     switch (type)
     {
-        case WaveType::GAUSSIAN: return list<float>(SIZE, [shift, scale](size_t i) {
+        case WaveType::GAUSSIAN: return list<cfloat>(SIZE, [shift, scale](size_t i) {
             float scaledX = (15 + 13 * scale) * (i / SIZE_F - 0.5f - 0.5f * shift);
             return std::expf(- scaledX * scaledX);
         });
 
-        case WaveType::SINE: return list<float>(SIZE, [shift, scale](size_t i) {
+        case WaveType::SINE: return list<cfloat>(SIZE, [shift, scale](size_t i) {
             float scaledX = (1.f - scale) * (i / SIZE_F - 0.5f - 0.5f * shift) + 0.5f;
             if (scaledX < 0.f || scaledX > 1.f) return 0.0f;
             return std::sin(TWO_PI * scaledX);
         });
 
-        case WaveType::COSINE: return list<float>(SIZE, [shift, scale](size_t i) {
+        case WaveType::COSINE: return list<cfloat>(SIZE, [shift, scale](size_t i) {
             float scaledX = (1.f - scale) * (i / SIZE_F - 0.5f - 0.5f * shift) + 0.5f;
             if (scaledX < 0.f || scaledX > 1.f) return 0.0f;
             return std::cos(TWO_PI * scaledX);
         });
             
-        case WaveType::PARABOLA: return list<float>(SIZE, [shift, scale](size_t i) {
+        case WaveType::PARABOLA: return list<cfloat>(SIZE, [shift, scale](size_t i) {
             float scaledX = i / SIZE_F - 0.5f - 0.5f * shift;
             return 4 * scale / (1 + 3 * shift) * scaledX * scaledX;
         });
             
-        case WaveType::BARRIER: return list<float>(SIZE, [shift, scale](size_t i) {
+        case WaveType::BARRIER: return list<cfloat>(SIZE, [shift, scale](size_t i) {
             if (i == SIZE / 2) return 99.f;
             // else parabola
             float scaledX = i / SIZE_F - 0.5f - 0.5f * shift;
