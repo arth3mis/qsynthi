@@ -33,6 +33,9 @@ public:
     // Initializer
     void prepareToPlay(int midiNote, float sampleRate);
     
+    list<cfloat> waveTable;
+    inline std::function<float(cfloat)> getSampleConversion(const SampleType type, float scale, float yShift);
+    
     // MIDI
     void noteOn(int velocity);
     void noteOff();
@@ -48,9 +51,6 @@ public:
     
 private:
     Parameter *parameter = nullptr;
-    list<cfloat> waveTable;
-
-    inline std::function<float(cfloat)> getSampleConversion(const SampleType type, float scale, float yShift);
     
     State state;
     float envelopeLevel = 0;
