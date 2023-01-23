@@ -29,8 +29,8 @@ protected:
 
 	public:
 		pair_list(list a, list b) 
-			: ls{ a.length != b.length ? list<std::pair<V, U>>() :
-                list<size_t>::range(0, a.length).template mapTo<std::pair<V, U>>([&a, &b](size_t i) {
+			: ls{ a.length() != b.length() ? list<std::pair<V, U>>() :
+                list<size_t>::range(0, a.length()).template mapTo<std::pair<V, U>>([&a, &b](size_t i) {
 						return std::make_pair(a[i], b[i]);
 				}) }
 		{

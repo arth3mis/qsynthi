@@ -15,7 +15,7 @@
 #include <complex>
 #include <mutex>
 
-#define SDL_ACTIVE __has_include("SDL.h") && true
+#define SDL_ACTIVE __has_include("SDL.h") && false
 
 #if SDL_ACTIVE
 #include "SDL.h"
