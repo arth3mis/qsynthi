@@ -36,7 +36,7 @@ public:
     attachmentToParameter(p.treeState, parameter, *this)
     {
         addItemList(items, 1);
-        setSelectedId(1);
+        //setSelectedId();
     }
     
     AudioProcessorValueTreeState::ComboBoxAttachment attachmentToParameter;

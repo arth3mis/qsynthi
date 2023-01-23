@@ -13,6 +13,8 @@
 #include <complex>
 #include "list.hpp"
 
+typedef std::complex<float> cfloat;
+
 class Wavetable
 {
 public:
@@ -26,6 +28,6 @@ public:
     constexpr static float SIZE_F = static_cast<float>(SIZE);
     constexpr static float TWO_PI = MathConstants<float>::twoPi;
 
-    static list<float> generate(const size_t type, const float shift, const float scale);
+    static list<cfloat> generate(const size_t type, const float shift, const float scale);
     static float midiNoteToIncrement(const int noteNumber, const float sampleRate);
 };

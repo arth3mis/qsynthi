@@ -10,6 +10,7 @@
 
 #pragma once
 #include "list.hpp"
+#include <functional>
 #include <JuceHeader.h>
 
 #define PARAM_VERSION 1
@@ -44,6 +45,8 @@
 #define STEREO_AMOUNT "Stereoize"
 
 #define REVERB_MIX "Reverb Mix"
+
+typedef std::complex<float> cfloat;
 
 enum WaveType
 {
@@ -102,8 +105,17 @@ public:
     // Values per Wavetable for each
     list<float> potential;
     
-    SampleType sampleType = SampleType::SQARED_ABS; // for default value, go to layout creation
+    SampleType sampleType;          // for default value, go to layout creation
     bool showFFT = false;           // True if the FFT of the waveform should be played
+    
+    inline std::function<float(cfloat)> getSampleConverter()
+    {
+        if (sampleType == SampleType::REAL_VALUE)       return [](cfloat z) { return std::real(z); };
+        else if (sampleType == SampleType::IMAG_VALUE)  return [](cfloat z) { return std::imag(z); };
+        else if (sampleType == SampleType::SQARED_ABS)  return [](cfloat z) { return std::norm(z); };
+        else                                            return [](cfloat z) { return 0; };
+    }
+
 
     static AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
     void update(AudioProcessorValueTreeState& getParameter, float sampleRate);

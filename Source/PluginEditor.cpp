@@ -35,19 +35,15 @@ void WaveTableComponent::paint(Graphics& g)
     ColourGradient waveGradient (Colour(0xFFF7BD2A), 0.55f * getBounds().getWidth(), 0.25f * getBounds().getHeight(), Colour(0xFFFF3747), 0.45f * getBounds().getWidth(), getBounds().getHeight(), false);
     waveGradient.addColour(0.5, Colour(0xFFFF7738));
     
-    list<float> waveTable;
+    list<cfloat> waveTable;
+    auto sampleConversion = p.parameter->getSampleConverter();
+
     if (p.synth->displayedOscillator != nullptr)
-    {
-        auto sampleConversion = p.synth->displayedOscillator->getConverter();
-        auto table = p.synth->displayedOscillator->waveTable;
-        waveTable = table.mapTo(sampleConversion);
-    }
+        waveTable = p.synth->displayedOscillator->waveTable;
     else
-    {
         waveTable = Wavetable::generate(p.parameter->waveTypeNumber, p.parameter->waveShift, p.parameter->waveScale);
-    }
     
-    drawLine(g, getBounds(), waveTable, waveGradient);
+    drawLine(g, getBounds(), waveTable.mapTo(sampleConversion), waveGradient);
     
 }
 

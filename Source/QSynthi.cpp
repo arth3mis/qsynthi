@@ -70,7 +70,7 @@ void QSynthi::processBlock(AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
 
     if (noteToDraw > -1 && !plot.isQuit())
     {
-        plot.setDrawData(oscillators[noteToDraw].getWavetable(), oscillators[noteToDraw].getConverter(), parameter->potential);
+        plot.setDrawData(oscillators[noteToDraw].getWavetable(), parameter->getSampleConverter(), parameter->potential);
     }
     
     // Render everything after the last midiEvent in this block

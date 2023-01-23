@@ -12,8 +12,6 @@
 #include "list.hpp"
 #include "Parameter.h"
 #include <vector>
-
-typedef std::complex<float> cfloat;
 typedef std::vector<cfloat> cvec;
 
 enum class State {
@@ -34,21 +32,17 @@ public:
     void prepareToPlay(int midiNote, float sampleRate);
     
     list<cfloat> waveTable;
-    inline std::function<float(cfloat)> getSampleConversion(const SampleType type, float scale, float yShift);
+    inline list<cfloat> getWavetable() { return waveTable; }
     
     // MIDI
     void noteOn(int velocity);
     void noteOff();
-
-    inline list<cfloat> getWavetable() { return waveTable; }
-    inline std::function<float(cfloat)> getConverter() { return getSampleConversion(parameter->sampleType, 1, 0); }
     
-    // Important Components of                                          ja was
     inline bool isPlaying() { return state != State::SLEEP; }
 
     float getPhase();
     float getNextSample();
-    
+
 private:
     Parameter *parameter = nullptr;
     
@@ -67,5 +61,4 @@ private:
     inline cvec fft(cvec in);
 
     void updateState();
-
 };
