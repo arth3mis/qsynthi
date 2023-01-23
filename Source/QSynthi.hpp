@@ -23,6 +23,8 @@ public:
     QSynthi(Parameter *parameter);
     QSynthi() {}
     
+    WavetableOscillator* displayedOscillator;
+    
     void prepareToPlay(float sampleRate);
     void processBlock(AudioBuffer<float>& buffer, MidiBuffer& midiMessages);
     
@@ -43,6 +45,8 @@ private:
         processBlock(...) cleanup: checks for every oscillator if it thinks it's done with it's life cycle and removes if it's the case
      */
     mutable_list<WavetableOscillator> oscillators;
+    
+    Reverb reverb;
     
     void handleMidiEvent(const MidiMessage& midiEvent);
     void render(AudioBuffer<float>& buffer, int startSample, int endSample);

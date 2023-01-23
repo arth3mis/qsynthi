@@ -165,9 +165,11 @@ bool QSynthiAudioProcessor::hasEditor() const
 
 AudioProcessorEditor* QSynthiAudioProcessor::createEditor()
 {
-    // TODO: Entferne den Generischen
-    // return new QSynthiAudioProcessorEditor (*this);
-    return new GenericAudioProcessorEditor(*this);
+    // Our frontend
+    return new QSynthiAudioProcessorEditor (*this);
+    
+    // Generic frontend for testing purpuses
+    // return new GenericAudioProcessorEditor(*this);
 }
 
 //==============================================================================
@@ -176,12 +178,23 @@ void QSynthiAudioProcessor::getStateInformation (MemoryBlock& destData)
     // You should use this method to store your parameters in the memory block.
     // You could do that either as raw data, or use the XML or ValueTree classes
     // as intermediaries to make it easy to save and load complex data.
+    
+    MemoryOutputStream memoryStream(destData, true);
+    treeState.state.writeToStream(memoryStream);
+    
 }
 
 void QSynthiAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
+    
+    auto inputTree = ValueTree::readFromData(data, sizeInBytes);
+    if (inputTree.isValid())
+    {
+        treeState.replaceState(inputTree);
+        parameter->update(treeState, (float) getSampleRate());
+    }
 }
 
 //==============================================================================

@@ -22,6 +22,17 @@ class QSynthiAudioProcessor  : public AudioProcessor
                             #endif
 {
 public:
+    
+    // Tree state in dem alle Parameter drin gespeichert sind
+    AudioProcessorValueTreeState treeState {
+        *this,
+        nullptr,
+        "Parameters",
+        Parameter::createParameterLayout()
+    };
+    
+    Parameter *parameter;
+    QSynthi *synth;
 
     //==============================================================================
     QSynthiAudioProcessor();
@@ -64,16 +75,5 @@ private:
     
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (QSynthiAudioProcessor)
-    
 
-    QSynthi *synth;
-    Parameter *parameter;
-
-    // Tree state in dem alle Parameter drin gespeichert sind
-    AudioProcessorValueTreeState treeState {
-        *this,
-        nullptr,
-        "Parameters",
-        Parameter::createParameterLayout()
-    };
 };
