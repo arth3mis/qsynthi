@@ -26,6 +26,7 @@ public:
     
     AudioProcessorValueTreeState::SliderAttachment attachmentToParameter;
 
+    void resized() override;
 };
 
 class CustomComboBox : public ComboBox
@@ -108,6 +109,21 @@ private:
     CustomSlider reverbMix;
     
     ImageComponent waveTypeImage;
+    ImageComponent waveShiftImage;
+    ImageComponent waveScaleImage;
+    ImageComponent simulationSpeedImage;
+    ImageComponent simulationOffsetImage;
+    ImageComponent simulationAccuracyImage;
+    //ImageComponent sampleTypeImage;
+    
+    ImageComponent potentialTypeImage1;
+    ImageComponent potentialShiftImage1;
+    ImageComponent potentialScaleImage1;
+    ImageComponent potentialHeightImage1;
+    ImageComponent potentialTypeImage2;
+    ImageComponent potentialShiftImage2;
+    ImageComponent potentialScaleImage2;
+    ImageComponent potentialHeightImage2;
     
     
     list<Component*> waveComponents{
@@ -141,7 +157,29 @@ private:
         &reverbMix
     };
     
-    list<Component*> components = list<Component*>{&waveTable, &waveTypeImage} + waveComponents + potentialComponents + synthiComponents;
+    list<Component*> waveImages{
+        &waveTypeImage,
+        &waveShiftImage,
+        &waveScaleImage,
+        &simulationSpeedImage,
+        &simulationOffsetImage,
+        &simulationAccuracyImage
+    };
+    
+    list<Component*> potentialImages{
+        &potentialTypeImage1,
+        &potentialShiftImage1,
+        &potentialScaleImage1,
+        &potentialHeightImage1,
+        &potentialTypeImage2,
+        &potentialShiftImage2,
+        &potentialScaleImage2,
+        &potentialHeightImage2
+    };
+    
+    list<Component*> components = list<Component*>{&waveTable} + waveComponents + potentialComponents + synthiComponents + waveImages + potentialImages;
+    
+    Rectangle<int> trim(Rectangle<int> rect, int amount);
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (QSynthiAudioProcessorEditor)
 };

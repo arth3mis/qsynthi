@@ -14,6 +14,13 @@
 #define FOR_EACH(list) for (size_t i = 0; i < list.length(); i++) list[i]
 
 
+void CustomSlider::resized()
+{
+    Slider::resized();
+    setTextBoxStyle(Slider::TextEntryBoxPosition::TextBoxRight, false, getWidth()/4, getHeight());
+}
+
+
 void WaveTableComponent::paint(Graphics& g)
 {
     g.fillAll(Colour(0xff141010));
@@ -132,7 +139,27 @@ reverbMix(p, REVERB_MIX, " %")
         0x00000000, 0xffffffff, 0xffffffff,
         0xffffffff, 0xFF00CC48, 0xffffffff });
     
-    waveTypeImage.setImage(ImageFileFormat::loadFrom(BinaryData::waveShape_svg, BinaryData::waveShape_svgSize));
+    waveTypeImage.setImage(ImageFileFormat::loadFrom(BinaryData::waveShape_png, BinaryData::waveShape_pngSize));
+    waveShiftImage.setImage(ImageFileFormat::loadFrom(BinaryData::waveShift_png, BinaryData::waveShift_pngSize));
+    waveScaleImage.setImage(ImageFileFormat::loadFrom(BinaryData::waveScale_png, BinaryData::waveScale_pngSize));
+    simulationSpeedImage.setImage(ImageFileFormat::loadFrom(BinaryData::simSpeed_png, BinaryData::simSpeed_pngSize));
+    simulationOffsetImage.setImage(ImageFileFormat::loadFrom(BinaryData::simOffset_png, BinaryData::simOffset_pngSize));
+    simulationAccuracyImage.setImage(ImageFileFormat::loadFrom(BinaryData::simAccuracy_png, BinaryData::simAccuracy_pngSize));
+    //sampleTypeImage.setImage(ImageFileFormat::loadFrom(BinaryData::waveShape_png, BinaryData::waveShape_pngSize));
+    
+    
+    potentialTypeImage1.setImage(ImageFileFormat::loadFrom(BinaryData::potentialShape_png, BinaryData::potentialShape_pngSize));
+    potentialShiftImage1.setImage(ImageFileFormat::loadFrom(BinaryData::potentialShift_png, BinaryData::potentialShift_pngSize));
+    potentialScaleImage1.setImage(ImageFileFormat::loadFrom(BinaryData::potentialScale_png, BinaryData::potentialScale_pngSize));
+    potentialHeightImage1.setImage(ImageFileFormat::loadFrom(BinaryData::potentialHeight_png, BinaryData::potentialHeight_pngSize));
+    potentialTypeImage2.setImage(ImageFileFormat::loadFrom(BinaryData::potentialShape_png, BinaryData::potentialShape_pngSize));
+    potentialShiftImage2.setImage(ImageFileFormat::loadFrom(BinaryData::potentialShift_png, BinaryData::potentialShift_pngSize));
+    potentialScaleImage2.setImage(ImageFileFormat::loadFrom(BinaryData::potentialScale_png, BinaryData::potentialScale_pngSize));
+    potentialHeightImage2.setImage(ImageFileFormat::loadFrom(BinaryData::potentialHeight_png, BinaryData::potentialHeight_pngSize));
+    
+    
+    
+    
 
     
     setLookAndFeel(waveStyle);
@@ -142,9 +169,9 @@ reverbMix(p, REVERB_MIX, " %")
     synthiComponents.forEach([this](auto* c){ c->setLookAndFeel(this->synthiStyle); });
     
     components.forEach([this](auto* c){ this->addAndMakeVisible(c); });
-    addAndMakeVisible(waveTypeImage);
     
     setSize (900, 700);
+    setResizable(true, false);
 }
 
 QSynthiAudioProcessorEditor::~QSynthiAudioProcessorEditor()
@@ -182,28 +209,36 @@ void QSynthiAudioProcessorEditor::resized()
     auto bounds = getLocalBounds();
     int width = bounds.getWidth();
     int height = bounds.getHeight();
+    int border = (width+height) / 250;
     
     // Area for components
-    auto synthiArea = bounds.removeFromRight(width / 3);
+    auto synthiArea = trim(bounds.removeFromRight(width / 3), border);
     auto visualisationArea = bounds.removeFromTop(height / 2);
-    auto waveArea = bounds.removeFromLeft(width / 3);
-    auto potentialArea = bounds;
+    auto waveArea = trim(bounds.removeFromLeft(width / 3), border);
+    auto potentialArea = trim(bounds, border);
     
     waveTable.setBounds(visualisationArea);
     
     // WaveArea
     int waveComponentHeight = waveArea.getHeight() / 8;
     auto waveImageBounds = waveArea.removeFromLeft(waveComponentHeight);
-    waveTypeImage.setBounds(waveImageBounds.removeFromTop(waveComponentHeight));
-
-    FOR_EACH(waveComponents)->setBounds(waveArea.removeFromTop(waveComponentHeight));
+    FOR_EACH(waveImages)->setBounds(trim(waveImageBounds.removeFromTop(waveComponentHeight), border));
+    FOR_EACH(waveComponents)->setBounds(trim(waveArea.removeFromTop(waveComponentHeight), border));
     
     // Potential Area
     int potentialComponentHeight = potentialArea.getHeight() / 8;
-    FOR_EACH(potentialComponents)->setBounds(potentialArea.removeFromTop(potentialComponentHeight));
+    auto potentialImageBounds = potentialArea.removeFromLeft(waveComponentHeight);
+    FOR_EACH(potentialImages)->setBounds(trim(potentialImageBounds.removeFromTop(potentialComponentHeight), border));
+    FOR_EACH(potentialComponents)->setBounds(trim(potentialArea.removeFromTop(potentialComponentHeight), border));
     
-    // Synthi Arey
+    // Synthi Area
     int synthiComponentHeight = synthiArea.getHeight() / 16;
-    FOR_EACH(synthiComponents)->setBounds(synthiArea.removeFromTop(synthiComponentHeight));
+    FOR_EACH(synthiComponents)->setBounds(trim(synthiArea.removeFromTop(synthiComponentHeight), border));
     
+}
+
+Rectangle<int> QSynthiAudioProcessorEditor::trim(Rectangle<int> rect, int amount)
+{
+    
+    return rect.withTrimmedTop(amount).withTrimmedRight(amount).withTrimmedBottom(amount).withTrimmedLeft(amount);
 }
