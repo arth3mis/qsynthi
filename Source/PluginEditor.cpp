@@ -20,6 +20,12 @@ void CustomSlider::resized()
     setTextBoxStyle(Slider::TextEntryBoxPosition::TextBoxRight, false, getWidth()/4, getHeight());
 }
 
+void CustomLabel::resized()
+{
+    Label::resized();
+    setFont(Font("Inter", "Thin", getHeight() - 5));
+}
+
 
 void WaveTableComponent::paint(Graphics& g)
 {
@@ -47,10 +53,16 @@ void WaveTableComponent::paint(Graphics& g)
     
 }
 
+void WaveTableComponent::resized()
+{
+    Component::resized();
+    logo.setBounds(getWidth()/70, getHeight()/25, getWidth(), getHeight()/7);
+}
+
 void WaveTableComponent::drawLine(Graphics& g, Rectangle<int> bounds, list<float> values, ColourGradient gradient)
 {
     double stepSize = (double)bounds.getWidth() / (values.length()-1);
-    double pathScale = 0.7 * bounds.getHeight() / 2;
+    double pathScale = 0.75 * bounds.getHeight() / 2;
     double pathOffset = 1.25 * bounds.getHeight() / 2;
     
     auto lastX = 0;
@@ -59,25 +71,11 @@ void WaveTableComponent::drawLine(Graphics& g, Rectangle<int> bounds, list<float
     path.startNewSubPath(lastX, lastY);
     for (auto i = 1; i < values.length(); ++i)
     {
-        double newX = i * stepSize;
-        double newY = -pathScale * values[i] + pathOffset;
-        
-        
-        
-        path.lineTo(newX, newY);
-        
-
-        //g.setColour(gradient.getColourAtPosition(0.25 * (values[i-1] + values[i]) + 0.5));
-//        g.setColour(Colour(0xFFFF7738));
-        //g.strokePath(path, PathStrokeType(5.f, PathStrokeType::JointStyle::mitered, PathStrokeType::EndCapStyle::butt));
-        //g.drawLine(lastX, lastY, newX, newY, 6.f);
-        
-        
-        lastX = newX;
-        lastY = newY;
+        path.lineTo(i * stepSize, -pathScale * values[i] + pathOffset);
     }
+    
     g.setGradientFill(gradient);
-    g.strokePath(path, PathStrokeType(5.f, PathStrokeType::beveled));
+    g.strokePath(path, PathStrokeType(5.f, PathStrokeType::JointStyle::beveled, PathStrokeType::EndCapStyle::rounded));
 }
 
 void WaveTableComponent::timerCallback() {
@@ -218,6 +216,7 @@ void QSynthiAudioProcessorEditor::resized()
     // WaveArea
     int waveComponentHeight = waveArea.getHeight() / 8;
     auto waveImageBounds = waveArea.removeFromLeft(waveComponentHeight);
+    
     FOR_EACH(waveImages)->setBounds(trim(waveImageBounds.removeFromTop(waveComponentHeight), border));
     FOR_EACH(waveComponents)->setBounds(trim(waveArea.removeFromTop(waveComponentHeight), border));
     

@@ -42,6 +42,17 @@ public:
     AudioProcessorValueTreeState::ComboBoxAttachment attachmentToParameter;
 };
 
+class CustomLabel : public Label
+{
+public:
+    CustomLabel(const String text) : Label(text, text)
+    {
+        
+    }
+    
+    void resized() override;
+};
+
 class WaveTableComponent : public Component, Timer
 {
 public:
@@ -50,13 +61,18 @@ public:
     WaveTableComponent(QSynthiAudioProcessor& p) : Timer(), p(p)
     {
         startTimerHz(30);
+        logo.setImage(ImageFileFormat::loadFrom(BinaryData::logo_png, BinaryData::logo_pngSize), 1);
+        addAndMakeVisible(&logo);
     }
   
     void paint(Graphics& g) override;
-    
+    void resized() override;
     void timerCallback() override;
+    
 private:
     void drawLine(Graphics& g, Rectangle<int> bounds, list<float> values, ColourGradient gradient);
+    
+    ImageComponent logo;
 };
 
 
@@ -83,6 +99,7 @@ private:
     
     WaveTableComponent waveTable;
     
+    CustomLabel waveText{"Schrödingers Welle"};
     CustomComboBox waveType;
     CustomSlider waveShift;
     CustomSlider waveScale;
@@ -127,6 +144,7 @@ private:
     
     
     list<Component*> waveComponents{
+        &waveText,
         &waveType,
         &waveShift,
         &waveScale,
