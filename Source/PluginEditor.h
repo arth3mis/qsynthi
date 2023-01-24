@@ -36,7 +36,7 @@ public:
     attachmentToParameter(p.treeState, parameter, *this)
     {
         addItemList(items, 1);
-        //setSelectedId();
+        setSelectedId(p.treeState.getRawParameterValue(parameter)->load() + 1);
     }
     
     AudioProcessorValueTreeState::ComboBoxAttachment attachmentToParameter;
@@ -99,7 +99,6 @@ private:
     
     WaveTableComponent waveTable;
     
-    CustomLabel waveText{"Schrödingers Welle"};
     CustomComboBox waveType;
     CustomSlider waveShift;
     CustomSlider waveScale;
@@ -117,13 +116,13 @@ private:
     CustomSlider potentialScale2;
     CustomSlider potentialHeight2;
     
-    CustomSlider gain;
     CustomSlider attack;
     CustomSlider decay;
     CustomSlider sustain;
     CustomSlider release;
     CustomSlider stereoize;
     CustomSlider reverbMix;
+    CustomSlider gain;
     
     ImageComponent waveTypeImage;
     ImageComponent waveShiftImage;
@@ -131,7 +130,7 @@ private:
     ImageComponent simulationSpeedImage;
     ImageComponent simulationOffsetImage;
     ImageComponent simulationAccuracyImage;
-    //ImageComponent sampleTypeImage;
+    ImageComponent sampleTypeImage;
     
     ImageComponent potentialTypeImage1;
     ImageComponent potentialShiftImage1;
@@ -142,9 +141,22 @@ private:
     ImageComponent potentialScaleImage2;
     ImageComponent potentialHeightImage2;
     
+    ImageComponent attackImage;
+    ImageComponent decayImage;
+    ImageComponent sustainImage;
+    ImageComponent releaseImage;
+    ImageComponent stereoImage;
+    ImageComponent reverbImage;
+    ImageComponent gainImage;
+    
+    CustomLabel waveText{"Wave settings"};
+    CustomLabel simulationText{"Simulation settings"};
+    CustomLabel potentialText{"Potential settings"};
+    CustomLabel envelopeText{"Envelope settings"};
+    CustomLabel generalText{"General settings"};
+    
     
     list<Component*> waveComponents{
-        &waveText,
         &waveType,
         &waveShift,
         &waveScale,
@@ -166,13 +178,13 @@ private:
     };
     
     list<Component*> synthiComponents{
-        &gain,
         &attack,
         &decay,
         &sustain,
         &release,
         &stereoize,
-        &reverbMix
+        &reverbMix,
+        &gain
     };
     
     list<Component*> waveImages{
@@ -181,7 +193,8 @@ private:
         &waveScaleImage,
         &simulationSpeedImage,
         &simulationOffsetImage,
-        &simulationAccuracyImage
+        &simulationAccuracyImage,
+        &sampleTypeImage
     };
     
     list<Component*> potentialImages{
@@ -195,7 +208,25 @@ private:
         &potentialHeightImage2
     };
     
-    list<Component*> components = list<Component*>{&waveTable} + waveComponents + potentialComponents + synthiComponents + waveImages + potentialImages;
+    list<Component*> synthiImages{
+        &attackImage,
+        &decayImage,
+        &sustainImage,
+        &releaseImage,
+        &stereoImage,
+        &reverbImage,
+        &gainImage
+    };
+    
+    list<Component*> textComponents{
+        &waveText,
+        &simulationText,
+        &potentialText,
+        &envelopeText,
+        &generalText
+    };
+    
+    list<Component*> components = list<Component*>{&waveTable} + waveComponents + potentialComponents + synthiComponents + waveImages + potentialImages + synthiImages + textComponents;
     
     Rectangle<int> trim(Rectangle<int> rect, int amount);
 
