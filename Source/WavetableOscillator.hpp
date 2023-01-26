@@ -45,6 +45,7 @@ public:
 
 private:
     Parameter *parameter = nullptr;
+    bool showFFT = false;  // mirrors parameter on start, stays the same while playing
     
     State state;
     float envelopeLevel = 0;
@@ -58,7 +59,7 @@ private:
     double timestepCountTo = 0;
     void doTimestep(const float dt);
     inline float potential(const size_t x);
-    inline cvec fft(cvec in);
+    inline cvec fft(cvec in, bool forward);
 
     void updateState();
 };
