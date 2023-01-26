@@ -10,7 +10,7 @@
 #include <cmath>
 #include "Wavetable.hpp"
 
-#define POCKETFFT_CACHE_SIZE 1
+#define POCKETFFT_CACHE_SIZE 1000
 #define POCKETFFT_NO_MULTITHREADING
 #include "pocketfft_hdronly.h"
 
