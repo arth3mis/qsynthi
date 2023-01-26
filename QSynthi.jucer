@@ -7,6 +7,22 @@
               pluginAUExportPrefix="QSynthiAU">
   <MAINGROUP id="d0qst2" name="QSynthi">
     <GROUP id="{887AE7C2-BAAB-B9EB-6492-D6F32E89DA10}" name="Source">
+      <GROUP id="{139A5DCF-61E6-B416-010F-17CA00BEB4CF}" name="img">
+        <FILE id="qyrm7Z" name="potentialHeight.png" compile="0" resource="1"
+              file="Source/img/potentialHeight.png"/>
+        <FILE id="qHdNWP" name="potentialScale.png" compile="0" resource="1"
+              file="Source/img/potentialScale.png"/>
+        <FILE id="bWPbuw" name="potentialShape.png" compile="0" resource="1"
+              file="Source/img/potentialShape.png"/>
+        <FILE id="Gt4ykH" name="potentialShift.png" compile="0" resource="1"
+              file="Source/img/potentialShift.png"/>
+        <FILE id="CACqvy" name="simAccuracy.png" compile="0" resource="1" file="Source/img/simAccuracy.png"/>
+        <FILE id="U20rue" name="simOffset.png" compile="0" resource="1" file="Source/img/simOffset.png"/>
+        <FILE id="YYBA00" name="simSpeed.png" compile="0" resource="1" file="Source/img/simSpeed.png"/>
+        <FILE id="IwDCtA" name="waveScale.png" compile="0" resource="1" file="Source/img/waveScale.png"/>
+        <FILE id="JWCgMP" name="waveShape.png" compile="0" resource="1" file="Source/img/waveShape.png"/>
+        <FILE id="U4INI3" name="waveShift.png" compile="0" resource="1" file="Source/img/waveShift.png"/>
+      </GROUP>
       <FILE id="aBaJFT" name="WavetablePlot.cpp" compile="1" resource="0"
             file="Source/WavetablePlot.cpp"/>
       <FILE id="C2GILi" name="WavetablePlot.h" compile="0" resource="0" file="Source/WavetablePlot.h"/>
