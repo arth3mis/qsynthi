@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="YctFDe" name="QSynthi" projectType="audioplug" useAppConfig="1"
+              addUsingNamespaceToJuceHeader="1" displaySplashScreen="1" jucerFormatVersion="1"
+              companyName="AJ" pluginCharacteristicsValue="pluginIsSynth,pluginProducesMidiOut,pluginWantsMidiIn">
+  <MAINGROUP id="BfkBYy" name="QSynthi">
+    <GROUP id="{EC3B5050-0D9F-0939-FDAB-6AB6467EEA47}" name="img">
+      <FILE id="Q3SQfQ" name="attack.png" compile="0" resource="1" file="Source/img/attack.png"/>
+      <FILE id="vwacq6" name="decay.png" compile="0" resource="1" file="Source/img/decay.png"/>
+      <FILE id="Tg0xII" name="filter.png" compile="0" resource="1" file="Source/img/filter.png"/>
+      <FILE id="D2zliN" name="gian.png" compile="0" resource="1" file="Source/img/gian.png"/>
+      <FILE id="NcRM01" name="logo.png" compile="0" resource="1" file="Source/img/logo.png"/>
+      <FILE id="fxEJXT" name="potentialHeight.png" compile="0" resource="1"
+            file="Source/img/potentialHeight.png"/>
+      <FILE id="uloikY" name="potentialScale.png" compile="0" resource="1"
+            file="Source/img/potentialScale.png"/>
+      <FILE id="BmyyKz" name="potentialShape.png" compile="0" resource="1"
+            file="Source/img/potentialShape.png"/>
+      <FILE id="QD7d3Q" name="potentialShift.png" compile="0" resource="1"
+            file="Source/img/potentialShift.png"/>
+      <FILE id="N9BfaB" name="release.png" compile="0" resource="1" file="Source/img/release.png"/>
+      <FILE id="LMeDQM" name="reverb.png" compile="0" resource="1" file="Source/img/reverb.png"/>
+      <FILE id="z3Mbcn" name="simAccuracy.png" compile="0" resource="1" file="Source/img/simAccuracy.png"/>
+      <FILE id="PolmTl" name="simOffset.png" compile="0" resource="1" file="Source/img/simOffset.png"/>
+      <FILE id="aYDZEE" name="simSpeed.png" compile="0" resource="1" file="Source/img/simSpeed.png"/>
+      <FILE id="uLqUU5" name="stereo.png" compile="0" resource="1" file="Source/img/stereo.png"/>
+      <FILE id="nhKIbK" name="sustain.png" compile="0" resource="1" file="Source/img/sustain.png"/>
+      <FILE id="Vynotw" name="waveScale.png" compile="0" resource="1" file="Source/img/waveScale.png"/>
+      <FILE id="cTEKyU" name="waveShape.png" compile="0" resource="1" file="Source/img/waveShape.png"/>
+      <FILE id="YZWPBi" name="waveShift.png" compile="0" resource="1" file="Source/img/waveShift.png"/>
+    </GROUP>
+    <GROUP id="{44F51F24-FCD1-DAA9-C595-861060811641}" name="Source">
+      <GROUP id="{9AD71E07-775F-9991-E252-5A9E70909C9E}" name="Plugin">
+        <FILE id="nBZex3" name="Parameter.cpp" compile="1" resource="0" file="Source/Parameter.cpp"/>
+        <FILE id="W1XT1u" name="Parameter.h" compile="0" resource="0" file="Source/Parameter.h"/>
+        <FILE id="zd4d5w" name="PluginEditor.cpp" compile="1" resource="0"
+              file="Source/PluginEditor.cpp"/>
+        <FILE id="nSzaZC" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
+        <FILE id="AtsrQu" name="PluginProcessor.cpp" compile="1" resource="0"
+              file="Source/PluginProcessor.cpp"/>
+        <FILE id="J5uKV1" name="PluginProcessor.h" compile="0" resource="0"
+              file="Source/PluginProcessor.h"/>
+      </GROUP>
+      <GROUP id="{19520E40-E9EB-3164-8271-9982B9DBCB5A}" name="Synthesizer">
+        <FILE id="XTJJTT" name="QSynthi.cpp" compile="1" resource="0" file="Source/QSynthi.cpp"/>
+        <FILE id="XFmyw0" name="QSynthi.hpp" compile="0" resource="0" file="Source/QSynthi.hpp"/>
+        <FILE id="WMEU45" name="Wavetable.cpp" compile="1" resource="0" file="Source/Wavetable.cpp"/>
+        <FILE id="caOCbt" name="Wavetable.hpp" compile="0" resource="0" file="Source/Wavetable.hpp"/>
+        <FILE id="Y9WBQd" name="WavetableOscillator.cpp" compile="1" resource="0"
+              file="Source/WavetableOscillator.cpp"/>
+        <FILE id="gVdfCF" name="WavetableOscillator.hpp" compile="0" resource="0"
+              file="Source/WavetableOscillator.hpp"/>
+        <FILE id="fwpnMQ" name="WavetablePlot.cpp" compile="1" resource="0"
+              file="Source/WavetablePlot.cpp"/>
+        <FILE id="c8wSRe" name="WavetablePlot.h" compile="0" resource="0" file="Source/WavetablePlot.h"/>
+      </GROUP>
+      <GROUP id="{28194DBA-EDCE-8A1F-FBFA-1671DD13D9EC}" name="Util">
+        <FILE id="soJ4g6" name="pocketfft_hdronly.h" compile="0" resource="0"
+              file="Source/pocketfft_hdronly.h"/>
+        <FILE id="yCCOoF" name="list.hpp" compile="0" resource="0" file="Source/list.hpp"/>
+      </GROUP>
+    </GROUP>
+  </MAINGROUP>
+  <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_VST3_CAN_REPLACE_VST2="0"/>
+  <EXPORTFORMATS>
+    <XCODE_MAC targetFolder="Builds/MacOSX">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="QSynthi"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="QSynthi"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_audio_basics" path="../../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_plugin_client" path="../../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="../../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_dsp" path="../../../../../JUCE/modules"/>
+      </MODULEPATHS>
+    </XCODE_MAC>
+    <VS2019 targetFolder="Builds/VisualStudio2019">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug"/>
+        <CONFIGURATION isDebug="0" name="Release"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_audio_basics" path="~/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="~/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="~/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_plugin_client" path="~/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="~/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="~/JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="~/JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="~/JUCE/modules"/>
+        <MODULEPATH id="juce_dsp" path="~/JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="~/JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="~/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="~/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="~/JUCE/modules"/>
+      </MODULEPATHS>
+    </VS2019>
+  </EXPORTFORMATS>
+  <MODULES>
+    <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_plugin_client" showAllCode="1" useLocalCopy="0"
+            useGlobalPath="1"/>
+    <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_dsp" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+  </MODULES>
+</JUCERPROJECT>

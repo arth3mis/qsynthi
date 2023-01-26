@@ -109,10 +109,9 @@ void Parameter::update(AudioProcessorValueTreeState& treeState, float sampleRate
     const auto p1 = Wavetable::generate(GET(POTENTIAL_TYPE1), GET(POTENTIAL_SHIFT1), GET(POTENTIAL_SCALE1));
     const auto p2 = Wavetable::generate(GET(POTENTIAL_TYPE2), GET(POTENTIAL_SHIFT2), GET(POTENTIAL_SCALE2));
     potential = p1.zip(p2)
-        .map([](cfloat a, cfloat b) { return a + b; })
-        .mapTo<float>([potentialAmount1, potentialAmount2](cfloat v)
-            {
-                return 10.f * potentialAmount1 * potentialAmount2 * std::real(v);
+        .mapTo<float>([potentialAmount1, potentialAmount2](cfloat a, cfloat b) 
+            { 
+                return potentialAmount1 * std::real(a) + potentialAmount2 * std::real(b); 
             });
     
     samplesPerTimestep  = sampleRate / (accuracy * simulationSpeed);
