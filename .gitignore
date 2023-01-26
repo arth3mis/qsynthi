@@ -2,3 +2,4 @@ Builds/
 JuceLibraryCode/
 **/*.DS_Store
 .vs/
+QSynthi.juces

@@ -53,7 +53,7 @@ void WavetableOscillator::doTimestep(const float dt)
         v = fft(v);
 
         // "timestepT"
-        const float PRE = powf(2 * PI / n, 2);
+        const float PRE = powf(Wavetable::TWO_PI / n, 2);
         for (size_t i = 1; i < n / 2; i++)
         {
             v[i] *= std::polar(1.f, PRE * i * i * dtHalf);
@@ -63,7 +63,7 @@ void WavetableOscillator::doTimestep(const float dt)
         if (!parameter->showFFT)
             v = fft(v);
     }
-
+    
     waveTable = list(v);
 }
 
