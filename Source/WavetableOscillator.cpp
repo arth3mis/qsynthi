@@ -14,8 +14,6 @@
 #define POCKETFFT_NO_MULTITHREADING
 #include "pocketfft_hdronly.h"
 
-#define PI 3.1415926f
-
 // Sowas geht
 //namespace wvt = wavetable;
 
@@ -49,11 +47,11 @@ void WavetableOscillator::doTimestep(const float dt)
     v = fft(v, true);
 
     // "timestepT"
-    const float PRE = powf(2 * PI / n, 2);
+    const float PRE = powf(Wavetable::TWO_PI / n, 2) * dt;
     for (size_t i = 0; i < n / 2; i++)
     {
-        v[i] *= std::polar(1.f, PRE * i * i * dt);
-        v[n - i - 1] *= std::polar(1.f, PRE * i * i * dt);
+        v[i]         *= std::polar(1.f, PRE * i * i);
+        v[n - (i+1)] *= std::polar(1.f, PRE * (i+1) * (i+1));
     }
 
     if (!showFFT)
