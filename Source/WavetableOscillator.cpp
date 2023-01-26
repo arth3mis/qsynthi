@@ -39,7 +39,7 @@ void WavetableOscillator::doTimestep(const float dt)
 
 
         // "timestepV"
-    for (size_t i = 1; i < n - 1; i++)
+    for (size_t i = 0; i < n; i++)
     {
         v[i] *= std::polar(1.f, dt * potential(i));
     }
@@ -48,11 +48,11 @@ void WavetableOscillator::doTimestep(const float dt)
 
     // "timestepT"
     const float PRE = powf(Wavetable::TWO_PI / n, 2) * dt;
-    for (size_t i = 1; i < n / 2; i++)
+    for (size_t i = 0; i < n / 2; i++)
     {
-        const float theta = PRE * i * i;
-        v[i] *= std::polar(1.f, theta);
-        v[n - i] *= std::polar(1.f, theta);
+        const cfloat c = std::polar(1.f, PRE * i * i);
+        v[i]         *= c;
+        v[n - i - 1] *= c;
     }
 
     if (!showFFT)
