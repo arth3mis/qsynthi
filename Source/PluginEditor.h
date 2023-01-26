@@ -18,13 +18,15 @@
 class CustomSlider : public Slider
 {
 public:
-    CustomSlider(QSynthiAudioProcessor& p, const String parameter) : Slider(Slider::SliderStyle::LinearHorizontal, Slider::TextEntryBoxPosition::TextBoxRight),
+    CustomSlider(QSynthiAudioProcessor& p, const String parameter, const String suffix) : Slider(Slider::SliderStyle::LinearHorizontal, Slider::TextEntryBoxPosition::TextBoxRight),
     attachmentToParameter(p.treeState, parameter, *this)
     {
-        
+        setTextValueSuffix(suffix);
     }
     
     AudioProcessorValueTreeState::SliderAttachment attachmentToParameter;
+
+    void resized() override;
 };
 
 class CustomComboBox : public ComboBox
@@ -34,10 +36,21 @@ public:
     attachmentToParameter(p.treeState, parameter, *this)
     {
         addItemList(items, 1);
-        setSelectedId(1);
+        setSelectedId(p.treeState.getRawParameterValue(parameter)->load() + 1);
     }
     
     AudioProcessorValueTreeState::ComboBoxAttachment attachmentToParameter;
+};
+
+class CustomLabel : public Label
+{
+public:
+    CustomLabel(const String text) : Label(text, text)
+    {
+        
+    }
+    
+    void resized() override;
 };
 
 class WaveTableComponent : public Component, Timer
@@ -48,13 +61,18 @@ public:
     WaveTableComponent(QSynthiAudioProcessor& p) : Timer(), p(p)
     {
         startTimerHz(30);
+        logo.setImage(ImageFileFormat::loadFrom(BinaryData::logo_png, BinaryData::logo_pngSize), 1);
+        addAndMakeVisible(&logo);
     }
   
     void paint(Graphics& g) override;
-    
+    void resized() override;
     void timerCallback() override;
+    
 private:
     void drawLine(Graphics& g, Rectangle<int> bounds, list<float> values, ColourGradient gradient);
+    
+    ImageComponent logo;
 };
 
 
@@ -98,13 +116,44 @@ private:
     CustomSlider potentialScale2;
     CustomSlider potentialHeight2;
     
-    CustomSlider gain;
     CustomSlider attack;
     CustomSlider decay;
     CustomSlider sustain;
     CustomSlider release;
     CustomSlider stereoize;
     CustomSlider reverbMix;
+    CustomSlider gain;
+    
+    ImageComponent waveTypeImage;
+    ImageComponent waveShiftImage;
+    ImageComponent waveScaleImage;
+    ImageComponent simulationSpeedImage;
+    ImageComponent simulationOffsetImage;
+    ImageComponent simulationAccuracyImage;
+    ImageComponent sampleTypeImage;
+    
+    ImageComponent potentialTypeImage1;
+    ImageComponent potentialShiftImage1;
+    ImageComponent potentialScaleImage1;
+    ImageComponent potentialHeightImage1;
+    ImageComponent potentialTypeImage2;
+    ImageComponent potentialShiftImage2;
+    ImageComponent potentialScaleImage2;
+    ImageComponent potentialHeightImage2;
+    
+    ImageComponent attackImage;
+    ImageComponent decayImage;
+    ImageComponent sustainImage;
+    ImageComponent releaseImage;
+    ImageComponent stereoImage;
+    ImageComponent reverbImage;
+    ImageComponent gainImage;
+    
+    CustomLabel waveText{"Wave settings"};
+    CustomLabel simulationText{"Simulation settings"};
+    CustomLabel potentialText{"Potential settings"};
+    CustomLabel envelopeText{"Envelope settings"};
+    CustomLabel generalText{"General settings"};
     
     
     list<Component*> waveComponents{
@@ -129,16 +178,57 @@ private:
     };
     
     list<Component*> synthiComponents{
-        &gain,
         &attack,
         &decay,
         &sustain,
         &release,
         &stereoize,
-        &reverbMix
+        &reverbMix,
+        &gain
     };
     
-    list<Component*> components = list<Component*>{&waveTable} + waveComponents + potentialComponents + synthiComponents;
+    list<Component*> waveImages{
+        &waveTypeImage,
+        &waveShiftImage,
+        &waveScaleImage,
+        &simulationSpeedImage,
+        &simulationOffsetImage,
+        &simulationAccuracyImage,
+        &sampleTypeImage
+    };
+    
+    list<Component*> potentialImages{
+        &potentialTypeImage1,
+        &potentialShiftImage1,
+        &potentialScaleImage1,
+        &potentialHeightImage1,
+        &potentialTypeImage2,
+        &potentialShiftImage2,
+        &potentialScaleImage2,
+        &potentialHeightImage2
+    };
+    
+    list<Component*> synthiImages{
+        &attackImage,
+        &decayImage,
+        &sustainImage,
+        &releaseImage,
+        &stereoImage,
+        &reverbImage,
+        &gainImage
+    };
+    
+    list<Component*> textComponents{
+        &waveText,
+        &simulationText,
+        &potentialText,
+        &envelopeText,
+        &generalText
+    };
+    
+    list<Component*> components = list<Component*>{&waveTable} + waveComponents + potentialComponents + synthiComponents + waveImages + potentialImages + synthiImages + textComponents;
+    
+    Rectangle<int> trim(Rectangle<int> rect, int amount);
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (QSynthiAudioProcessorEditor)
 };

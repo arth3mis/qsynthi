@@ -9,8 +9,26 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 #include "Wavetable.hpp"
+#include "BinaryData.h"
 
 #define FOR_EACH(list) for (size_t i = 0; i < list.length(); i++) list[i]
+
+#define LINE(i, iconList, componentList, area) iconList[i]->setBounds(trim(area.withTrimmedBottom(area.getHeight() - lineHeight).withTrimmedRight(area.getWidth() - lineHeight), border)); componentList[i]->setBounds(trim(area.removeFromTop(lineHeight).withTrimmedLeft(lineHeight), border));
+
+#define TEXT(textComponent, area) textComponent.setBounds(area.removeFromTop(lineHeight).withTrimmedTop(border/2))
+
+
+void CustomSlider::resized()
+{
+    Slider::resized();
+    setTextBoxStyle(Slider::TextEntryBoxPosition::TextBoxRight, false, getWidth()/4, getHeight());
+}
+
+void CustomLabel::resized()
+{
+    Label::resized();
+    setFont(Font("Inter", "Thin", getHeight() - 5));
+}
 
 
 void WaveTableComponent::paint(Graphics& g)
@@ -18,17 +36,14 @@ void WaveTableComponent::paint(Graphics& g)
     g.fillAll(Colour(0xff141010));
     
     // Draw Potential
-    ColourGradient potentialGradient = ColourGradient();
-    potentialGradient.addColour(0, Colour(0xFF9F1CA9));
-    potentialGradient.addColour(0.5, Colour(0xFF00669E));
-    potentialGradient.addColour(1, Colour(0xFF00D1BB));
+    ColourGradient potentialGradient (Colour(0xFF3AF4D0), 0.55f * getBounds().getWidth(), 0.33f * getBounds().getHeight(), Colour(0xFF4618D8), 0.45f * getBounds().getWidth(), 1.f * getBounds().getHeight(), false);
+    potentialGradient.addColour(0.5, Colour(0xFF00D1BB));
     drawLine(g, getBounds(), p.parameter->potential, potentialGradient);
     
+    
     // Draw Wave
-    ColourGradient waveGradient = ColourGradient();
-    waveGradient.addColour(0, Colour(0xFFFF3747));
+    ColourGradient waveGradient (Colour(0xFFF7BD2A), 0.55f * getBounds().getWidth(), 0.25f * getBounds().getHeight(), Colour(0xFFFF3747), 0.45f * getBounds().getWidth(), getBounds().getHeight(), false);
     waveGradient.addColour(0.5, Colour(0xFFFF7738));
-    waveGradient.addColour(1, Colour(0xFFF7BD2A));
     
     list<cfloat> waveTable;
     auto sampleConversion = p.parameter->getSampleConverter();
@@ -42,28 +57,29 @@ void WaveTableComponent::paint(Graphics& g)
     
 }
 
+void WaveTableComponent::resized()
+{
+    Component::resized();
+    logo.setBounds(getWidth()/70, getHeight()/25, getWidth(), getHeight()/7);
+}
+
 void WaveTableComponent::drawLine(Graphics& g, Rectangle<int> bounds, list<float> values, ColourGradient gradient)
 {
-    auto pathWidth = bounds.getWidth();
-    auto stepSize = pathWidth / (values.length()-1);
-    auto pathScale = 0.6 * bounds.getHeight() / 2;
-    auto pathOffset = 1.25 * bounds.getHeight() / 2;
+    double stepSize = (double)bounds.getWidth() / (values.length()-1);
+    double pathScale = 0.74 * bounds.getHeight() / 2;
+    double pathOffset = 1.174 * bounds.getHeight() / 2;
     
     auto lastX = 0;
     auto lastY = -pathScale * values[0] + pathOffset;
-    
+    Path path;
+    path.startNewSubPath(lastX, lastY);
     for (auto i = 1; i < values.length(); ++i)
     {
-        double newX = i * stepSize;
-        double newY = -pathScale * values[i] + pathOffset;
-        
-        g.setColour(gradient.getColourAtPosition(0.25 * (values[i-1] + values[i]) + 0.5));
-//        g.setColour(Colour(0xFFFF7738));
-        g.drawLine(lastX, lastY, newX, newY, 4.5f);
-        
-        lastX = newX;
-        lastY = newY;
+        path.lineTo(i * stepSize, -pathScale * values[i] + pathOffset);
     }
+    
+    g.setGradientFill(gradient);
+    g.strokePath(path, PathStrokeType(5.f, PathStrokeType::JointStyle::beveled, PathStrokeType::EndCapStyle::rounded));
 }
 
 void WaveTableComponent::timerCallback() {
@@ -79,29 +95,29 @@ QSynthiAudioProcessorEditor::QSynthiAudioProcessorEditor (QSynthiAudioProcessor&
 waveTable(p),
 
 waveType(p, WAVE_TYPE, Parameter::WAVE_TYPES),
-waveShift(p, WAVE_SHIFT),
-waveScale(p, WAVE_SCALE),
-simulationSpeed(p, SIMULATION_SPEED),
-simulationOffset(p, SIMULATION_OFFSET),
-simulationAccuracy(p, ACCURACY),
+waveShift(p, WAVE_SHIFT, ""),
+waveScale(p, WAVE_SCALE, ""),
+simulationSpeed(p, SIMULATION_SPEED, " x"),
+simulationOffset(p, SIMULATION_OFFSET, ""),
+simulationAccuracy(p, ACCURACY, ""),
 sampleType(p, SAMPLE_TYPE, Parameter::SAMPLE_TYPES),
 
 potentialType1(p, POTENTIAL_TYPE1, Parameter::WAVE_TYPES),
-potentialShift1(p, POTENTIAL_SHIFT1),
-potentialScale1(p, POTENTIAL_SCALE1),
-potentialHeight1(p, POTENTIAL_AMOUNT1),
+potentialShift1(p, POTENTIAL_SHIFT1, ""),
+potentialScale1(p, POTENTIAL_SCALE1, ""),
+potentialHeight1(p, POTENTIAL_AMOUNT1, ""),
 potentialType2(p, POTENTIAL_TYPE2, Parameter::WAVE_TYPES),
-potentialShift2(p, POTENTIAL_SHIFT2),
-potentialScale2(p, POTENTIAL_SCALE2),
-potentialHeight2(p, POTENTIAL_AMOUNT2),
+potentialShift2(p, POTENTIAL_SHIFT2, ""),
+potentialScale2(p, POTENTIAL_SCALE2, ""),
+potentialHeight2(p, POTENTIAL_AMOUNT2, ""),
 
-gain(p, GAIN),
-attack(p, ATTACK_TIME),
-decay(p, DECAY_TIME),
-sustain(p, SUSTAIN_LEVEL),
-release(p, RELEASE_TIME),
-stereoize(p, STEREO_AMOUNT),
-reverbMix(p, REVERB_MIX)
+attack(p, ATTACK_TIME, " ms"),
+decay(p, DECAY_TIME, " ms"),
+sustain(p, SUSTAIN_LEVEL, " dB"),
+release(p, RELEASE_TIME, " ms"),
+stereoize(p, STEREO_AMOUNT, " %"),
+reverbMix(p, REVERB_MIX, " %"),
+gain(p, GAIN, " dB")
 {
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
@@ -121,7 +137,38 @@ reverbMix(p, REVERB_MIX)
         0x00000000, 0xffffffff, 0xffffffff,
         0xffffffff, 0xFF00CC48, 0xffffffff });
     
+    waveTypeImage.setImage(ImageFileFormat::loadFrom(BinaryData::waveShape_png, BinaryData::waveShape_pngSize));
+    waveShiftImage.setImage(ImageFileFormat::loadFrom(BinaryData::waveShift_png, BinaryData::waveShift_pngSize));
+    waveScaleImage.setImage(ImageFileFormat::loadFrom(BinaryData::waveScale_png, BinaryData::waveScale_pngSize));
+    simulationSpeedImage.setImage(ImageFileFormat::loadFrom(BinaryData::simSpeed_png, BinaryData::simSpeed_pngSize));
+    simulationOffsetImage.setImage(ImageFileFormat::loadFrom(BinaryData::simOffset_png, BinaryData::simOffset_pngSize));
+    simulationAccuracyImage.setImage(ImageFileFormat::loadFrom(BinaryData::simAccuracy_png, BinaryData::simAccuracy_pngSize));
+    sampleTypeImage.setImage(ImageFileFormat::loadFrom(BinaryData::filter_png, BinaryData::filter_pngSize));
+    
+    
+    potentialTypeImage1.setImage(ImageFileFormat::loadFrom(BinaryData::potentialShape_png, BinaryData::potentialShape_pngSize));
+    potentialShiftImage1.setImage(ImageFileFormat::loadFrom(BinaryData::potentialShift_png, BinaryData::potentialShift_pngSize));
+    potentialScaleImage1.setImage(ImageFileFormat::loadFrom(BinaryData::potentialScale_png, BinaryData::potentialScale_pngSize));
+    potentialHeightImage1.setImage(ImageFileFormat::loadFrom(BinaryData::potentialHeight_png, BinaryData::potentialHeight_pngSize));
+    potentialTypeImage2.setImage(ImageFileFormat::loadFrom(BinaryData::potentialShape_png, BinaryData::potentialShape_pngSize));
+    potentialShiftImage2.setImage(ImageFileFormat::loadFrom(BinaryData::potentialShift_png, BinaryData::potentialShift_pngSize));
+    potentialScaleImage2.setImage(ImageFileFormat::loadFrom(BinaryData::potentialScale_png, BinaryData::potentialScale_pngSize));
+    potentialHeightImage2.setImage(ImageFileFormat::loadFrom(BinaryData::potentialHeight_png, BinaryData::potentialHeight_pngSize));
+    
+    
+    attackImage.setImage(ImageFileFormat::loadFrom(BinaryData::attack_png, BinaryData::attack_pngSize));
+    decayImage.setImage(ImageFileFormat::loadFrom(BinaryData::decay_png, BinaryData::decay_pngSize));
+    sustainImage.setImage(ImageFileFormat::loadFrom(BinaryData::sustain_png, BinaryData::sustain_pngSize));
+    releaseImage.setImage(ImageFileFormat::loadFrom(BinaryData::release_png, BinaryData::release_pngSize));
+    stereoImage.setImage(ImageFileFormat::loadFrom(BinaryData::stereo_png, BinaryData::stereo_pngSize));
+    reverbImage.setImage(ImageFileFormat::loadFrom(BinaryData::reverb_png, BinaryData::reverb_pngSize));
+    gainImage.setImage(ImageFileFormat::loadFrom(BinaryData::gian_png, BinaryData::gian_pngSize));
+    
+    
+    
+    
 
+    
     setLookAndFeel(waveStyle);
     
     waveComponents.forEach([this](auto* c){ c->setLookAndFeel(this->waveStyle); });
@@ -129,8 +176,9 @@ reverbMix(p, REVERB_MIX)
     synthiComponents.forEach([this](auto* c){ c->setLookAndFeel(this->synthiStyle); });
     
     components.forEach([this](auto* c){ this->addAndMakeVisible(c); });
-
+    
     setSize (900, 700);
+    setResizable(true, false);
 }
 
 QSynthiAudioProcessorEditor::~QSynthiAudioProcessorEditor()
@@ -154,7 +202,8 @@ void QSynthiAudioProcessorEditor::paint (Graphics& g)
 /*
     g.setColour (Colours::white);
     g.setFont (15.0f);
-    g.drawFittedText ("Hello World!", getLocalBounds(), Justification::centred, 1);*/
+g.drawFittedText ("Hello World!", getLocalBounds(), Justification::centred, 1);*/
+
 
 }
 
@@ -167,25 +216,56 @@ void QSynthiAudioProcessorEditor::resized()
     auto bounds = getLocalBounds();
     int width = bounds.getWidth();
     int height = bounds.getHeight();
+    int border = (width+height) / 250;
     
     // Area for components
-    auto synthiArea = bounds.removeFromRight(width / 3);
-    auto visualisationArea = bounds.removeFromTop(height / 2);
-    auto waveArea = bounds.removeFromLeft(width / 3);
-    auto potentialArea = bounds;
+    auto synthiArea = trim(bounds.removeFromRight(width / 3), border);
+    auto visualisationArea = bounds.removeFromTop((int) (height * 8.0 / (8.0 + 9.0)));
+    auto waveArea = trim(bounds.removeFromLeft(width / 3), border);
+    auto potentialArea = trim(bounds, border);
     
     waveTable.setBounds(visualisationArea);
+    int lineHeight = waveArea.getHeight() / 9;
     
     // WaveArea
-    int waveComponentHeight = waveArea.getHeight() / 8;
-    FOR_EACH(waveComponents)->setBounds(waveArea.removeFromTop(waveComponentHeight));
+    TEXT(waveText, waveArea);
+    LINE(0, waveImages, waveComponents, waveArea);
+    LINE(1, waveImages, waveComponents, waveArea);
+    LINE(2, waveImages, waveComponents, waveArea);
+    
+    TEXT(simulationText, waveArea);
+    LINE(3, waveImages, waveComponents, waveArea);
+    LINE(4, waveImages, waveComponents, waveArea);
+    LINE(5, waveImages, waveComponents, waveArea);
+    LINE(6, waveImages, waveComponents, waveArea);
     
     // Potential Area
-    int potentialComponentHeight = potentialArea.getHeight() / 8;
-    FOR_EACH(potentialComponents)->setBounds(potentialArea.removeFromTop(potentialComponentHeight));
+    TEXT(potentialText, potentialArea);
+    LINE(0, potentialImages, potentialComponents, potentialArea);
+    LINE(1, potentialImages, potentialComponents, potentialArea);
+    LINE(2, potentialImages, potentialComponents, potentialArea);
+    LINE(3, potentialImages, potentialComponents, potentialArea);
+    LINE(4, potentialImages, potentialComponents, potentialArea);
+    LINE(5, potentialImages, potentialComponents, potentialArea);
+    LINE(6, potentialImages, potentialComponents, potentialArea);
+    LINE(7, potentialImages, potentialComponents, potentialArea);
     
-    // Synthi Arey
-    int synthiComponentHeight = synthiArea.getHeight() / 16;
-    FOR_EACH(synthiComponents)->setBounds(synthiArea.removeFromTop(synthiComponentHeight));
+    // Synthi Area
+    TEXT(envelopeText, synthiArea);
+    LINE(0, synthiImages, synthiComponents, synthiArea);
+    LINE(1, synthiImages, synthiComponents, synthiArea);
+    LINE(2, synthiImages, synthiComponents, synthiArea);
+    LINE(3, synthiImages, synthiComponents, synthiArea);
     
+    TEXT(generalText, synthiArea);
+    LINE(4, synthiImages, synthiComponents, synthiArea);
+    LINE(5, synthiImages, synthiComponents, synthiArea);
+    LINE(6, synthiImages, synthiComponents, synthiArea);
+
+}
+
+Rectangle<int> QSynthiAudioProcessorEditor::trim(Rectangle<int> rect, int amount)
+{
+    
+    return rect.withTrimmedTop(amount).withTrimmedRight(amount).withTrimmedBottom(amount).withTrimmedLeft(amount);
 }
