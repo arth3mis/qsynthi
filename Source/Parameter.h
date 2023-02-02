@@ -42,6 +42,11 @@
 #define SAMPLE_TYPE "Sample Type"
 #define SHOW_FFT "FFT"
 
+#define FILTER_FREQUENCY "Filter Frequency"
+#define FILTER_RESONANCE "Filter Resonance"
+#define FILTER_ENVELOPE "Filter Envelope Amount"
+#define FILTER_KEY_TRACK "Filter Key Track"
+
 #define STEREO_AMOUNT "Stereoize"
 
 #define REVERB_MIX "Reverb Mix"
@@ -72,9 +77,9 @@ class Parameter
 {
 public:
     // Envelope Constants
-    static constexpr float ATTACK_THRESHOLD = 1 - 0.05f;
-    static constexpr float DECAY_THRESHOLD = 0.01f;
-    static constexpr float RELEASE_THRESHOLD = 0.005f;
+    static constexpr float ATTACK_THRESHOLD = 1.f;
+    static constexpr float DECAY_THRESHOLD = 0.05f;
+    static constexpr float RELEASE_THRESHOLD = 0.05f;
     
     static const StringArray WAVE_TYPES;
     static const StringArray SAMPLE_TYPES;
@@ -87,6 +92,11 @@ public:
     float decayFactor = 0;
     float sustainLevel = 0;
     float releaseFactor = 0;
+    
+    // Filter
+    float filterFreq = 500;
+    float filterQ = 1;
+    float filterEnvelope = 4;
     
     // Waveforms
     int waveTypeNumber = 0;

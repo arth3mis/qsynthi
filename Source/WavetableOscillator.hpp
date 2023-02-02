@@ -39,20 +39,25 @@ public:
     void noteOff();
     
     inline bool isPlaying() { return state != State::SLEEP; }
-
+    
     float getPhase();
     float getNextSample();
-
+    
 private:
+    float sampleRate;
+    
     Parameter *parameter = nullptr;
     bool showFFT = false;  // mirrors parameter on start, stays the same while playing
     
     State state;
     float envelopeLevel = 0;
     float velocityLevel = 0;
-
+    
     float phase = 0;
     float phaseIncrement = 0;
+    
+    // Filter
+    SingleThreadedIIRFilter* filter;
 
     // Schrödinger
     double timestepCounter = 0;

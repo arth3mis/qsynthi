@@ -36,8 +36,8 @@ void WaveTableComponent::paint(Graphics& g)
     g.fillAll(Colour(0xff141010));
     
     // Draw Potential
-    ColourGradient potentialGradient (Colour(0xFF3AF4D0), 0.55f * getBounds().getWidth(), 0.33f * getBounds().getHeight(), Colour(0xFF4618D8), 0.45f * getBounds().getWidth(), 1.f * getBounds().getHeight(), false);
-    potentialGradient.addColour(0.5, Colour(0xFF00D1BB));
+    ColourGradient potentialGradient (Colour(0xFF43F7B9), 0.55f * getBounds().getWidth(), 0.25f * getBounds().getHeight(), Colour(0xFF4618D8), 0.45f * getBounds().getWidth(), 1.f * getBounds().getHeight(), false);
+    potentialGradient.addColour(0.4, Colour(0xFF00D1BB));
     drawLine(g, getBounds(), p.parameter->potential, potentialGradient);
     
     
@@ -66,7 +66,7 @@ void WaveTableComponent::resized()
 void WaveTableComponent::drawLine(Graphics& g, Rectangle<int> bounds, list<float> values, ColourGradient gradient)
 {
     double stepSize = (double)bounds.getWidth() / (values.length()-1);
-    double pathScale = 0.74 * bounds.getHeight() / 2;
+    double pathScale = 0.7 * bounds.getHeight() / 2;
     double pathOffset = 1.174 * bounds.getHeight() / 2;
     
     auto lastX = 0;
@@ -111,13 +111,18 @@ potentialShift2(p, POTENTIAL_SHIFT2, ""),
 potentialScale2(p, POTENTIAL_SCALE2, ""),
 potentialHeight2(p, POTENTIAL_AMOUNT2, ""),
 
-attack(p, ATTACK_TIME, " ms"),
-decay(p, DECAY_TIME, " ms"),
-sustain(p, SUSTAIN_LEVEL, " dB"),
-release(p, RELEASE_TIME, " ms"),
-stereoize(p, STEREO_AMOUNT, " %"),
-reverbMix(p, REVERB_MIX, " %"),
-gain(p, GAIN, " dB")
+attack(p, ATTACK_TIME, "s"),
+decay(p, DECAY_TIME, "s"),
+sustain(p, SUSTAIN_LEVEL, ""),
+release(p, RELEASE_TIME, "s"),
+
+filterFrequency(p, FILTER_FREQUENCY, "Hz"),
+filterResonance(p, FILTER_RESONANCE, ""),
+filterEnvelope(p, FILTER_ENVELOPE, ""),
+
+stereoize(p, STEREO_AMOUNT, "%"),
+reverbMix(p, REVERB_MIX, "%"),
+gain(p, GAIN, "dB")
 {
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
@@ -160,6 +165,9 @@ gain(p, GAIN, " dB")
     decayImage.setImage(ImageFileFormat::loadFrom(BinaryData::decay_png, BinaryData::decay_pngSize));
     sustainImage.setImage(ImageFileFormat::loadFrom(BinaryData::sustain_png, BinaryData::sustain_pngSize));
     releaseImage.setImage(ImageFileFormat::loadFrom(BinaryData::release_png, BinaryData::release_pngSize));
+    filterFrequencyImage.setImage(ImageFileFormat::loadFrom(BinaryData::filterFreq_png, BinaryData::filterFreq_pngSize));
+    filterResonanceImage.setImage(ImageFileFormat::loadFrom(BinaryData::filterRes_png, BinaryData::filterRes_pngSize));
+    filterEnvelopeImage.setImage(ImageFileFormat::loadFrom(BinaryData::filterEnv_png, BinaryData::filterEnv_pngSize));
     stereoImage.setImage(ImageFileFormat::loadFrom(BinaryData::stereo_png, BinaryData::stereo_pngSize));
     reverbImage.setImage(ImageFileFormat::loadFrom(BinaryData::reverb_png, BinaryData::reverb_pngSize));
     gainImage.setImage(ImageFileFormat::loadFrom(BinaryData::gian_png, BinaryData::gian_pngSize));
@@ -177,7 +185,7 @@ gain(p, GAIN, " dB")
     
     components.forEach([this](auto* c){ this->addAndMakeVisible(c); });
     
-    setSize (900, 700);
+    setSize (800, 580);
     setResizable(true, false);
 }
 
@@ -219,13 +227,14 @@ void QSynthiAudioProcessorEditor::resized()
     int border = (width+height) / 250;
     
     // Area for components
+    int lineHeight = (int) (height / 16.f);
+    
     auto synthiArea = trim(bounds.removeFromRight(width / 3), border);
-    auto visualisationArea = bounds.removeFromTop((int) (height * 8.0 / (8.0 + 9.0)));
+    auto visualisationArea = bounds.removeFromTop((int) (lineHeight * (16 - 9)));
     auto waveArea = trim(bounds.removeFromLeft(width / 3), border);
     auto potentialArea = trim(bounds, border);
     
     waveTable.setBounds(visualisationArea);
-    int lineHeight = waveArea.getHeight() / 9;
     
     // WaveArea
     TEXT(waveText, waveArea);
@@ -257,10 +266,19 @@ void QSynthiAudioProcessorEditor::resized()
     LINE(2, synthiImages, synthiComponents, synthiArea);
     LINE(3, synthiImages, synthiComponents, synthiArea);
     
-    TEXT(generalText, synthiArea);
+    synthiArea.removeFromTop(lineHeight);
+    
+    TEXT(filterText, synthiArea);
     LINE(4, synthiImages, synthiComponents, synthiArea);
     LINE(5, synthiImages, synthiComponents, synthiArea);
     LINE(6, synthiImages, synthiComponents, synthiArea);
+    
+    synthiArea.removeFromTop(lineHeight);
+    
+    TEXT(generalText, synthiArea);
+    LINE(7, synthiImages, synthiComponents, synthiArea);
+    LINE(8, synthiImages, synthiComponents, synthiArea);
+    LINE(9, synthiImages, synthiComponents, synthiArea);
 
 }
 

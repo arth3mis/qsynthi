@@ -5,29 +5,32 @@
               companyName="AJ" pluginCharacteristicsValue="pluginIsSynth,pluginProducesMidiOut,pluginWantsMidiIn">
   <MAINGROUP id="BfkBYy" name="QSynthi">
     <GROUP id="{EC3B5050-0D9F-0939-FDAB-6AB6467EEA47}" name="img">
-      <FILE id="Q3SQfQ" name="attack.png" compile="0" resource="1" file="Source/img/attack.png"/>
-      <FILE id="vwacq6" name="decay.png" compile="0" resource="1" file="Source/img/decay.png"/>
-      <FILE id="Tg0xII" name="filter.png" compile="0" resource="1" file="Source/img/filter.png"/>
-      <FILE id="D2zliN" name="gian.png" compile="0" resource="1" file="Source/img/gian.png"/>
-      <FILE id="NcRM01" name="logo.png" compile="0" resource="1" file="Source/img/logo.png"/>
-      <FILE id="fxEJXT" name="potentialHeight.png" compile="0" resource="1"
+      <FILE id="Tzy15L" name="attack.png" compile="0" resource="1" file="Source/img/attack.png"/>
+      <FILE id="ctHzfJ" name="decay.png" compile="0" resource="1" file="Source/img/decay.png"/>
+      <FILE id="HYGvXo" name="filter.png" compile="0" resource="1" file="Source/img/filter.png"/>
+      <FILE id="FEFswm" name="filterEnv.png" compile="0" resource="1" file="Source/img/filterEnv.png"/>
+      <FILE id="udyx2p" name="filterFreq.png" compile="0" resource="1" file="Source/img/filterFreq.png"/>
+      <FILE id="Y0JNW3" name="filterRes.png" compile="0" resource="1" file="Source/img/filterRes.png"/>
+      <FILE id="e0sniG" name="gian.png" compile="0" resource="1" file="Source/img/gian.png"/>
+      <FILE id="EZZTiO" name="logo.png" compile="0" resource="1" file="Source/img/logo.png"/>
+      <FILE id="Jg3uV7" name="potentialHeight.png" compile="0" resource="1"
             file="Source/img/potentialHeight.png"/>
-      <FILE id="uloikY" name="potentialScale.png" compile="0" resource="1"
+      <FILE id="kRHHO1" name="potentialScale.png" compile="0" resource="1"
             file="Source/img/potentialScale.png"/>
-      <FILE id="BmyyKz" name="potentialShape.png" compile="0" resource="1"
+      <FILE id="vufW8d" name="potentialShape.png" compile="0" resource="1"
             file="Source/img/potentialShape.png"/>
-      <FILE id="QD7d3Q" name="potentialShift.png" compile="0" resource="1"
+      <FILE id="caoCLP" name="potentialShift.png" compile="0" resource="1"
             file="Source/img/potentialShift.png"/>
-      <FILE id="N9BfaB" name="release.png" compile="0" resource="1" file="Source/img/release.png"/>
-      <FILE id="LMeDQM" name="reverb.png" compile="0" resource="1" file="Source/img/reverb.png"/>
-      <FILE id="z3Mbcn" name="simAccuracy.png" compile="0" resource="1" file="Source/img/simAccuracy.png"/>
-      <FILE id="PolmTl" name="simOffset.png" compile="0" resource="1" file="Source/img/simOffset.png"/>
-      <FILE id="aYDZEE" name="simSpeed.png" compile="0" resource="1" file="Source/img/simSpeed.png"/>
-      <FILE id="uLqUU5" name="stereo.png" compile="0" resource="1" file="Source/img/stereo.png"/>
-      <FILE id="nhKIbK" name="sustain.png" compile="0" resource="1" file="Source/img/sustain.png"/>
-      <FILE id="Vynotw" name="waveScale.png" compile="0" resource="1" file="Source/img/waveScale.png"/>
-      <FILE id="cTEKyU" name="waveShape.png" compile="0" resource="1" file="Source/img/waveShape.png"/>
-      <FILE id="YZWPBi" name="waveShift.png" compile="0" resource="1" file="Source/img/waveShift.png"/>
+      <FILE id="OHV6p1" name="release.png" compile="0" resource="1" file="Source/img/release.png"/>
+      <FILE id="p5hOci" name="reverb.png" compile="0" resource="1" file="Source/img/reverb.png"/>
+      <FILE id="hWYV2n" name="simAccuracy.png" compile="0" resource="1" file="Source/img/simAccuracy.png"/>
+      <FILE id="N9dkm6" name="simOffset.png" compile="0" resource="1" file="Source/img/simOffset.png"/>
+      <FILE id="C2K1W3" name="simSpeed.png" compile="0" resource="1" file="Source/img/simSpeed.png"/>
+      <FILE id="vBcBWe" name="stereo.png" compile="0" resource="1" file="Source/img/stereo.png"/>
+      <FILE id="qnISOn" name="sustain.png" compile="0" resource="1" file="Source/img/sustain.png"/>
+      <FILE id="I6jrD7" name="waveScale.png" compile="0" resource="1" file="Source/img/waveScale.png"/>
+      <FILE id="yRW4be" name="waveShape.png" compile="0" resource="1" file="Source/img/waveShape.png"/>
+      <FILE id="ihdKxL" name="waveShift.png" compile="0" resource="1" file="Source/img/waveShift.png"/>
     </GROUP>
     <GROUP id="{44F51F24-FCD1-DAA9-C595-861060811641}" name="Source">
       <GROUP id="{9AD71E07-775F-9991-E252-5A9E70909C9E}" name="Plugin">

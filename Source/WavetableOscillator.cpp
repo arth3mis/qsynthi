@@ -21,6 +21,7 @@ WavetableOscillator::WavetableOscillator(Parameter *parameter)
     : parameter{ parameter }
     , state{ State::SLEEP }
 {
+    filter = new SingleThreadedIIRFilter();
 }
 
 // Schrödinger equation functions -------------------------------------------------------------------------------------------------
@@ -58,6 +59,8 @@ void WavetableOscillator::doTimestep(const float dt)
         v = fft(v, false);
 
     waveTable = list(v);
+    
+    
 }
 
 inline float WavetableOscillator::potential(const size_t x)
@@ -83,6 +86,7 @@ void WavetableOscillator::prepareToPlay(int midiNote, float sampleRate)
 {
     phaseIncrement = Wavetable::midiNoteToIncrement(midiNote, sampleRate);
     envelopeLevel = 0.f;
+    this->sampleRate = sampleRate;
 }
 
 void WavetableOscillator::noteOn(int velocity) 
@@ -155,7 +159,7 @@ float WavetableOscillator::getNextSample()
 
     // Audio calculations
     //
-    const auto sample = 
+    const auto sample =
           envelopeLevel 
         * velocityLevel 
         * waveTable.getLinearInterpolation(phase, parameter->getSampleConverter());
@@ -164,37 +168,44 @@ float WavetableOscillator::getNextSample()
 
     updateState();
     
-    return sample;
+    
+    // Filter and Return
+    filter->setCoefficients(IIRCoefficients::makeLowPass(sampleRate, std::max(std::min(parameter->filterFreq + parameter->filterFreq * parameter->filterEnvelope * (envelopeLevel - parameter->sustainLevel), sampleRate * 0.5f - 1), parameter->filterFreq * 0.25f), parameter->filterQ));
+    return filter->processSingleSampleRaw(sample);
 }
 
 void WavetableOscillator::updateState() {
     switch (state) {
         case State::SLEEP:
-            break;
+            return;
             
         case State::ATTACK:
-            envelopeLevel += parameter->attackFactor * (1 - envelopeLevel);
+            envelopeLevel += parameter->attackFactor;
             if (envelopeLevel > Parameter::ATTACK_THRESHOLD) state = State::DECAY;
-            break;
+            return;
             
         case State::DECAY:
         {
             float difference = (envelopeLevel - parameter->sustainLevel);
             envelopeLevel -= parameter->decayFactor * difference;
-            if (difference < Parameter::DECAY_THRESHOLD) state = State::SUSTAIN;
-        } break;
+            if (difference < Parameter::DECAY_THRESHOLD * 0.01f) {
+                state = State::SUSTAIN;
+                envelopeLevel = parameter->sustainLevel;
+            }
+        } return;
         
         case State::SUSTAIN:
-            break;
+            return;
         
         case State::RELEASE:
             envelopeLevel *= parameter->releaseFactor;
             // Is done playing?
             // Make threshold even smaller to keep playing super quietly after the set release time
-            if (envelopeLevel < (Parameter::RELEASE_THRESHOLD * 0.01f)) {
+            if (envelopeLevel < Parameter::RELEASE_THRESHOLD * 0.01f) {
                 state = State::SLEEP;
                 envelopeLevel = 0;
             }
+            return;
 
     }
 }

@@ -120,6 +120,11 @@ private:
     CustomSlider decay;
     CustomSlider sustain;
     CustomSlider release;
+    
+    CustomSlider filterFrequency;
+    CustomSlider filterResonance;
+    CustomSlider filterEnvelope;
+
     CustomSlider stereoize;
     CustomSlider reverbMix;
     CustomSlider gain;
@@ -145,6 +150,9 @@ private:
     ImageComponent decayImage;
     ImageComponent sustainImage;
     ImageComponent releaseImage;
+    ImageComponent filterFrequencyImage;
+    ImageComponent filterResonanceImage;
+    ImageComponent filterEnvelopeImage;
     ImageComponent stereoImage;
     ImageComponent reverbImage;
     ImageComponent gainImage;
@@ -153,6 +161,7 @@ private:
     CustomLabel simulationText{"Simulation settings"};
     CustomLabel potentialText{"Potential settings"};
     CustomLabel envelopeText{"Envelope settings"};
+    CustomLabel filterText{"Filter settings"};
     CustomLabel generalText{"General settings"};
     
     
@@ -182,6 +191,9 @@ private:
         &decay,
         &sustain,
         &release,
+        &filterFrequency,
+        &filterResonance,
+        &filterEnvelope,
         &stereoize,
         &reverbMix,
         &gain
@@ -213,6 +225,9 @@ private:
         &decayImage,
         &sustainImage,
         &releaseImage,
+        &filterFrequencyImage,
+        &filterResonanceImage,
+        &filterEnvelopeImage,
         &stereoImage,
         &reverbImage,
         &gainImage
@@ -223,6 +238,7 @@ private:
         &simulationText,
         &potentialText,
         &envelopeText,
+        &filterText,
         &generalText
     };
     
