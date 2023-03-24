@@ -27,6 +27,7 @@ class WavetableOscillator
 public:
     WavetableOscillator(Parameter *parameter);
     WavetableOscillator() : state{ State::SLEEP } {}  // needed by list internals
+    ~WavetableOscillator();
     
     // Initializer
     void prepareToPlay(int midiNote, float sampleRate);

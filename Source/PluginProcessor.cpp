@@ -23,6 +23,7 @@ QSynthiAudioProcessor::QSynthiAudioProcessor()
 #endif
 {
     parameter = new Parameter();
+    parameter->update(treeState, 44100.f);
     synth = new QSynthi(parameter);
 }
 

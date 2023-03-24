@@ -30,4 +30,13 @@ public:
 
     static list<cfloat> generate(const size_t type, const float shift, const float scale);
     static float midiNoteToIncrement(const int noteNumber, const float sampleRate);
+    
+private:
+    static inline float gaussianCurve(float x, float shift, float scale);
+    static inline float sineCurve(float x, float shift, float scale);
+    static inline float cosCurve(float x, float shift, float scale);
+    static inline float parabolaCurve(float x, float shift, float scale);
+    static inline float sawtoothCurve(float x, float shift, float scale);
+    
+    static inline float sliderScaling(float sliderValue, float valueAtNeg1, float valueAt0, float valueAt1, float mixLinear);
 };

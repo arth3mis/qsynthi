@@ -22,6 +22,7 @@ public:
     attachmentToParameter(p.treeState, parameter, *this)
     {
         setTextValueSuffix(suffix);
+        setHelpText(parameter);
     }
     
     AudioProcessorValueTreeState::SliderAttachment attachmentToParameter;

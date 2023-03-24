@@ -27,7 +27,7 @@ void CustomSlider::resized()
 void CustomLabel::resized()
 {
     Label::resized();
-    setFont(Font("Inter", "Thin", getHeight() - 5));
+    setFont(Font("Inter", "Light", getHeight() - 5));
 }
 
 
@@ -176,7 +176,7 @@ gain(p, GAIN, "dB")
     
     
 
-    
+
     setLookAndFeel(waveStyle);
     
     waveComponents.forEach([this](auto* c){ c->setLookAndFeel(this->waveStyle); });
@@ -186,7 +186,7 @@ gain(p, GAIN, "dB")
     components.forEach([this](auto* c){ this->addAndMakeVisible(c); });
     
     setSize (800, 580);
-    setResizable(true, false);
+    setResizable(true, true);
 }
 
 QSynthiAudioProcessorEditor::~QSynthiAudioProcessorEditor()

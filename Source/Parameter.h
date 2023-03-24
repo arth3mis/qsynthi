@@ -59,7 +59,9 @@ enum WaveType
     SINE,
     COSINE,
     PARABOLA,
-    BARRIER
+    BARRIER,
+    SAWTOOTH,
+    SQUARE
 };
 
 enum SampleType
@@ -77,12 +79,14 @@ class Parameter
 {
 public:
     // Envelope Constants
-    static constexpr float ATTACK_THRESHOLD = 1.f;
-    static constexpr float DECAY_THRESHOLD = 0.05f;
-    static constexpr float RELEASE_THRESHOLD = 0.05f;
+    static constexpr float ATTACK_THRESHOLD = 0.01f;
+    static constexpr float DECAY_THRESHOLD = 0.00001f;
+    static constexpr float RELEASE_THRESHOLD = 0.00001f;
     
     static const StringArray WAVE_TYPES;
     static const StringArray SAMPLE_TYPES;
+    
+    static constexpr float POTENTIAL_SCALE = 1.f;
     
     // general
     float gainFactor = 0;

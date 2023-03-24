@@ -24,6 +24,11 @@ WavetableOscillator::WavetableOscillator(Parameter *parameter)
     filter = new SingleThreadedIIRFilter();
 }
 
+WavetableOscillator::~WavetableOscillator()
+{
+
+}
+
 // Schrödinger equation functions -------------------------------------------------------------------------------------------------
 //
 
@@ -114,6 +119,11 @@ void WavetableOscillator::noteOn(int velocity)
     velocityLevel = velocity / 127.f; // TODO: Rethink velocity sensitivity
     
     phase = 0.f; // Not necessary for the sound, but helpful for null-tests
+    if (envelopeLevel < Parameter::ATTACK_THRESHOLD)
+    {
+        envelopeLevel = Parameter::ATTACK_THRESHOLD;
+    }
+    
     // phaseIncrement is set by prepareToPlay
 }
 
@@ -180,8 +190,11 @@ void WavetableOscillator::updateState() {
             return;
             
         case State::ATTACK:
-            envelopeLevel += parameter->attackFactor;
-            if (envelopeLevel > Parameter::ATTACK_THRESHOLD) state = State::DECAY;
+            envelopeLevel += envelopeLevel * parameter->attackFactor;
+            if (envelopeLevel >= 1.f) {
+                state = State::DECAY;
+                envelopeLevel = 1.f;
+            }
             return;
             
         case State::DECAY:

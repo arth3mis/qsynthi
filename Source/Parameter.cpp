@@ -25,7 +25,9 @@ const StringArray Parameter::WAVE_TYPES = {
     "Sine",
     "Cosine",
     "Parabola",
-    "Barrier"
+    "Barrier",
+    "Sawtooth",
+    "Square"
 };
 
 const StringArray Parameter::SAMPLE_TYPES = {
@@ -53,7 +55,7 @@ AudioProcessorValueTreeState::ParameterLayout Parameter::createParameterLayout()
     
     BOOL_PARAM(APPLY_WAVEFUNC, true);
 
-    FLOAT_PARAM(ACCURACY, NormalisableRange<float>(0.01f, 100.f, 0.01f, 0.25f, false), .5f);
+    FLOAT_PARAM(ACCURACY, NormalisableRange<float>(0.01f, 100.f, 0.01f, 0.25f, false), 1.f);
     FLOAT_PARAM(SIMULATION_SPEED, NormalisableRange<float>(0.f, 10000.f, 0.1f, 0.15f, false), 42.f);
     FLOAT_PARAM(SIMULATION_OFFSET, NormalisableRange<float>(0.f, 1000.f, 1.f, 1.f, false), 0.f);
 
@@ -61,11 +63,11 @@ AudioProcessorValueTreeState::ParameterLayout Parameter::createParameterLayout()
     CHOICE_PARAM(POTENTIAL_TYPE1, WAVE_TYPES, WaveType::PARABOLA);
     FLOAT_PARAM(POTENTIAL_SHIFT1, NormalisableRange<float>(-1.f, 1.f, 0.01f, 1.f, true), 0.f);
     FLOAT_PARAM(POTENTIAL_SCALE1, NormalisableRange<float>(-1.f, 1.f, 0.01f, 1.f, true), 0.f);
-    FLOAT_PARAM(POTENTIAL_AMOUNT1, NormalisableRange<float>(-1.f, 1.f, 0.01f, 1.f, true), 0.f);
-    CHOICE_PARAM(POTENTIAL_TYPE2, WAVE_TYPES, WaveType::PARABOLA);
+    FLOAT_PARAM(POTENTIAL_AMOUNT1, NormalisableRange<float>(-100.f, 100.f, 0.01f, .25f, true), 0.f);
+    CHOICE_PARAM(POTENTIAL_TYPE2, WAVE_TYPES, WaveType::BARRIER);
     FLOAT_PARAM(POTENTIAL_SHIFT2, NormalisableRange<float>(-1.f, 1.f, 0.01f, 1.f, true), 0.f);
     FLOAT_PARAM(POTENTIAL_SCALE2, NormalisableRange<float>(-1.f, 1.f, 0.01f, 1.f, true), 0.f);
-    FLOAT_PARAM(POTENTIAL_AMOUNT2, NormalisableRange<float>(-1.f, 1.f, 0.01f, 1.f, true), 0.f);
+    FLOAT_PARAM(POTENTIAL_AMOUNT2, NormalisableRange<float>(-100.f, 100.f, 0.01f, .25f, true), 0.f);
     
     CHOICE_PARAM(SAMPLE_TYPE, SAMPLE_TYPES, SampleType::SQARED_ABS);
     
@@ -75,7 +77,7 @@ AudioProcessorValueTreeState::ParameterLayout Parameter::createParameterLayout()
     // Filter
     FLOAT_PARAM(FILTER_FREQUENCY, NormalisableRange<float>(30.f, 20000.f, 1.f, .25f, false), 20000.f);
     FLOAT_PARAM(FILTER_RESONANCE, NormalisableRange<float>(0.1f, 100.f, 0.01f, .15f, false), .71f);
-    FLOAT_PARAM(FILTER_ENVELOPE, NormalisableRange<float>(0.f, 100.f, 0.1f, .15f, false), 0.f);
+    FLOAT_PARAM(FILTER_ENVELOPE, NormalisableRange<float>(0.f, 10.f, 0.1f, .25f, false), 0.f);
 
     FLOAT_PARAM(STEREO_AMOUNT, NormalisableRange<float>(0.f, 100.f, 1.f, 1.f, true), 0.f);
     FLOAT_PARAM(REVERB_MIX, NormalisableRange<float>(0.f, 100.f, 1.f, 0.9f, false), 15.f);
@@ -91,7 +93,7 @@ void Parameter::update(AudioProcessorValueTreeState& treeState, float sampleRate
     gainFactor = Decibels::decibelsToGain(GET(GAIN));
     
     // Envelope
-    attackFactor = 1 / (sampleRate * GET(ATTACK_TIME));
+    attackFactor = 1 - std::pow(ATTACK_THRESHOLD, 1 / (sampleRate * GET(ATTACK_TIME)));
     decayFactor = 1 - std::pow(DECAY_THRESHOLD, 1 / (sampleRate * GET(DECAY_TIME)));
     releaseFactor = std::pow(RELEASE_THRESHOLD, 1 / (sampleRate * GET(RELEASE_TIME)));
     sustainLevel = GET(SUSTAIN_LEVEL);
@@ -115,7 +117,7 @@ void Parameter::update(AudioProcessorValueTreeState& treeState, float sampleRate
     potential = p1.zip(p2)
         .mapTo<float>([potentialAmount1, potentialAmount2](cfloat a, cfloat b) 
             { 
-                return potentialAmount1 * std::real(a) + potentialAmount2 * std::real(b); 
+                return POTENTIAL_SCALE * (potentialAmount1 * std::real(a) + potentialAmount2 * std::real(b));
             });
     
     samplesPerTimestep  = sampleRate / (accuracy * simulationSpeed);
