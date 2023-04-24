@@ -138,9 +138,12 @@ inline float Wavetable::sliderScaling(float sliderValue, float valueAtNeg1, floa
 }
 
 
-float Wavetable::midiNoteToIncrement(const int noteNumber, const float sampleRate)
+float Wavetable::midiNoteToFrequency(const int noteNumber)
 {
-    const float frequency = A4_FREQUENCY * std::pow(2.f, (noteNumber - A4_NOTE_NUMBER) / SEMITONES_PER_OCTAVE);
+    return A4_FREQUENCY * std::pow(2.f, (noteNumber - A4_NOTE_NUMBER) / SEMITONES_PER_OCTAVE);
+}
 
+float Wavetable::frequencyToIncrement(const float frequency, const float sampleRate)
+{
     return frequency * (float)(SIZE / sampleRate);
 }

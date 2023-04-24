@@ -2,7 +2,8 @@
 
 <JUCERPROJECT id="YctFDe" name="QSynthi" projectType="audioplug" useAppConfig="1"
               addUsingNamespaceToJuceHeader="1" displaySplashScreen="1" jucerFormatVersion="1"
-              companyName="AJ" pluginCharacteristicsValue="pluginIsSynth,pluginProducesMidiOut,pluginWantsMidiIn">
+              companyName="AJ" pluginCharacteristicsValue="pluginIsSynth,pluginProducesMidiOut,pluginWantsMidiIn"
+              pluginFormats="buildAU,buildVST3">
   <MAINGROUP id="BfkBYy" name="QSynthi">
     <GROUP id="{EC3B5050-0D9F-0939-FDAB-6AB6467EEA47}" name="img">
       <FILE id="Tzy15L" name="attack.png" compile="0" resource="1" file="Source/img/attack.png"/>
@@ -28,6 +29,7 @@
       <FILE id="C2K1W3" name="simSpeed.png" compile="0" resource="1" file="Source/img/simSpeed.png"/>
       <FILE id="vBcBWe" name="stereo.png" compile="0" resource="1" file="Source/img/stereo.png"/>
       <FILE id="qnISOn" name="sustain.png" compile="0" resource="1" file="Source/img/sustain.png"/>
+      <FILE id="GzsXNU" name="voiceCount.png" compile="0" resource="1" file="Source/img/voiceCount.png"/>
       <FILE id="I6jrD7" name="waveScale.png" compile="0" resource="1" file="Source/img/waveScale.png"/>
       <FILE id="yRW4be" name="waveShape.png" compile="0" resource="1" file="Source/img/waveShape.png"/>
       <FILE id="ihdKxL" name="waveShift.png" compile="0" resource="1" file="Source/img/waveShift.png"/>
@@ -63,10 +65,11 @@
         <FILE id="yCCOoF" name="list.hpp" compile="0" resource="0" file="Source/list.hpp"/>
       </GROUP>
     </GROUP>
+    <FILE id="pXuM4y" name="portamento.png" compile="0" resource="1" file="Source/img/portamento.png"/>
   </MAINGROUP>
   <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_VST3_CAN_REPLACE_VST2="0"/>
   <EXPORTFORMATS>
-    <XCODE_MAC targetFolder="Builds/MacOSX">
+    <XCODE_MAC targetFolder="Builds/MacOSX" xcodeValidArchs="arm64,arm64e,i386,x86_64">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="1" name="Debug" targetName="QSynthi"/>
         <CONFIGURATION isDebug="0" name="Release" targetName="QSynthi"/>

@@ -12,14 +12,7 @@
 
 QSynthi::QSynthi(Parameter *parameter) : parameter{ parameter }
 {
-    oscillators = mutable_list<WavetableOscillator>(128, [parameter](size_t _){
-        return WavetableOscillator(parameter);
-    });
-
-    plot.setup(800,500);
-    plot.start();
-    noteOnCount = 0;
-    noteToDraw = -1;
+    
 
     /*
     mutable_list<int> test(2);
@@ -28,6 +21,7 @@ QSynthi::QSynthi(Parameter *parameter) : parameter{ parameter }
     test.forEach([](int& a) { a++; });
     auto t2 = test;
     t2 += {1,2,3};  // does not change test anymore
+    test.eraseItem(42);
     //*/
 
     //using namespace std::complex_literals;
@@ -39,12 +33,36 @@ void QSynthi::prepareToPlay(float sampleRate)
 {
     this->sampleRate = sampleRate;
     reverb.setSampleRate((double) sampleRate);
+    
+    playingOscillators = {};
+    sleepingOscillators = {};
+    
+    oscillators = mutable_list<WavetableOscillator>(parameter->numVoices, [sampleRate, this](size_t _){
+        return WavetableOscillator(parameter);
+    });
+    
+    for (int i = 0; i < oscillators.length(); i++)
+    {
+        oscillators[i].prepareToPlay(sampleRate);
+        sleepingOscillators.append(&(oscillators[i]));
+    }
+    
+    stolenNotes = {};
+    sustainedNotes = {};
+    
+
 }
 /**
  Coordinates handleMidiEvent(...) and render(...) to process the midiMessages and fill the buffer
  */
 void QSynthi::processBlock(AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
 {
+    // Test if number of oscillators changed
+    if (parameter->numVoices != oscillators.length())
+    {
+        prepareToPlay(sampleRate);
+    }
+    
     
     int currentSample = 0;
     
@@ -67,11 +85,6 @@ void QSynthi::processBlock(AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
         
         currentSample = midiEventSample;
     }
-
-    if (noteToDraw > -1 && !plot.isQuit())
-    {
-        plot.setDrawData(oscillators[noteToDraw].getWavetable(), parameter->getSampleConverter(), parameter->potential);
-    }
     
     // Render everything after the last midiEvent in this block
     render(buffer, currentSample, buffer.getNumSamples());
@@ -88,37 +101,102 @@ void QSynthi::handleMidiEvent(const MidiMessage& midiEvent)
     if (midiEvent.isNoteOn())
     {
         int noteNumber = midiEvent.getNoteNumber();
+        sustainedNotes.eraseItem(noteNumber);
         
-        oscillators[noteNumber].prepareToPlay(noteNumber, sampleRate);// is calling here correct? was not called at all before
-        oscillators[noteNumber].noteOn(midiEvent.getVelocity());
+        WavetableOscillator* oscillator = nullptr;
         
-        if (noteOnCount <= 0)
-            noteToDraw = noteNumber;
-        noteOnCount++;
+        // Find playing Osci with same note
+        for (size_t i = 0; i < playingOscillators.length(); i++)
+        {
+            if (playingOscillators[i]->midiNote == noteNumber)
+            {
+                oscillator = playingOscillators[i];
+                playingOscillators.erase(i);
+                break;
+            }
+        }
+        // No playing Osci found
+        if (oscillator == nullptr)
+        {
+            if (sleepingOscillators.length() > 0) {
+                oscillator = sleepingOscillators[0];
+                sleepingOscillators.erase(0);
+            } else {
+                oscillator = playingOscillators[0];
+                playingOscillators.erase(0);
+                stolenNotes.append(oscillator->midiNote);
+            }
+        }
         
-        if (displayedOscillator == nullptr) displayedOscillator = &oscillators[noteNumber];
+        playingOscillators.append(oscillator);
+        oscillator->noteOn(noteNumber, midiEvent.getVelocity());
+        
+        if (displayedOscillator == nullptr) displayedOscillator = oscillator;
     }
     else if (midiEvent.isNoteOff())
     {
         int noteNumber = midiEvent.getNoteNumber();
-        oscillators[noteNumber].noteOff();
-
-        noteOnCount--;
-        if (noteOnCount <= 0)
-            noteToDraw = -1;
         
-        if (displayedOscillator == &oscillators[noteNumber]) displayedOscillator = nullptr;
+        if (sustain)
+        {
+            sustainedNotes.append(noteNumber);
+        }
+        else
+        {
+            noteOff(midiEvent.getNoteNumber());
+        }
+        
+        
     }
     else if (midiEvent.isAllNotesOff())
     {
-        oscillators.forEach([](auto oscillator) {
-            oscillator.noteOff();
+        playingOscillators.forEach([this](auto o) {
+            o->noteOff();
+            this->sleepingOscillators.append(o);
         });
 
-        noteOnCount = 0;
-        noteToDraw = -1;
         displayedOscillator = nullptr;
+        stolenNotes = {};
         
+    }
+    else if (midiEvent.isSustainPedalOn())
+    {
+        sustain = true;
+    }
+    else if (midiEvent.isSustainPedalOff())
+    {
+        sustain = false;
+        for (int i = 0; i < sustainedNotes.length(); i++) {
+            noteOff(sustainedNotes[i]);
+        }
+        sustainedNotes = {};
+    }
+}
+
+void QSynthi::noteOff(int noteNumber) {
+    stolenNotes.eraseItem(noteNumber);
+    
+    for (int i = 0; i < playingOscillators.length(); i++) {
+        if (playingOscillators[i]->midiNote == noteNumber)
+        {
+            auto o = playingOscillators[i];
+            
+            if (stolenNotes.length() <= 0) {
+                o->noteOff();
+                sleepingOscillators.append(o);
+                if (displayedOscillator == o) displayedOscillator = nullptr;
+                playingOscillators.erase(i--);
+                
+            } else {
+                
+                int midiNote = stolenNotes[stolenNotes.length() - 1];
+                stolenNotes.eraseItem(midiNote);
+                
+                playingOscillators.erase(i--);
+                playingOscillators.append(o);
+                o->noteOn(midiNote, 127);
+            }
+        }
     }
 }
 

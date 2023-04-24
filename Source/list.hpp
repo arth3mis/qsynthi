@@ -417,6 +417,33 @@ public:
 		append(right);
 		return *this;
 	}
+    
+    mutable_list erase(const size_t from, const size_t count = 1)
+    {
+        list<T>::ls.erase(list<T>::begin() + from, list<T>::begin() + from + count);
+        return *this;
+    }
+    
+    mutable_list eraseItem(const T item)
+    {
+        for (size_t i = 0; i < length(); i++)
+            if (item == get(i))
+                list<T>::ls.erase(list<T>::begin() + i, list<T>::begin() + i+1);
+        return *this;
+    }
+    
+    bool contains(const T item)
+    {
+        for (size_t i = 0; i < length(); i++)
+            if (item == get(i))
+                return true;
+        return false;
+    }
+    
+    list<T> toList() const
+    {
+        return list<T>(list<T>::ls);
+    }
 
 	// executes f on each element, returns this list
 	void forEach(std::function<void(T&)> f)

@@ -126,6 +126,8 @@ private:
     CustomSlider filterResonance;
     CustomSlider filterEnvelope;
 
+    CustomSlider voiceCount;
+    CustomSlider portamento;
     CustomSlider stereoize;
     CustomSlider reverbMix;
     CustomSlider gain;
@@ -154,6 +156,8 @@ private:
     ImageComponent filterFrequencyImage;
     ImageComponent filterResonanceImage;
     ImageComponent filterEnvelopeImage;
+    ImageComponent voiceCountImage;
+    ImageComponent portamentoImage;
     ImageComponent stereoImage;
     ImageComponent reverbImage;
     ImageComponent gainImage;
@@ -195,6 +199,8 @@ private:
         &filterFrequency,
         &filterResonance,
         &filterEnvelope,
+        &voiceCount,
+        &portamento,
         &stereoize,
         &reverbMix,
         &gain
@@ -229,6 +235,8 @@ private:
         &filterFrequencyImage,
         &filterResonanceImage,
         &filterEnvelopeImage,
+        &voiceCountImage,
+        &portamentoImage,
         &stereoImage,
         &reverbImage,
         &gainImage

@@ -87,17 +87,38 @@ inline cvec WavetableOscillator::fft(cvec in, bool forward)
 // Note and sample processing ------------------------------------------------------------------------------------------------------
 //
 
-void WavetableOscillator::prepareToPlay(int midiNote, float sampleRate)
+void WavetableOscillator::prepareToPlay(float sampleRate)
 {
-    phaseIncrement = Wavetable::midiNoteToIncrement(midiNote, sampleRate);
+    playingFrequency = 0.f;
     envelopeLevel = 0.f;
     this->sampleRate = sampleRate;
 }
 
-void WavetableOscillator::noteOn(int velocity) 
+void WavetableOscillator::noteOn(int midiNote, int velocity)
 {
-    // generate new wavetable
-    waveTable = Wavetable::generate(parameter->waveTypeNumber, parameter->waveShift, parameter->waveScale).to<cfloat>();
+    // Do pitch stuff
+    this->midiNote = midiNote;
+    targetFrequency = Wavetable::midiNoteToFrequency(midiNote);
+    if (playingFrequency == 0) playingFrequency = targetFrequency;
+    oldFrequency = playingFrequency;
+    
+    phaseIncrement = Wavetable::frequencyToIncrement(playingFrequency, sampleRate);
+    
+    
+    
+    if (!isPlaying()) {
+        // generate new wavetable
+         waveTable = Wavetable::generate(parameter->waveTypeNumber, parameter->waveShift, parameter->waveScale).to<cfloat>();
+        
+        // pre-start simulation
+        const size_t steps = parameter->preStartTimesteps;
+        for (size_t i = 0; i < steps; i++)
+        {
+            doTimestep(parameter->timestepDelta);
+        }
+        
+        phase = 0.f; // Not necessary for the sound, but helpful for null-tests
+    }
     
     // FFT result as standard form?
     if (parameter->showFFT)
@@ -105,26 +126,19 @@ void WavetableOscillator::noteOn(int velocity)
         waveTable = list(fft(waveTable.toVector(), true));
         showFFT = true;
     }
-
-    // pre-start simulation
-    const size_t steps = parameter->preStartTimesteps;
-    for (size_t i = 0; i < steps; i++)
-    {
-        doTimestep(parameter->timestepDelta);
-    }
     
     // Do not set envelopeLevel = 0 here, to enable smooth retriggers of one note
     
+    if (!isNoteOn()) {
+        velocityLevel = Decibels::decibelsToGain(-20 + 20 * velocity / 127.f); // TODO: Rethink velocity sensitivity
+    }
     state = State::ATTACK;
-    velocityLevel = velocity / 127.f; // TODO: Rethink velocity sensitivity
     
-    phase = 0.f; // Not necessary for the sound, but helpful for null-tests
     if (envelopeLevel < Parameter::ATTACK_THRESHOLD)
     {
         envelopeLevel = Parameter::ATTACK_THRESHOLD;
     }
     
-    // phaseIncrement is set by prepareToPlay
 }
 
 void WavetableOscillator::noteOff() {
@@ -174,6 +188,23 @@ float WavetableOscillator::getNextSample()
         * velocityLevel 
         * waveTable.getLinearInterpolation(phase, parameter->getSampleConverter());
     
+    // Update Frequency if playing Frequency didnt reach targetFrequency yet
+    if (targetFrequency != playingFrequency)
+    {
+        if (parameter->portamentoTime == 0)
+        {
+            playingFrequency = targetFrequency;
+            phaseIncrement = Wavetable::frequencyToIncrement(playingFrequency, sampleRate);
+        }
+        else if (((oldFrequency < targetFrequency && playingFrequency < targetFrequency) || (oldFrequency > targetFrequency && playingFrequency > targetFrequency)))
+        {
+            playingFrequency += (targetFrequency - oldFrequency) / parameter->portamentoTime / sampleRate;
+            phaseIncrement = Wavetable::frequencyToIncrement(playingFrequency, sampleRate);
+        } else {
+            playingFrequency = targetFrequency;
+            phaseIncrement = Wavetable::frequencyToIncrement(playingFrequency, sampleRate);
+        }
+    }
     phase = std::fmod(phase + phaseIncrement, Wavetable::SIZE_F);
 
     updateState();

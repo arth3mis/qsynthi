@@ -29,7 +29,8 @@ public:
     constexpr static float TWO_PI = MathConstants<float>::twoPi;
 
     static list<cfloat> generate(const size_t type, const float shift, const float scale);
-    static float midiNoteToIncrement(const int noteNumber, const float sampleRate);
+    static float midiNoteToFrequency(const int noteNumber);
+    static float frequencyToIncrement(const float frequency, const float sampleRate);
     
 private:
     static inline float gaussianCurve(float x, float shift, float scale);

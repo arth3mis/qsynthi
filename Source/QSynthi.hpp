@@ -29,12 +29,11 @@ public:
     void processBlock(AudioBuffer<float>& buffer, MidiBuffer& midiMessages);
     
 private:
+    bool sustain = false;
+    
     Parameter *parameter;
     float sampleRate;
 
-    WavetablePlot plot;
-    int noteOnCount;
-    int noteToDraw;
     
     /** Map for all playing oscillators
         noteNumber -> playing Oscillator on this note
@@ -45,9 +44,15 @@ private:
         processBlock(...) cleanup: checks for every oscillator if it thinks it's done with it's life cycle and removes if it's the case
      */
     mutable_list<WavetableOscillator> oscillators;
+    mutable_list<WavetableOscillator*> playingOscillators;
+    mutable_list<WavetableOscillator*> sleepingOscillators;
+    
+    mutable_list<int> stolenNotes;
+    mutable_list<int> sustainedNotes;
     
     Reverb reverb;
     
+    void noteOff(int noteNumber);
     void handleMidiEvent(const MidiMessage& midiEvent);
     void render(AudioBuffer<float>& buffer, int startSample, int endSample);
 };

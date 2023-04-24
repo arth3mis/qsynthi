@@ -25,21 +25,25 @@ enum class State {
 class WavetableOscillator
 {
 public:
+    
+    int midiNote = -1;
+    
     WavetableOscillator(Parameter *parameter);
     WavetableOscillator() : state{ State::SLEEP } {}  // needed by list internals
     ~WavetableOscillator();
     
     // Initializer
-    void prepareToPlay(int midiNote, float sampleRate);
+    void prepareToPlay(float sampleRate);
     
     list<cfloat> waveTable;
     inline list<cfloat> getWavetable() { return waveTable; }
     
     // MIDI
-    void noteOn(int velocity);
+    void noteOn(int midiNote, int velocity);
     void noteOff();
     
     inline bool isPlaying() { return state != State::SLEEP; }
+    inline bool isNoteOn() { return state != State::SLEEP && state != State::SUSTAIN; }
     
     float getPhase();
     float getNextSample();
@@ -54,6 +58,9 @@ private:
     float envelopeLevel = 0;
     float velocityLevel = 0;
     
+    float oldFrequency = 0;
+    float targetFrequency = 0;
+    float playingFrequency = 0;
     float phase = 0;
     float phaseIncrement = 0;
     

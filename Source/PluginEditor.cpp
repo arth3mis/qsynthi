@@ -65,21 +65,23 @@ void WaveTableComponent::resized()
 
 void WaveTableComponent::drawLine(Graphics& g, Rectangle<int> bounds, list<float> values, ColourGradient gradient)
 {
-    double stepSize = (double)bounds.getWidth() / (values.length()-1);
-    double pathScale = 0.7 * bounds.getHeight() / 2;
-    double pathOffset = 1.174 * bounds.getHeight() / 2;
-    
-    auto lastX = 0;
-    auto lastY = -pathScale * values[0] + pathOffset;
-    Path path;
-    path.startNewSubPath(lastX, lastY);
-    for (auto i = 1; i < values.length(); ++i)
-    {
-        path.lineTo(i * stepSize, -pathScale * values[i] + pathOffset);
+    if (values.length() > 0) {
+        double stepSize = (double)bounds.getWidth() / (values.length()-1);
+        double pathScale = 0.7 * bounds.getHeight() / 2;
+        double pathOffset = 1.174 * bounds.getHeight() / 2;
+        
+        auto lastX = 0;
+        auto lastY = -pathScale * values[0] + pathOffset;
+        Path path;
+        path.startNewSubPath(lastX, lastY);
+        for (auto i = 1; i < values.length(); ++i)
+        {
+            path.lineTo(i * stepSize, -pathScale * values[i] + pathOffset);
+        }
+        
+        g.setGradientFill(gradient);
+        g.strokePath(path, PathStrokeType(5.f, PathStrokeType::JointStyle::beveled, PathStrokeType::EndCapStyle::rounded));
     }
-    
-    g.setGradientFill(gradient);
-    g.strokePath(path, PathStrokeType(5.f, PathStrokeType::JointStyle::beveled, PathStrokeType::EndCapStyle::rounded));
 }
 
 void WaveTableComponent::timerCallback() {
@@ -120,6 +122,8 @@ filterFrequency(p, FILTER_FREQUENCY, "Hz"),
 filterResonance(p, FILTER_RESONANCE, ""),
 filterEnvelope(p, FILTER_ENVELOPE, ""),
 
+voiceCount(p, VOICE_COUNT, ""),
+portamento(p, PORTAMENTO, "s"),
 stereoize(p, STEREO_AMOUNT, "%"),
 reverbMix(p, REVERB_MIX, "%"),
 gain(p, GAIN, "dB")
@@ -168,6 +172,8 @@ gain(p, GAIN, "dB")
     filterFrequencyImage.setImage(ImageFileFormat::loadFrom(BinaryData::filterFreq_png, BinaryData::filterFreq_pngSize));
     filterResonanceImage.setImage(ImageFileFormat::loadFrom(BinaryData::filterRes_png, BinaryData::filterRes_pngSize));
     filterEnvelopeImage.setImage(ImageFileFormat::loadFrom(BinaryData::filterEnv_png, BinaryData::filterEnv_pngSize));
+    voiceCountImage.setImage(ImageFileFormat::loadFrom(BinaryData::voiceCount_png, BinaryData::voiceCount_pngSize));
+    portamentoImage.setImage(ImageFileFormat::loadFrom(BinaryData::portamento_png, BinaryData::portamento_pngSize));
     stereoImage.setImage(ImageFileFormat::loadFrom(BinaryData::stereo_png, BinaryData::stereo_pngSize));
     reverbImage.setImage(ImageFileFormat::loadFrom(BinaryData::reverb_png, BinaryData::reverb_pngSize));
     gainImage.setImage(ImageFileFormat::loadFrom(BinaryData::gian_png, BinaryData::gian_pngSize));
@@ -266,19 +272,21 @@ void QSynthiAudioProcessorEditor::resized()
     LINE(2, synthiImages, synthiComponents, synthiArea);
     LINE(3, synthiImages, synthiComponents, synthiArea);
     
-    synthiArea.removeFromTop(lineHeight);
+    synthiArea.removeFromTop(lineHeight/2);
     
     TEXT(filterText, synthiArea);
     LINE(4, synthiImages, synthiComponents, synthiArea);
     LINE(5, synthiImages, synthiComponents, synthiArea);
     LINE(6, synthiImages, synthiComponents, synthiArea);
     
-    synthiArea.removeFromTop(lineHeight);
+    synthiArea.removeFromTop(lineHeight/2);
     
     TEXT(generalText, synthiArea);
     LINE(7, synthiImages, synthiComponents, synthiArea);
     LINE(8, synthiImages, synthiComponents, synthiArea);
     LINE(9, synthiImages, synthiComponents, synthiArea);
+    LINE(10, synthiImages, synthiComponents, synthiArea);
+    LINE(11, synthiImages, synthiComponents, synthiArea);
 
 }
 

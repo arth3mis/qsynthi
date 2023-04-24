@@ -43,6 +43,8 @@ AudioProcessorValueTreeState::ParameterLayout Parameter::createParameterLayout()
     // trotzdem Klammern nicht vergessen (mach ich auch imemr wieder)
     
     FLOAT_PARAM(GAIN, NormalisableRange<float>(-64.f, 0.f, 0.1f, 0.9f, true), -24.f);
+    FLOAT_PARAM(VOICE_COUNT, NormalisableRange<float>(1.f, 64.f, 1.f, 0.4f, false), 16.f);
+    FLOAT_PARAM(PORTAMENTO, NormalisableRange<float>(0.f, 5.f, 0.001f, 0.25f, false), 0.f);
     
     FLOAT_PARAM(ATTACK_TIME, NormalisableRange<float>(0.001f, 16.f, 0.001f, 0.3f, false), 0.08f);
     FLOAT_PARAM(DECAY_TIME, NormalisableRange<float>(0.001f, 16.f, 0.001f, 0.3f, false), 0.5f);
@@ -91,6 +93,8 @@ AudioProcessorValueTreeState::ParameterLayout Parameter::createParameterLayout()
 void Parameter::update(AudioProcessorValueTreeState& treeState, float sampleRate)
 {
     gainFactor = Decibels::decibelsToGain(GET(GAIN));
+    numVoices = GET(VOICE_COUNT);
+    portamentoTime = GET(PORTAMENTO);
     
     // Envelope
     attackFactor = 1 - std::pow(ATTACK_THRESHOLD, 1 / (sampleRate * GET(ATTACK_TIME)));
@@ -142,4 +146,5 @@ void Parameter::update(AudioProcessorValueTreeState& treeState, float sampleRate
     
     // FX
     reverbMix = GET(REVERB_MIX) * 0.01f;
+    
 }

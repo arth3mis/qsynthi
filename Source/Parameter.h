@@ -16,6 +16,8 @@
 #define PARAM_VERSION 1
 
 #define GAIN "Gain"
+#define VOICE_COUNT "Number of Voices"
+#define PORTAMENTO "Portamento"
 
 #define ATTACK_TIME "Attack"
 #define DECAY_TIME "Decay"
@@ -90,6 +92,8 @@ public:
     
     // general
     float gainFactor = 0;
+    float numVoices = 3;
+    float portamentoTime = 0.5;
     
     // Envelope
     float attackFactor = 0;
@@ -106,6 +110,7 @@ public:
     int waveTypeNumber = 0;
     float waveShift = 0;
     float waveScale = 0;
+
     
     
     
