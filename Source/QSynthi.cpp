@@ -150,12 +150,13 @@ void QSynthi::handleMidiEvent(const MidiMessage& midiEvent)
     }
     else if (midiEvent.isAllNotesOff())
     {
-        playingOscillators.forEach([this](auto o) {
-            o->noteOff();
-            this->sleepingOscillators.append(o);
-        });
+        for (size_t i = 0; i < playingOscillators.length(); i++) {
+            playingOscillators[i]->noteOff();
+            this->sleepingOscillators.append(playingOscillators[i]);
+        }
 
         displayedOscillator = nullptr;
+        playingOscillators = {};
         stolenNotes = {};
         
     }
