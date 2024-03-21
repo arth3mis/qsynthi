@@ -13,7 +13,7 @@ list<cfloat> Wavetable::generate(const size_t type, const float shift, const flo
             return list<cfloat>(SIZE, [shift, scale] (size_t i) {
                 
                 float min = std::min(gaussianCurve(0, shift, scale), gaussianCurve(1, shift, scale));
-                return (gaussianCurve(i / SIZE_F, shift, scale) - min) / (1 - min);
+                return cfloat((gaussianCurve(i / SIZE_F, shift, scale) - min) / (1 - min), 0);
                 
             });
 
@@ -21,8 +21,8 @@ list<cfloat> Wavetable::generate(const size_t type, const float shift, const flo
             return list<cfloat>(SIZE, [shift, scale] (size_t i) {
                 
                 float sineScale = pow(7, -scale);
-                float factor = (sineScale * (1 + abs(shift))) < 0.5f ? 1 / std::max(sineCurve(0, shift, sineScale), abs(sineCurve(1, shift, sineScale))) : 1;
-                return factor * sineCurve(i / SIZE_F, shift, sineScale);
+                float factor = (sineScale * (1 + abs(shift))) < 0.5f ? 1 / std::max(sineCurve(0, shift, sineScale), std::abs(sineCurve(1, shift, sineScale))) : 1;
+                return cfloat(factor * sineCurve(i / SIZE_F, shift, sineScale), 0);
                 
             });
 
@@ -32,9 +32,9 @@ list<cfloat> Wavetable::generate(const size_t type, const float shift, const flo
                 float cosScale = pow(7, -scale);
                 if (cosScale * (1 + abs (shift)) < 1) {
                     float offset = 2 / (1 - std::min(cosCurve(0, shift, cosScale), cosCurve(1, shift, cosScale)));
-                    return - offset * cosCurve(i / SIZE_F, shift, cosScale) - 1 + offset;
+                    return cfloat(- offset * cosCurve(i / SIZE_F, shift, cosScale) - 1 + offset, 0);
                 } else {
-                    return -cosCurve(i / SIZE_F, shift, cosScale);
+                    return cfloat(-cosCurve(i / SIZE_F, shift, cosScale), 0);
                 }
                 
             });
@@ -43,24 +43,24 @@ list<cfloat> Wavetable::generate(const size_t type, const float shift, const flo
             return list<cfloat>(SIZE, [shift, scale] (size_t i) {
             
                 float max = std::max(parabolaCurve(0, shift, scale), parabolaCurve(1, shift, scale));
-                return parabolaCurve(i / SIZE_F, shift, scale) / max;
+                return cfloat(parabolaCurve(i / SIZE_F, shift, scale) / max, 0);
                 
             });
             
         case WaveType::BARRIER:
             return list<cfloat>(SIZE, [shift, scale](size_t i) {
                 
-                if (i == SIZE / 2) return 99.f;
+                if (i == SIZE / 2) return cfloat(99.f, 0);
                 // else parabola
                 float scaledX = i / SIZE_F - 0.5f - 0.5f * shift;
-                return 4 * scale / (1 + 3 * shift) * scaledX * scaledX;
+                return cfloat(4 * scale / (1 + 3 * shift) * scaledX * scaledX, 0);
                 
         });
             
         case WaveType::SAWTOOTH:
             return list<cfloat>(SIZE, [shift, scale] (size_t i) {
                 
-                return sawtoothCurve(i / SIZE_F, shift, scale);
+                return cfloat(sawtoothCurve(i / SIZE_F, shift, scale), 0);
                 
             });
             
@@ -82,7 +82,7 @@ inline float Wavetable::sineCurve(float x, float shift, float scale)
 {
     x = x - 0.5f - 0.5f * shift;
     x *= scale;
-    
+
     return -(abs(x) <= 0.5f ? sin(TWO_PI * x) : 0);
 }
 

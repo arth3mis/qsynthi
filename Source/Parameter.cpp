@@ -141,7 +141,7 @@ void Parameter::update(AudioProcessorValueTreeState& treeState, float sampleRate
     //Stereo
     float stereoAmount = GET(STEREO_AMOUNT) * 0.01f;
     stereoList = list<float>(Wavetable::SIZE, [stereoAmount](size_t i){
-        return 1 - stereoAmount * 0.5f * (std::tanhf(Wavetable::TWO_PI * (i / Wavetable::SIZE_F - 0.5f)) + 1);
+        return 1 - stereoAmount * 0.5f * (std::tanh(Wavetable::TWO_PI * (i / Wavetable::SIZE_F - 0.5f)) + 1);
     });
     
     // FX

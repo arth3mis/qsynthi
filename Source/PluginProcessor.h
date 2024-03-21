@@ -8,10 +8,12 @@
 
 #pragma once
 
-#include <JuceHeader.h>
+// #include <JuceHeader.h>
+#include <juce_audio_processors/juce_audio_processors.h>
 #include "QSynthi.hpp"
 #include "Parameter.h"
 
+using namespace juce;
 
 //==============================================================================
 /**

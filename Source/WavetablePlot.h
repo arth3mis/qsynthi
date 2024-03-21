@@ -14,6 +14,7 @@
 #include <functional>
 #include <complex>
 #include <mutex>
+#include <thread>
 
 #define SDL_ACTIVE __has_include("SDL.h") && false
 

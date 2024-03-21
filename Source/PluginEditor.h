@@ -8,7 +8,9 @@
 
 #pragma once
 
-#include <JuceHeader.h>
+// #include <JuceHeader.h>
+#include <juce_audio_processors/juce_audio_processors.h>
+using namespace juce;
 #include "PluginProcessor.h"
 #include "Parameter.h"
 
@@ -62,7 +64,7 @@ public:
     WaveTableComponent(QSynthiAudioProcessor& p) : Timer(), p(p)
     {
         startTimerHz(30);
-        logo.setImage(ImageFileFormat::loadFrom(BinaryData::logo_png, BinaryData::logo_pngSize), 1);
+        //logo.setImage(ImageFileFormat::loadFrom(BinaryData::logo_png, BinaryData::logo_pngSize), 1);
         addAndMakeVisible(&logo);
     }
   

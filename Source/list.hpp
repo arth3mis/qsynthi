@@ -8,6 +8,7 @@
 #include <utility>
 #include <numeric>
 #include <algorithm>
+#include <cmath>
 #include <initializer_list>
 #include <functional>
 #include <ostream>
@@ -116,7 +117,7 @@ public:
 	inline T getLinearInterpolation(double i) const 
 	{
 		if (empty()) return 0;
-		return ls[floor(i)] + (ls[(size_t)ceil(i) % length()] - ls[floor(i)]) * (i - floor(i)); 
+		return ls[floor(i)] + (ls[(size_t)ceil(i) % length()] - ls[floor(i)]) * (i - floor(i));
 	} 
 	// a + b*x (with previous conversion)
 	template<typename R>
@@ -167,7 +168,7 @@ public:
 	// moves values through list (end-start/start-end transfer)
 	list rotate(long long n=1) const
 	{
-		n = abs(n) % length() * /*sign function -->*/ (!signbit(n) * 2 - 1);
+		n = abs(n) % length() * /*sign function -->*/ (!std::signbit(n) * 2 - 1);
 		std::vector<T> v = ls;
 		if (n > 0)
 		{

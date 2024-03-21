@@ -11,7 +11,10 @@
 #pragma once
 #include "list.hpp"
 #include <functional>
-#include <JuceHeader.h>
+// #include <JuceHeader.h>
+#include <complex>
+#include <juce_audio_processors/juce_audio_processors.h>
+using namespace juce;
 
 #define PARAM_VERSION 1
 
