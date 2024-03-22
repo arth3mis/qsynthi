@@ -5,6 +5,7 @@
 #pragma once
 
 #include <vector>
+#include <cmath>
 #include <utility>
 #include <numeric>
 #include <algorithm>
@@ -167,7 +168,7 @@ public:
 	// moves values through list (end-start/start-end transfer)
 	list rotate(long long n=1) const
 	{
-		n = abs(n) % length() * /*sign function -->*/ (!signbit(n) * 2 - 1);
+		n = abs(n) % length() * /*sign function -->*/ (!std::signbit(n) * 2 - 1);
 		std::vector<T> v = ls;
 		if (n > 0)
 		{

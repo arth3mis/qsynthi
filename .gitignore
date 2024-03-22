@@ -3,3 +3,7 @@ JuceLibraryCode/
 **/*.DS_Store
 .vs/
 QSynthi.jucer
+/cmake-build-debug/
+/cmake-build-release/
+/libs/
+/.idea/
