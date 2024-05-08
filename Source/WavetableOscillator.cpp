@@ -4,8 +4,6 @@
 //
 //  Created by Jannis Müller on 12.12.22.
 //
-
-
 #include "WavetableOscillator.hpp"
 #include <cmath>
 #include "Wavetable.hpp"
@@ -14,8 +12,6 @@
 #define POCKETFFT_NO_MULTITHREADING
 #include "pocketfft_hdronly.h"
 
-// Sowas geht
-//namespace wvt = wavetable;
 
 WavetableOscillator::WavetableOscillator(Parameter *parameter) 
     : parameter{ parameter }
@@ -44,7 +40,7 @@ void WavetableOscillator::doTimestep(const float dt)
         v = fft(v, false);
 
 
-        // "timestepV"
+    // "timestepV"
     for (size_t i = 0; i < n; i++)
     {
         v[i] *= std::polar(1.f, dt * potential(i));
