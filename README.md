@@ -1,13 +1,24 @@
-# QSynthi
+# QSynthi - The Quantum Synthesizer
 
-The Quantum Synthesizer - by Jannis Müller & Arthur Freye
-
-
-## Video/Audio Demonstration
-
-https://drive.google.com/file/d/1Q3UvIyj4OghBhc4Y7gy1pjGBIHChAZL3/view?usp=share_link
+by Jannis Müller & Arthur Freye
 
 
-## Documentation (German)
+## Download & More
+You can find the plugin's VST3 & AU downloads, examples and our paper here:
+https://qsynthi.com
 
-https://docs.google.com/document/d/1XeaCrXb7apr-GOIGQENndjWFS6PSAvZ-FsfydEOfC_w
+
+## Setup
+This project uses the [juce](https://juce.com/) framework with the Projucer.
+Download JUCE and Projucer ([official site](https://juce.com/download/))
+and open [QSynthi.jucer](QSynthi.jucer) in the Projucer.
+
+
+
+## License
+See [LICENSE](LICENSE).
+
+
+## Contact
+arthur.freye[at]mni.thm.de
+
