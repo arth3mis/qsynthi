@@ -6,6 +6,7 @@
 //
 #include "WavetableOscillator.hpp"
 #include <cmath>
+#include <complex>
 #include "Wavetable.hpp"
 
 #define POCKETFFT_CACHE_SIZE 1000
