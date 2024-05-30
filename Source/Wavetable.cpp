@@ -21,7 +21,7 @@ list<cfloat> Wavetable::generate(const size_t type, const float shift, const flo
             return list<cfloat>(SIZE, [shift, scale] (size_t i) {
                 
                 float sineScale = pow(7, -scale);
-                float factor = (sineScale * (1 + abs(shift))) < 0.5f ? 1 / std::max(sineCurve(0, shift, sineScale), std::abs(sineCurve(1, shift, sineScale))) : 1;
+                float factor = (sineScale * (1 + std::abs(shift))) < 0.5f ? 1 / std::max(sineCurve(0, shift, sineScale), std::abs(sineCurve(1, shift, sineScale))) : 1;
                 return cfloat(factor * sineCurve(i / SIZE_F, shift, sineScale), 0);
                 
             });
@@ -30,7 +30,7 @@ list<cfloat> Wavetable::generate(const size_t type, const float shift, const flo
             return list<cfloat>(SIZE, [shift, scale] (size_t i) {
                 
                 float cosScale = pow(7, -scale);
-                if (cosScale * (1 + abs (shift)) < 1) {
+                if (cosScale * (1 + std::abs (shift)) < 1) {
                     float offset = 2 / (1 - std::min(cosCurve(0, shift, cosScale), cosCurve(1, shift, cosScale)));
                     return cfloat(- offset * cosCurve(i / SIZE_F, shift, cosScale) - 1 + offset, 0);
                 } else {
@@ -83,7 +83,7 @@ inline float Wavetable::sineCurve(float x, float shift, float scale)
     x = x - 0.5f - 0.5f * shift;
     x *= scale;
 
-    return -(abs(x) <= 0.5f ? sin(TWO_PI * x) : 0);
+    return -(std::abs(x) <= 0.5f ? sin(TWO_PI * x) : 0);
 }
 
 inline float Wavetable::cosCurve(float x, float shift, float scale)
@@ -91,15 +91,15 @@ inline float Wavetable::cosCurve(float x, float shift, float scale)
     x = x - 0.5f - 0.5f * shift;
     x *= scale;
     
-    return (abs(x) <= 0.5f ? cos(TWO_PI * x) : 0);
+    return (std::abs(x) <= 0.5f ? cos(TWO_PI * x) : 0);
 }
 
 inline float Wavetable::parabolaCurve(float x, float shift, float scale)
 {
-    scale = 0.25f + 1.75f / (1.f - 1.f / 15.f) * (pow(15.f, scale) - 1.f / 15.f);
+    scale = 0.25f + 1.75f / (1.f - 1.f / 15.f) * (std::pow(15.f, scale) - 1.f / 15.f);
     x = x - 0.5f - 0.5f * shift;
     
-    return pow(2 * abs(x), scale);
+    return pow(2 * std::abs(x), scale);
 }
 
 inline float Wavetable::sawtoothCurve(float x, float shift, float scale)
@@ -107,7 +107,7 @@ inline float Wavetable::sawtoothCurve(float x, float shift, float scale)
     scale = sliderScaling(scale, 0.001f, 1.f, 16.f, 0.f);
     x = fmod(x - 0.5f * shift, 1) - 0.5f;
 
-    return -((x > 0) ? 1 : -1) * pow(2 * abs(x), scale);
+    return -((x > 0) ? 1 : -1) * std::pow(2 * std::abs(x), scale);
 }
 
 
@@ -117,8 +117,8 @@ inline float Wavetable::sawtoothCurve(float x, float shift, float scale)
 inline float Wavetable::sliderScaling(float sliderValue, float valueAtNeg1, float valueAt0, float valueAt1, float mixLinear)
 {
     // Linear
-    float leftDifference = abs(valueAt0 - valueAtNeg1);
-    float rightDifference =abs(valueAt1 - valueAt0);
+    float leftDifference = std::abs(valueAt0 - valueAtNeg1);
+    float rightDifference =std::abs(valueAt1 - valueAt0);
     auto linearValue = [valueAtNeg1, valueAt0, valueAt1, leftDifference, rightDifference](float x) {
         return ((valueAt1 - valueAtNeg1 > 0) ? 1 : -1) * std::min(leftDifference, rightDifference) * x + valueAt0;
     };
