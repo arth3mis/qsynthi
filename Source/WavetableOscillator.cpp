@@ -17,7 +17,7 @@ WavetableOscillator::WavetableOscillator(Parameter *parameter)
     : parameter{ parameter }
     , state{ State::SLEEP }
 {
-    filter = new SingleThreadedIIRFilter();
+    filter = std::make_shared<SingleThreadedIIRFilter>();
 }
 
 WavetableOscillator::~WavetableOscillator()
