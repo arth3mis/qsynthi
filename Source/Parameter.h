@@ -87,55 +87,53 @@ public:
     static constexpr float ATTACK_THRESHOLD = 0.01f;
     static constexpr float DECAY_THRESHOLD = 0.00001f;
     static constexpr float RELEASE_THRESHOLD = 0.00001f;
-    
+
     static const StringArray WAVE_TYPES;
     static const StringArray SAMPLE_TYPES;
-    
+
     static constexpr float POTENTIAL_SCALE = 1.f;
-    
+
     // general
     float gainFactor = 0;
     float numVoices = 3;
     float portamentoTime = 0.5;
-    
+
     // Envelope
     float attackFactor = 0;
     float decayFactor = 0;
     float sustainLevel = 0;
     float releaseFactor = 0;
-    
+
     // Filter
     float filterFreq = 500;
     float filterQ = 1;
     float filterEnvelope = 4;
-    
+
     // Waveforms
     int waveTypeNumber = 0;
     float waveShift = 0;
     float waveScale = 0;
 
-    
-    
-    
+
     // For Schroedinger
     bool applyWavefunction = false; // True if Schrödinger's equation should be applied to waveform
-    
+
     float samplesPerTimestep = 0;   // Number of timesteps which get performed after a sample is calculated. Always > 0, could get > 1
     float timestepDelta = 0;        // Time duration of each timestep
     size_t preStartTimesteps = 0;
 
     // Values per Wavetable for each
     list<float> potential;
-    
+
     SampleType sampleType;          // for default value, go to layout creation
     bool showFFT = false;           // True if the FFT of the waveform should be played
-    
-    inline std::function<float(cfloat)> getSampleConverter()
+
+    std::function<float(cfloat)> getSampleConverter() const
     {
-        if (sampleType == SampleType::REAL_VALUE)       return [](cfloat z) { return std::real(z); };
-        else if (sampleType == SampleType::IMAG_VALUE)  return [](cfloat z) { return std::imag(z); };
-        else if (sampleType == SampleType::SQARED_ABS)  return [](cfloat z) { return std::norm(z); };
-        else                                            return [](cfloat z) { return 0; };
+        if (sampleType == REAL_VALUE) return [](const cfloat z) { return std::real(z); };
+        if (sampleType == IMAG_VALUE) return [](const cfloat z) { return std::imag(z); };
+        if (sampleType == SQARED_ABS) return [](const cfloat z) { return std::norm(z); };
+        return [](cfloat z) { return 0; };
     }
 
 
