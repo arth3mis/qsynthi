@@ -46,10 +46,10 @@ void WaveTableComponent::paint(Graphics& g)
     waveGradient.addColour(0.5, Colour(0xFFFF7738));
     
     list<cfloat> waveTable;
-    auto sampleConversion = p.parameter->getSampleConverter();
+    const auto sampleConversion = p.parameter->getSampleConverter();
 
-    if (p.synth->displayedOscillator != nullptr)
-        waveTable = p.synth->displayedOscillator->waveTable;
+    if (p.synth->hasDisplayedWavetable())
+        waveTable = p.synth->getDisplayedWavetable();
     else
         waveTable = Wavetable::generate(p.parameter->waveTypeNumber, p.parameter->waveShift, p.parameter->waveScale);
     

@@ -23,10 +23,11 @@ public:
     QSynthi(Parameter *parameter);
     QSynthi() {}
 
-    WavetableOscillator* displayedOscillator = nullptr;
+    list<cfloat> getDisplayedWavetable();
+    bool hasDisplayedWavetable() const;
 
     void prepareToPlay(float sampleRate);
-    void processBlock(AudioBuffer<float>& buffer, MidiBuffer& midiMessages);
+    void processBlock(AudioBuffer<float>& buffer, const MidiBuffer& midiMessages);
     
 private:
     bool sustain = false;
@@ -47,7 +48,10 @@ private:
     mutable_list<WavetableOscillator*> playingOscillators;
     mutable_list<WavetableOscillator*> sleepingOscillators;
 
-    std::vector<WavetableOscillator*> displayQueue;
+    WavetableOscillator* displayedOscillator = nullptr;
+    std::deque<WavetableOscillator*> displayQueue;
+    std::mutex displayAccessMutex;
+    void setDisplayedOscillator(WavetableOscillator* o);
 
     mutable_list<int> stolenNotes;
     mutable_list<int> sustainedNotes;
