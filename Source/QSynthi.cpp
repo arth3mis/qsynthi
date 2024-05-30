@@ -132,6 +132,7 @@ void QSynthi::handleMidiEvent(const MidiMessage& midiEvent)
         oscillator->noteOn(noteNumber, midiEvent.getVelocity());
         
         if (displayedOscillator == nullptr) displayedOscillator = oscillator;
+        displayQueue.push_back(oscillator);
     }
     else if (midiEvent.isNoteOff())
     {
@@ -156,6 +157,7 @@ void QSynthi::handleMidiEvent(const MidiMessage& midiEvent)
         }
 
         displayedOscillator = nullptr;
+        displayQueue.clear();
         playingOscillators = {};
         stolenNotes = {};
         
@@ -185,7 +187,19 @@ void QSynthi::noteOff(int noteNumber) {
             if (stolenNotes.length() <= 0) {
                 o->noteOff();
                 sleepingOscillators.append(o);
-                if (displayedOscillator == o) displayedOscillator = nullptr;
+                for (auto it = displayQueue.begin(); it != displayQueue.end(); ++it) {
+                    if (*it == o) {
+                        displayQueue.erase(it);
+                        break;
+                    }
+                }
+                if (displayedOscillator == o) {
+                    displayedOscillator = nullptr;
+                    if (!displayQueue.empty()) {
+                        displayedOscillator = displayQueue.front();
+                        displayQueue.pop_front();
+                    }
+                }
                 playingOscillators.erase(i--);
                 
             } else {

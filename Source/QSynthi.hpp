@@ -25,9 +25,9 @@ class QSynthi
 public:
     QSynthi(Parameter *parameter);
     QSynthi() {}
-    
+
     WavetableOscillator* displayedOscillator = nullptr;
-    
+
     void prepareToPlay(float sampleRate);
     void processBlock(AudioBuffer<float>& buffer, MidiBuffer& midiMessages);
     
@@ -49,12 +49,14 @@ private:
     mutable_list<WavetableOscillator> oscillators;
     mutable_list<WavetableOscillator*> playingOscillators;
     mutable_list<WavetableOscillator*> sleepingOscillators;
-    
+
+    std::vector<WavetableOscillator*> displayQueue;
+
     mutable_list<int> stolenNotes;
     mutable_list<int> sustainedNotes;
-    
+
     Reverb reverb;
-    
+
     void noteOff(int noteNumber);
     void handleMidiEvent(const MidiMessage& midiEvent);
     void render(AudioBuffer<float>& buffer, int startSample, int endSample);
