@@ -84,8 +84,10 @@ class QSynthiAudioProcessorEditor  : public AudioProcessorEditor
 public:
     QSynthiAudioProcessorEditor (QSynthiAudioProcessor&);
     ~QSynthiAudioProcessorEditor() override;
-    
-    
+
+    bool keyPressed(const KeyPress &key) override;
+    bool keyStateChanged(bool isKeyDown) override;
+
     //==============================================================================
     void paint (Graphics&) override;
     void resized() override;
@@ -93,6 +95,9 @@ public:
 private:
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
+
+    std::unordered_set<juce_wchar> keysDown;
+    void midiNote(int noteNumber, bool state);
     
     QSynthiAudioProcessor& audioProcessor;
     

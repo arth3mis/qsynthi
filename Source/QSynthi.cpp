@@ -38,6 +38,10 @@ bool QSynthi::hasDisplayedWavetable() const {
     return displayedOscillator != nullptr;
 }
 
+void QSynthi::addMidiMessage(const MidiMessage &message) {
+    customMessages.addEvent(message, Time::getMillisecondCounterHiRes());
+}
+
 void QSynthi::prepareToPlay(const float sampleRate)
 {
     this->sampleRate = sampleRate;
@@ -67,42 +71,46 @@ void QSynthi::prepareToPlay(const float sampleRate)
 void QSynthi::processBlock(AudioBuffer<float>& buffer, const MidiBuffer& midiMessages)
 {
     // Test if number of oscillators changed
-    if (static_cast<size_t>(parameter->numVoices) != oscillators.length())
-    {
+    if (static_cast<size_t>(parameter->numVoices) != oscillators.length()) {
         prepareToPlay(sampleRate);
     }
-    
-    
+
     int currentSample = 0;
-    
+
     reverb.setParameters(Reverb::Parameters{0.4f + 0.5f * parameter->reverbMix * parameter->reverbMix, 0.4f, 0.35f * parameter->reverbMix, (1-parameter->reverbMix), 0.8f, 0.0f});
 
 
     // idea 1: create all, keep all always, ask everyone for isPlaying
     // idea 2: make list with playing oscis' references, maybe self-updating
-    
-    
-    
-    for (const auto midiMessage : midiMessages)
-    {
+
+
+    // handle custom events (sent by PluginEditor)
+    for (const auto midiMessage : customMessages) {
+        const auto midiEvent = midiMessage.getMessage();
+        // const auto midiEventSample = static_cast<int>(midiEvent.getTimeStamp());
+        // render(buffer, currentSample, midiEventSample);
+        handleMidiEvent(midiEvent);
+Logger::writeToLog(midiEvent.getDescription());
+    }
+    customMessages.clear();
+
+    for (const auto midiMessage : midiMessages) {
         const auto midiEvent = midiMessage.getMessage();
         const auto midiEventSample = static_cast<int>(midiEvent.getTimeStamp());
-        
         // Render everything before the event and handle it
         render(buffer, currentSample, midiEventSample);
         handleMidiEvent(midiEvent);
-        
+
         currentSample = midiEventSample;
     }
-    
+
     // Render everything after the last midiEvent in this block
     render(buffer, currentSample, buffer.getNumSamples());
-    
+
     // Apply Reverb
     if (parameter->reverbMix != 0) {
         reverb.processStereo(buffer.getWritePointer(0), buffer.getWritePointer(1), buffer.getNumSamples());
     }
-    
 }
 
 void QSynthi::handleMidiEvent(const MidiMessage& midiEvent)

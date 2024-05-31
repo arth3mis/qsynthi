@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.22)
 
+add_compile_options(-fPIC)
+
 juce_add_binary_data(BinaryData SOURCES
         attack.png
         decay.png

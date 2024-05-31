@@ -179,8 +179,8 @@ gain(p, GAIN, "dB")
     gainImage.setImage(ImageFileFormat::loadFrom(BinaryData::gian_png, BinaryData::gian_pngSize));
     
     
-    
-    
+    if (PluginHostType::getPluginLoadedAs() == AudioProcessor::wrapperType_Standalone)
+        setWantsKeyboardFocus(true);
 
 
     setLookAndFeel(waveStyle);
@@ -206,6 +206,56 @@ QSynthiAudioProcessorEditor::~QSynthiAudioProcessorEditor()
     waveStyle = nullptr;
     potentialStyle = nullptr;
     synthiStyle = nullptr;
+}
+
+bool QSynthiAudioProcessorEditor::keyPressed(const KeyPress &key) {
+    if (PluginHostType::getPluginLoadedAs() != AudioProcessor::wrapperType_Standalone)
+        return AudioProcessorEditor::keyPressed(key);
+
+    // Standalone mode
+    const auto k = key.getTextCharacter();
+
+    if (!keysDown.contains(k)) {
+        keysDown.insert(k);
+        switch (k) {
+            case 97: midiNote(36, true);
+            default: break;
+        }
+        Logger::writeToLog(String(k));
+    }
+
+    return AudioProcessorEditor::keyPressed(key);
+}
+
+bool QSynthiAudioProcessorEditor::keyStateChanged(bool isKeyDown) {
+    if (PluginHostType::getPluginLoadedAs() != AudioProcessor::wrapperType_Standalone)
+        return AudioProcessorEditor::keyStateChanged(isKeyDown);
+
+    // Standalone mode
+    std::vector<juce_wchar> toRemove;
+    for (const auto k: keysDown) {
+        if (!KeyPress::isKeyCurrentlyDown(k)) {
+            toRemove.push_back(k);
+        }
+    }
+    for (const auto k : toRemove) {
+        keysDown.erase(k);
+
+        switch (k) {
+            case 97: midiNote(36, false);
+            default: break;
+        }
+    }
+
+    return AudioProcessorEditor::keyStateChanged(isKeyDown);
+}
+
+void QSynthiAudioProcessorEditor::midiNote(int noteNumber, bool state) {
+    auto message = state ?
+        juce::MidiMessage::noteOn (1, noteNumber, static_cast<juce::uint8>(127)) :
+        juce::MidiMessage::noteOff(1, noteNumber, static_cast<juce::uint8>(127));
+    message.setTimeStamp (juce::Time::getMillisecondCounterHiRes());
+    audioProcessor.synth->addMidiMessage(message);
 }
 
 //==============================================================================

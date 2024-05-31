@@ -29,6 +29,9 @@ public:
     list<cfloat> getDisplayedWavetable();
     bool hasDisplayedWavetable() const;
 
+    MidiBuffer customMessages;
+    void addMidiMessage(const MidiMessage& message);
+
     void prepareToPlay(float sampleRate);
     void processBlock(AudioBuffer<float>& buffer, const MidiBuffer& midiMessages);
     
