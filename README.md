@@ -24,7 +24,10 @@ Select an exporter and start the project, which opens in the selected IDE.
 
 This project can also be built using CMake.
 Switch to the branch [cmake](https://github.com/arth3mis/qsynthi/tree/cmake)
-to get the compatible version.
+(``git checkout cmake``) to get the compatible code base.
+
+Note: Not all methods described below have been tested with this project.
+You may need to refer to other guides for further help.
 
 The following tools must be installed on your system:
 - CMake Version 3.22 or higher
