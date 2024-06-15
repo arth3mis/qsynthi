@@ -1,16 +1,16 @@
 cmake_minimum_required(VERSION 3.22)
 
 # Version is needed by JUCE.
-project(AudioPlugin VERSION 0.8.1)
+project(AudioPlugin VERSION 0.9)
 
 # Adding a directory with the library/application name as a subfolder of the
 # include folder is a good practice. It helps avoid name clashes later on.
 #set(INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include/QSynthi2")
 
 IF (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-    set(PROD_NAME "QSynthiCmake-Debug")
+    set(PROD_NAME "QSynthi-Debug")
 ELSE()
-    set(PROD_NAME "QSynthiCmake")
+    set(PROD_NAME "QSynthi")
 ENDIF()
 
 # Adds a plugin target (that's basically what the Projucer does).
