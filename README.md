@@ -77,7 +77,7 @@ Save the file (Ctrl+S) to reload the CMake project.
 
 Select the "x64-Release" configuration in the dropdown menu to the left of the start button.
 Then, at the very top, click on Build→Install. The plugins will be created in
-``out/build/x64-Release/plugin/AudioPlugin_artefacts/Release/``
+``out/build/x64-Release/Source/AudioPlugin_artefacts/Release/``
 (note that the individual files are not directly in this folder, but further down the path).
 
 
