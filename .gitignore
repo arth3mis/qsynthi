@@ -4,4 +4,4 @@ JuceLibraryCode/
 .vs/
 QSynthi.jucer
 /libs/
-/cmake-build-*/
+/*build*/

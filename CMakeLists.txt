@@ -11,6 +11,10 @@ set(CMAKE_CXX_STANDARD 23)
 # If you want to install them system wide, set CPM_SOURCE_CACHE with the path to the dependencies
 # either as an environment variable or pass it to the cmake script with -DCPM_SOURCE_CACHE=<path>.
 
+IF (NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE "Release")
+ENDIF()
+
 IF (${CMAKE_BUILD_TYPE} STREQUAL "Release")
     # save release lib builds in cmake-build-release[...] folder
     set(LIB_DIR ${CMAKE_CURRENT_BINARY_DIR}/libs)

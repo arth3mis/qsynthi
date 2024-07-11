@@ -21,7 +21,7 @@ juce_add_plugin(${PROJECT_NAME}
         NEEDS_MIDI_OUTPUT TRUE
         COPY_PLUGIN_AFTER_BUILD FALSE
         PLUGIN_MANUFACTURER_CODE Ajfm
-        PLUGIN_CODE Qsy2
+        PLUGIN_CODE Qsyn
         FORMATS AU VST3 Standalone
         PRODUCT_NAME ${PROD_NAME}
 )
