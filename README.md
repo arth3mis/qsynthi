@@ -24,10 +24,7 @@ Select an exporter and start the project, which opens in the selected IDE.
 
 This project can also be built using CMake.
 Switch to the branch [cmake](https://github.com/arth3mis/qsynthi/tree/cmake)
-(``git checkout cmake``) to get the compatible code base.
-
-Note: Not all methods described below have been tested with this project.
-You may need to refer to other guides for further help.
+to get the compatible version.
 
 The following tools must be installed on your system:
 - CMake Version 3.22 or higher
@@ -37,9 +34,11 @@ The following tools must be installed on your system:
 
 Clone the repository and open it in your IDE.
 
-When your build has succeeded, you will find the VST3 and AU Plugin files here (relative to the project directory):
+When your build has succeeded, you will find the VST3 and AU Plugin files in one of these folders (relative to the project directory):
 ``build/plugin/AudioPlugin_artefacts/Release/VST3/``
 ``build/plugin/AudioPlugin_artefacts/Release/AU/``
+``build/Source/AudioPlugin_artefacts/Release/VST3/``
+``build/Source/AudioPlugin_artefacts/Release/AU/``
 
 If errors occur during the setup, you can retry by deleting the build folder.
 Before you give up, try the [manual method](#manual-build), it is sometimes simpler than IDE setups
@@ -51,13 +50,15 @@ another way of building ("Projucer"), this does **not** apply to this project!
 
 ### VS Code
 
-Please install the CMake extension (twxs.cmake) inside Visual Studio Code.
+Please install the CMake extension (twxs.cmake) and the CMake Tools extension (ms-vscode.cmake-tools) inside Visual Studio Code.
 
 Visual Studio Code should be able to detect the project and offer you to configure it.
 You can also right-click the file ``CMakeLists.txt`` in the project root directory and select "Configure All Projects".
 
-In the CMake tab on the left side of VS Code, you will now find the "Project Outline" containing
-the buildable targets. Select ``AudioPlugin_All`` as the default build target or build it
+Go to the CMake tab on the left side of VS Code, then navigate to "Project status" → "Configure". Select your compiler option here (if the methods above didn't work) and choose ```Release``` as the build variant.
+
+When the project is successfully configured, you will find the "Project Outline" in the CMake tab of VS Code, which now contains the buildable targets.
+Select ``AudioPlugin_All`` (located under "AudioPlugin") as the default build target or build it
 via the button or right-clicking.
 
 
@@ -77,7 +78,7 @@ Save the file (Ctrl+S) to reload the CMake project.
 
 Select the "x64-Release" configuration in the dropdown menu to the left of the start button.
 Then, at the very top, click on Build→Install. The plugins will be created in
-``out/build/x64-Release/Source/AudioPlugin_artefacts/Release/``
+``out/build/x64-Release/plugin/AudioPlugin_artefacts/Release/``
 (note that the individual files are not directly in this folder, but further down the path).
 
 
