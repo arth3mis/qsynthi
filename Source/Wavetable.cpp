@@ -55,13 +55,21 @@ list<cfloat> Wavetable::generate(const size_t type, const float shift, const flo
                 float scaledX = i / SIZE_F - 0.5f - 0.5f * shift;
                 return 4 * scale / (1 + 3 * shift) * scaledX * scaledX;
                 
-        });
+            });
             
         case WaveType::SAWTOOTH:
             return list<cfloat>(SIZE, [shift, scale] (size_t i) {
                 
                 return sawtoothCurve(i / SIZE_F, shift, scale);
                 
+            });
+            
+        case WaveType::SQUARE:
+            return list<cfloat>(SIZE, [shift, scale] (size_t i) {
+
+                float squareScale = pow(7, -scale);
+                float factor = (squareScale * (1 + abs(shift))) < 0.5f ? 1 / std::max(squareCurve(0, shift, squareScale), abs(squareCurve(1, shift, squareScale))) : 1;
+                return factor * squareCurve(i / SIZE_F, shift, squareScale);
             });
             
     }
@@ -108,6 +116,14 @@ inline float Wavetable::sawtoothCurve(float x, float shift, float scale)
     x = fmod(x - 0.5f * shift, 1) - 0.5f;
 
     return -((x > 0) ? 1 : -1) * pow(2 * abs(x), scale);
+}
+
+inline float Wavetable::squareCurve(float x, float shift, float scale)
+{
+    x = x - 0.5f - 0.5f * shift;
+    x *= scale;
+    
+    return -(abs(x) <= 0.5f ? ((fmod(x, 1.0f) > 0.0f) ? 1.0f : -1.0f) : 0);
 }
 
 
