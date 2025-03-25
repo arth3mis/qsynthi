@@ -3,7 +3,10 @@
 <JUCERPROJECT id="YctFDe" name="QSynthi" projectType="audioplug" useAppConfig="1"
               addUsingNamespaceToJuceHeader="1" displaySplashScreen="1" jucerFormatVersion="1"
               companyName="AJ" pluginCharacteristicsValue="pluginIsSynth,pluginProducesMidiOut,pluginWantsMidiIn"
-              pluginFormats="buildAU,buildVST3">
+              pluginFormats="buildAU,buildVST3" version="0.9" companyWebsite="www.qsynthi.com"
+              companyEmail="info@qsynthi.com" pluginManufacturerCode="Ajfm"
+              pluginCode="Qsyi" pluginManufacturer="AJ" pluginDesc="The Quantum Synthesizer"
+              pluginName="QSynthi">
   <MAINGROUP id="BfkBYy" name="QSynthi">
     <GROUP id="{EC3B5050-0D9F-0939-FDAB-6AB6467EEA47}" name="img">
       <FILE id="Tzy15L" name="attack.png" compile="0" resource="1" file="Source/img/attack.png"/>
@@ -71,7 +74,7 @@
   <EXPORTFORMATS>
     <XCODE_MAC targetFolder="Builds/MacOSX" xcodeValidArchs="arm64,arm64e,i386,x86_64">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" targetName="QSynthi"/>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="QSynthi-Debug" defines="JucePlugin_Name=&quot;QSynthi-Debug&quot;"/>
         <CONFIGURATION isDebug="0" name="Release" targetName="QSynthi"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
