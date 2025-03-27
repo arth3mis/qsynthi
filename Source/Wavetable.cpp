@@ -68,8 +68,9 @@ list<cfloat> Wavetable::generate(const size_t type, const float shift, const flo
             return list<cfloat>(SIZE, [shift, scale] (size_t i) {
 
                 float squareScale = pow(7, -scale);
-                float factor = (squareScale * (1 + abs(shift))) < 0.5f ? 1 / std::max(squareCurve(0, shift, squareScale), abs(squareCurve(1, shift, squareScale))) : 1;
-                return factor * squareCurve(i / SIZE_F, shift, squareScale);
+                float factor = (squareScale * (1 + abs(shift))) < 0.5f ? 1 / std::max(squareCurve(0.f, shift, squareScale), std::abs(squareCurve(1.f, shift, squareScale))) : 1;
+
+                return cfloat(factor * squareCurve(i / SIZE_F, shift, squareScale), 0);
             });
             
     }
