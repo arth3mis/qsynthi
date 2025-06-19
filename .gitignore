@@ -1,4 +1,5 @@
 Builds/
+build/
 JuceLibraryCode/
 **/*.DS_Store
 .vs/
