@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.22)
 
 # Version is needed by JUCE.
-project(AudioPlugin VERSION 0.8.1)
+project(AudioPlugin VERSION 0.9)
 
 # Adding a directory with the library/application name as a subfolder of the
 # include folder is a good practice. It helps avoid name clashes later on.
@@ -24,6 +24,9 @@ juce_add_plugin(${PROJECT_NAME}
         PLUGIN_CODE Qsyi
         FORMATS AU VST3 Standalone
         PRODUCT_NAME ${PROD_NAME}
+        DESCRIPTION "The Quantum Synthesizer"
+        COMPANY_EMAIL "info@qsynthi.com"
+        COMPANY_WEBSITE "https://qsynthi.com"
 )
 
 # add image folder

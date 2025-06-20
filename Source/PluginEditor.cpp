@@ -130,19 +130,22 @@ gain(p, GAIN, "dB")
 {
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
+
+    Colour highlightFG{ 0xff4C3F50 };
+    Colour tooltipFG{ 0xffD6D0DF };
     
     waveStyle = new LookAndFeel_V4(LookAndFeel_V4::ColourScheme{
-        0xFF221C24, 0xff4C3F50, 0xff141010,
+        0xFF221C24, highlightFG, 0xff141010,
         0x00000000, 0xffffffff, 0xffffffff,
         0xffffffff, 0xFFFF7738, 0xffffffff });
     
     potentialStyle = new LookAndFeel_V4(LookAndFeel_V4::ColourScheme{
-        0xFF221C24, 0xff4C3F50, 0xff141010,
+        0xFF221C24, highlightFG, 0xff141010,
         0x00000000, 0xffffffff, 0xffffffff,
         0xffffffff, 0xFF00D1BB, 0xffffffff });
     
     synthiStyle = new LookAndFeel_V4(LookAndFeel_V4::ColourScheme{
-        0xFF221C24, 0xff4C3F50, 0xff141010,
+        0xFF221C24, highlightFG, 0xff141010,
         0x00000000, 0xffffffff, 0xffffffff,
         0xffffffff, 0xFF00CC48, 0xffffffff });
     
@@ -153,8 +156,8 @@ gain(p, GAIN, "dB")
     simulationOffsetImage.setImage(ImageFileFormat::loadFrom(BinaryData::simOffset_png, BinaryData::simOffset_pngSize));
     simulationAccuracyImage.setImage(ImageFileFormat::loadFrom(BinaryData::simAccuracy_png, BinaryData::simAccuracy_pngSize));
     sampleTypeImage.setImage(ImageFileFormat::loadFrom(BinaryData::filter_png, BinaryData::filter_pngSize));
-
-
+    
+    
     potentialTypeImage1.setImage(ImageFileFormat::loadFrom(BinaryData::potentialShape_png, BinaryData::potentialShape_pngSize));
     potentialShiftImage1.setImage(ImageFileFormat::loadFrom(BinaryData::potentialShift_png, BinaryData::potentialShift_pngSize));
     potentialScaleImage1.setImage(ImageFileFormat::loadFrom(BinaryData::potentialScale_png, BinaryData::potentialScale_pngSize));
@@ -163,8 +166,8 @@ gain(p, GAIN, "dB")
     potentialShiftImage2.setImage(ImageFileFormat::loadFrom(BinaryData::potentialShift_png, BinaryData::potentialShift_pngSize));
     potentialScaleImage2.setImage(ImageFileFormat::loadFrom(BinaryData::potentialScale_png, BinaryData::potentialScale_pngSize));
     potentialHeightImage2.setImage(ImageFileFormat::loadFrom(BinaryData::potentialHeight_png, BinaryData::potentialHeight_pngSize));
-
-
+    
+    
     attackImage.setImage(ImageFileFormat::loadFrom(BinaryData::attack_png, BinaryData::attack_pngSize));
     decayImage.setImage(ImageFileFormat::loadFrom(BinaryData::decay_png, BinaryData::decay_pngSize));
     sustainImage.setImage(ImageFileFormat::loadFrom(BinaryData::sustain_png, BinaryData::sustain_pngSize));
@@ -178,9 +181,42 @@ gain(p, GAIN, "dB")
     reverbImage.setImage(ImageFileFormat::loadFrom(BinaryData::reverb_png, BinaryData::reverb_pngSize));
     gainImage.setImage(ImageFileFormat::loadFrom(BinaryData::gian_png, BinaryData::gian_pngSize));
     
+
+    // Fixed tooltip label display
+    tooltipLabel.setJustificationType(Justification::centredLeft);
+    tooltipLabel.setColour(Label::textColourId, Colour(0xFFCCCCDD));
+    addAndMakeVisible(tooltipLabel);
     
-    if (PluginHostType::getPluginLoadedAs() == AudioProcessor::wrapperType_Standalone)
-        setWantsKeyboardFocus(true);
+    // Bottom bar buttons
+    Image linkButtonVersionImage = ImageFileFormat::loadFrom(BinaryData::buttonVersion_png,
+        BinaryData::buttonVersion_pngSize);
+    Image linkButtonHelpImage = ImageFileFormat::loadFrom(BinaryData::buttonHelp_png,
+        BinaryData::buttonHelp_pngSize);
+    Image linkButtonDonateImage = ImageFileFormat::loadFrom(BinaryData::buttonDonate_png,
+        BinaryData::buttonDonate_pngSize);
+
+    linkButtonVersion.setImages(false, true, true,
+        linkButtonVersionImage, 0.0f, highlightFG,  // opaque tint
+        linkButtonVersionImage, 1.0f, Colours::transparentBlack,
+        linkButtonVersionImage, 0.6f, Colours::transparentBlack);
+    linkButtonHelp.setImages(false, true, true,
+        linkButtonHelpImage, 0.0f, highlightFG,
+        linkButtonHelpImage, 1.0f, Colours::transparentBlack,
+        linkButtonHelpImage, 0.6f, Colours::transparentBlack);
+    linkButtonDonate.setImages(false, true, true,
+        linkButtonDonateImage, 0.0f, highlightFG,
+        linkButtonDonateImage, 1.0f, Colours::transparentBlack,
+        linkButtonDonateImage, 0.6f, Colours::transparentBlack);
+
+    linkButtonVersion.onClick = [this]() {
+        URL(String("https://qsynthi.com/version-check?v=") + JucePlugin_VersionString).launchInDefaultBrowser();
+        };
+    linkButtonHelp.onClick = [this]() {
+        URL(String("https://qsynthi.com/")).launchInDefaultBrowser();
+        };
+    linkButtonDonate.onClick = [this]() {
+        URL(String("https://qsynthi.com/donate")).launchInDefaultBrowser();
+        };
 
 
     setLookAndFeel(waveStyle);
@@ -189,9 +225,12 @@ gain(p, GAIN, "dB")
     potentialComponents.forEach([this](auto* c){ c->setLookAndFeel(this->potentialStyle); });
     synthiComponents.forEach([this](auto* c){ c->setLookAndFeel(this->synthiStyle); });
     
-    components.forEach([this](auto* c){ this->addAndMakeVisible(c); });
+    components.forEach([this](auto* c){ 
+        c->addMouseListener(this, false);
+        this->addAndMakeVisible(c);
+    });
     
-    setSize (800, 580);
+    setSize (800, 610);
     setResizable(true, true);
 }
 
@@ -208,61 +247,19 @@ QSynthiAudioProcessorEditor::~QSynthiAudioProcessorEditor()
     synthiStyle = nullptr;
 }
 
-bool QSynthiAudioProcessorEditor::keyPressed(const KeyPress &key) {
-    if (PluginHostType::getPluginLoadedAs() != AudioProcessor::wrapperType_Standalone)
-        return AudioProcessorEditor::keyPressed(key);
-
-    // Standalone mode
-    const auto k = key.getTextCharacter();
-
-    if (!keysDown.contains(k)) {
-        keysDown.insert(k);
-        switch (k) {
-            case 97: midiNote(36, true);
-            default: break;
-        }
-        Logger::writeToLog(String(k));
-    }
-
-    return AudioProcessorEditor::keyPressed(key);
-}
-
-bool QSynthiAudioProcessorEditor::keyStateChanged(bool isKeyDown) {
-    if (PluginHostType::getPluginLoadedAs() != AudioProcessor::wrapperType_Standalone)
-        return AudioProcessorEditor::keyStateChanged(isKeyDown);
-
-    // Standalone mode
-    std::vector<juce_wchar> toRemove;
-    for (const auto k: keysDown) {
-        if (!KeyPress::isKeyCurrentlyDown(k)) {
-            toRemove.push_back(k);
-        }
-    }
-    for (const auto k : toRemove) {
-        keysDown.erase(k);
-
-        switch (k) {
-            case 97: midiNote(36, false);
-            default: break;
-        }
-    }
-
-    return AudioProcessorEditor::keyStateChanged(isKeyDown);
-}
-
-void QSynthiAudioProcessorEditor::midiNote(int noteNumber, bool state) {
-    auto message = state ?
-        juce::MidiMessage::noteOn (1, noteNumber, static_cast<juce::uint8>(127)) :
-        juce::MidiMessage::noteOff(1, noteNumber, static_cast<juce::uint8>(127));
-    message.setTimeStamp (juce::Time::getMillisecondCounterHiRes());
-    audioProcessor.synth->addMidiMessage(message);
-}
-
 //==============================================================================
 void QSynthiAudioProcessorEditor::paint (Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
     g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));
+
+    // bottom area background
+    //auto bounds = getLocalBounds();
+    //int bottomHeight = bounds.getHeight() / bottomBarHeightFraction;
+    //auto bottomArea = bounds.removeFromBottom(bottomHeight);
+    //g.setColour(Colour(0xff141010));
+    //g.fillRect(bottomArea);
+
 /*
     g.setColour (Colours::white);
     g.setFont (15.0f);
@@ -278,9 +275,24 @@ void QSynthiAudioProcessorEditor::resized()
     
     // Get Bounds
     auto bounds = getLocalBounds();
+
+    int bottomHeight = bounds.getHeight() / 20;
+    auto bottomArea = bounds.removeFromBottom(bottomHeight);
+
     int width = bounds.getWidth();
     int height = bounds.getHeight();
     int border = (width+height) / 250;
+
+    // Bottom Bar Area
+    bottomArea = trim(bottomArea, border);
+    int bottomButtonSize = bottomArea.getHeight();
+    int bottomButtonSpaceW = bottomButtonSize + border;
+    bottomArea.removeFromRight(border * 2);  // right padding
+    // buttons are ordered right to left
+    linkButtonVersion   .setBounds(bottomArea.removeFromRight(bottomButtonSpaceW).withWidth(bottomButtonSize));
+    linkButtonHelp      .setBounds(bottomArea.removeFromRight(bottomButtonSpaceW).withWidth(bottomButtonSize));
+    linkButtonDonate    .setBounds(bottomArea.removeFromRight(bottomButtonSpaceW).withWidth(bottomButtonSize));
+    tooltipLabel.setBounds(bottomArea);
     
     // Area for components
     int lineHeight = (int) (height / 16.f);
@@ -342,6 +354,39 @@ void QSynthiAudioProcessorEditor::resized()
 
 Rectangle<int> QSynthiAudioProcessorEditor::trim(Rectangle<int> rect, int amount)
 {
-    
     return rect.withTrimmedTop(amount).withTrimmedRight(amount).withTrimmedBottom(amount).withTrimmedLeft(amount);
+}
+
+void QSynthiAudioProcessorEditor::mouseEnter(const MouseEvent& e)
+{
+    // Bottom bar buttons
+    if (e.eventComponent == &linkButtonVersion)
+        showTooltip("Check for updates");
+    else if (e.eventComponent == &linkButtonHelp)
+        showTooltip("Open website for info and ideas");
+    else if (e.eventComponent == &linkButtonDonate)
+        showTooltip("Donate to support us!");
+
+    // Wave
+
+    // Potential
+
+    // Synthi
+    //else if (e.eventComponent == &sustainImage || e.eventComponent == &sustain)
+    //    showTooltip("Sustain");
+}
+
+void QSynthiAudioProcessorEditor::mouseExit(const MouseEvent& e)
+{
+    hideTooltip();
+}
+
+void QSynthiAudioProcessorEditor::showTooltip(const String& text)
+{
+    tooltipLabel.setText(text, dontSendNotification);
+}
+
+void QSynthiAudioProcessorEditor::hideTooltip()
+{
+    tooltipLabel.setText("", dontSendNotification);
 }
