@@ -368,12 +368,78 @@ void QSynthiAudioProcessorEditor::mouseEnter(const MouseEvent& e)
         showTooltip("Donate to support us!");
 
     // Wave
+    else if (e.eventComponent == &waveTypeImage || e.eventComponent == &waveType)
+        showTooltip("QSynthi <3");
+    else if (e.eventComponent == &waveShiftImage || e.eventComponent == &waveShift)
+        showTooltip("QSynthi <3");
+    else if (e.eventComponent == &waveScaleImage || e.eventComponent == &waveScale)
+        showTooltip("QSynthi <3");
+    else if (e.eventComponent == &simulationSpeedImage || e.eventComponent == &simulationSpeed)
+        showTooltip("QSynthi <3");
+    else if (e.eventComponent == &simulationOffsetImage || e.eventComponent == &simulationOffset)
+        showTooltip("QSynthi <3");
+    else if (e.eventComponent == &simulationAccuracyImage || e.eventComponent == &simulationAccuracy)
+        showTooltip("QSynthi <3");
+    else if (e.eventComponent == &sampleTypeImage || e.eventComponent == &sampleType)
+        showTooltip("QSynthi <3");
 
     // Potential
+    else if (e.eventComponent == &potentialTypeImage1 || e.eventComponent == &potentialType1)
+        showTooltip("QSynthi <3");
+    else if (e.eventComponent == &potentialShiftImage1 || e.eventComponent == &potentialShift1)
+        showTooltip("QSynthi <3");
+    else if (e.eventComponent == &potentialScaleImage1 || e.eventComponent == &potentialScale1)
+        showTooltip("QSynthi <3");
+    else if (e.eventComponent == &potentialHeightImage1 || e.eventComponent == &potentialHeight1)
+        showTooltip("QSynthi <3");
+    else if (e.eventComponent == &potentialTypeImage2 || e.eventComponent == &potentialType2)
+        showTooltip("QSynthi <3");
+    else if (e.eventComponent == &potentialShiftImage2 || e.eventComponent == &potentialShift2)
+        showTooltip("QSynthi <3");
+    else if (e.eventComponent == &potentialScaleImage2 || e.eventComponent == &potentialScale2)
+        showTooltip("QSynthi <3");
+    else if (e.eventComponent == &potentialHeightImage2 || e.eventComponent == &potentialHeight2)
+        showTooltip("QSynthi <3");
 
     // Synthi
-    //else if (e.eventComponent == &sustainImage || e.eventComponent == &sustain)
-    //    showTooltip("Sustain");
+    else if (e.eventComponent == &attackImage || e.eventComponent == &attack)
+        showTooltip("Attack");
+    else if (e.eventComponent == &decayImage || e.eventComponent == &decay)
+        showTooltip("Decay");
+    else if (e.eventComponent == &sustainImage || e.eventComponent == &sustain)
+        showTooltip("Sustain");
+    else if (e.eventComponent == &releaseImage || e.eventComponent == &release)
+        showTooltip("Release");
+    else if (e.eventComponent == &filterFrequencyImage || e.eventComponent == &filterFrequency)
+        showTooltip("QSynthi <3");
+    else if (e.eventComponent == &filterResonanceImage || e.eventComponent == &filterResonance)
+        showTooltip("QSynthi <3");
+    else if (e.eventComponent == &filterEnvelopeImage || e.eventComponent == &filterEnvelope)
+        showTooltip("QSynthi <3");
+    else if (e.eventComponent == &voiceCountImage || e.eventComponent == &voiceCount)
+        showTooltip("QSynthi <3");
+    else if (e.eventComponent == &portamentoImage || e.eventComponent == &portamento)
+        showTooltip("QSynthi <3");
+    else if (e.eventComponent == &stereoImage || e.eventComponent == &stereoize)
+        showTooltip("QSynthi <3");
+    else if (e.eventComponent == &reverbImage || e.eventComponent == &reverbMix)
+        showTooltip("QSynthi <3");
+    else if (e.eventComponent == &gainImage || e.eventComponent == &gain)
+        showTooltip("QSynthi <3");
+
+    // Headings
+    else if (e.eventComponent == &waveText)
+        showTooltip("QSynthi <3");
+    else if (e.eventComponent == &simulationText)
+        showTooltip("QSynthi <3");
+    else if (e.eventComponent == &potentialText)
+        showTooltip("QSynthi <3");
+    else if (e.eventComponent == &envelopeText)
+        showTooltip("QSynthi <3");
+    else if (e.eventComponent == &filterText)
+        showTooltip("QSynthi <3");
+    else if (e.eventComponent == &generalText)
+        showTooltip("QSynthi <3");
 }
 
 void QSynthiAudioProcessorEditor::mouseExit(const MouseEvent& e)
