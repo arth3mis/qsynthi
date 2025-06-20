@@ -65,7 +65,7 @@ private:
     float phaseIncrement = 0;
     
     // Filter
-    SingleThreadedIIRFilter* filter;
+    std::shared_ptr<SingleThreadedIIRFilter> filter;
 
     // Schrödinger
     double timestepCounter = 0;

@@ -22,11 +22,12 @@ class QSynthi
 public:
     QSynthi(Parameter *parameter);
     QSynthi() {}
-    
-    WavetableOscillator* displayedOscillator = nullptr;
-    
+
+    list<cfloat> getDisplayedWavetable();
+    bool hasDisplayedWavetable() const;
+
     void prepareToPlay(float sampleRate);
-    void processBlock(AudioBuffer<float>& buffer, MidiBuffer& midiMessages);
+    void processBlock(AudioBuffer<float>& buffer, const MidiBuffer& midiMessages);
     
 private:
     bool sustain = false;
@@ -46,12 +47,17 @@ private:
     mutable_list<WavetableOscillator> oscillators;
     mutable_list<WavetableOscillator*> playingOscillators;
     mutable_list<WavetableOscillator*> sleepingOscillators;
-    
+
+    WavetableOscillator* displayedOscillator = nullptr;
+    std::deque<WavetableOscillator*> displayQueue;
+    std::mutex displayAccessMutex;
+    void setDisplayedOscillator(WavetableOscillator* o);
+
     mutable_list<int> stolenNotes;
     mutable_list<int> sustainedNotes;
-    
+
     Reverb reverb;
-    
+
     void noteOff(int noteNumber);
     void handleMidiEvent(const MidiMessage& midiEvent);
     void render(AudioBuffer<float>& buffer, int startSample, int endSample);

@@ -29,15 +29,24 @@ QSynthi::QSynthi(Parameter *parameter) : parameter{ parameter }
     //float x = psiTest.getLinearInterpolation<float>(0.5f, [](std::complex<float> z) { return std::norm(z); });
 }
 
-void QSynthi::prepareToPlay(float sampleRate)
+list<cfloat> QSynthi::getDisplayedWavetable() {
+    std::lock_guard lock(displayAccessMutex);
+    return displayedOscillator->waveTable;
+}
+
+bool QSynthi::hasDisplayedWavetable() const {
+    return displayedOscillator != nullptr;
+}
+
+void QSynthi::prepareToPlay(const float sampleRate)
 {
     this->sampleRate = sampleRate;
-    reverb.setSampleRate((double) sampleRate);
+    reverb.setSampleRate(sampleRate);
     
     playingOscillators = {};
     sleepingOscillators = {};
     
-    oscillators = mutable_list<WavetableOscillator>(parameter->numVoices, [sampleRate, this](size_t _){
+    oscillators = mutable_list<WavetableOscillator>(static_cast<size_t>(parameter->numVoices), [this](size_t _){
         return WavetableOscillator(parameter);
     });
     
@@ -55,10 +64,10 @@ void QSynthi::prepareToPlay(float sampleRate)
 /**
  Coordinates handleMidiEvent(...) and render(...) to process the midiMessages and fill the buffer
  */
-void QSynthi::processBlock(AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
+void QSynthi::processBlock(AudioBuffer<float>& buffer, const MidiBuffer& midiMessages)
 {
     // Test if number of oscillators changed
-    if (parameter->numVoices != oscillators.length())
+    if (static_cast<size_t>(parameter->numVoices) != oscillators.length())
     {
         prepareToPlay(sampleRate);
     }
@@ -131,7 +140,9 @@ void QSynthi::handleMidiEvent(const MidiMessage& midiEvent)
         playingOscillators.append(oscillator);
         oscillator->noteOn(noteNumber, midiEvent.getVelocity());
         
-        if (displayedOscillator == nullptr) displayedOscillator = oscillator;
+        if (displayedOscillator == nullptr)
+            setDisplayedOscillator(oscillator);
+        displayQueue.push_back(oscillator);
     }
     else if (midiEvent.isNoteOff())
     {
@@ -155,7 +166,8 @@ void QSynthi::handleMidiEvent(const MidiMessage& midiEvent)
             this->sleepingOscillators.append(playingOscillators[i]);
         }
 
-        displayedOscillator = nullptr;
+        setDisplayedOscillator(nullptr);
+        displayQueue.clear();
         playingOscillators = {};
         stolenNotes = {};
         
@@ -174,6 +186,11 @@ void QSynthi::handleMidiEvent(const MidiMessage& midiEvent)
     }
 }
 
+void QSynthi::setDisplayedOscillator(WavetableOscillator *o) {
+    std::lock_guard lock(displayAccessMutex);
+    displayedOscillator = o;
+}
+
 void QSynthi::noteOff(int noteNumber) {
     stolenNotes.eraseItem(noteNumber);
     
@@ -185,7 +202,19 @@ void QSynthi::noteOff(int noteNumber) {
             if (stolenNotes.length() <= 0) {
                 o->noteOff();
                 sleepingOscillators.append(o);
-                if (displayedOscillator == o) displayedOscillator = nullptr;
+                for (auto it = displayQueue.begin(); it != displayQueue.end(); ++it) {
+                    if (*it == o) {
+                        displayQueue.erase(it);
+                        break;
+                    }
+                }
+                if (displayedOscillator == o) {
+                    setDisplayedOscillator(nullptr);
+                    if (!displayQueue.empty()) {
+                        setDisplayedOscillator(displayQueue.front());
+                        displayQueue.pop_front();
+                    }
+                }
                 playingOscillators.erase(i--);
                 
             } else {

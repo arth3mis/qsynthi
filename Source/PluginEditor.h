@@ -87,6 +87,9 @@ public:
     //==============================================================================
     void paint (Graphics&) override;
     void resized() override;
+
+    void mouseEnter(const MouseEvent& e) override;
+    void mouseExit(const MouseEvent& e) override;
     
 private:
     // This reference is provided as a quick way for your editor to
@@ -168,6 +171,16 @@ private:
     CustomLabel envelopeText{"Envelope settings"};
     CustomLabel filterText{"Filter settings"};
     CustomLabel generalText{"General settings"};
+
+    // tooltip
+    CustomLabel tooltipLabel{""};
+    void showTooltip(const juce::String& text);
+    void hideTooltip();
+
+    // bottom bar
+    ImageButton linkButtonVersion;
+    ImageButton linkButtonHelp;
+    ImageButton linkButtonDonate;
     
     
     list<Component*> waveComponents{
@@ -250,8 +263,14 @@ private:
         &filterText,
         &generalText
     };
+
+    list<Component*> buttonComponents{
+        &linkButtonVersion,
+        &linkButtonHelp,
+        &linkButtonDonate,
+    };
     
-    list<Component*> components = list<Component*>{&waveTable} + waveComponents + potentialComponents + synthiComponents + waveImages + potentialImages + synthiImages + textComponents;
+    list<Component*> components = list<Component*>{&waveTable} + waveComponents + potentialComponents + synthiComponents + waveImages + potentialImages + synthiImages + textComponents + buttonComponents;
     
     Rectangle<int> trim(Rectangle<int> rect, int amount);
 
