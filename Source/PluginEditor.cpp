@@ -149,37 +149,37 @@ gain(p, GAIN, "dB")
         0x00000000, 0xffffffff, 0xffffffff,
         0xffffffff, 0xFF00CC48, 0xffffffff });
     
-    waveTypeImage.setImage(ImageFileFormat::loadFrom(BinaryData::waveShape_png, BinaryData::waveShape_pngSize));
-    waveShiftImage.setImage(ImageFileFormat::loadFrom(BinaryData::waveShift_png, BinaryData::waveShift_pngSize));
-    waveScaleImage.setImage(ImageFileFormat::loadFrom(BinaryData::waveScale_png, BinaryData::waveScale_pngSize));
-    simulationSpeedImage.setImage(ImageFileFormat::loadFrom(BinaryData::simSpeed_png, BinaryData::simSpeed_pngSize));
-    simulationOffsetImage.setImage(ImageFileFormat::loadFrom(BinaryData::simOffset_png, BinaryData::simOffset_pngSize));
-    simulationAccuracyImage.setImage(ImageFileFormat::loadFrom(BinaryData::simAccuracy_png, BinaryData::simAccuracy_pngSize));
-    sampleTypeImage.setImage(ImageFileFormat::loadFrom(BinaryData::filter_png, BinaryData::filter_pngSize));
+    waveTypeImage.setImage(ImageCache::getFromMemory(BinaryData::waveShape_png, BinaryData::waveShape_pngSize));
+    waveShiftImage.setImage(ImageCache::getFromMemory(BinaryData::waveShift_png, BinaryData::waveShift_pngSize));
+    waveScaleImage.setImage(ImageCache::getFromMemory(BinaryData::waveScale_png, BinaryData::waveScale_pngSize));
+    simulationSpeedImage.setImage(ImageCache::getFromMemory(BinaryData::simSpeed_png, BinaryData::simSpeed_pngSize));
+    simulationOffsetImage.setImage(ImageCache::getFromMemory(BinaryData::simOffset_png, BinaryData::simOffset_pngSize));
+    simulationAccuracyImage.setImage(ImageCache::getFromMemory(BinaryData::simAccuracy_png, BinaryData::simAccuracy_pngSize));
+    sampleTypeImage.setImage(ImageCache::getFromMemory(BinaryData::filter_png, BinaryData::filter_pngSize));
     
     
-    potentialTypeImage1.setImage(ImageFileFormat::loadFrom(BinaryData::potentialShape_png, BinaryData::potentialShape_pngSize));
-    potentialShiftImage1.setImage(ImageFileFormat::loadFrom(BinaryData::potentialShift_png, BinaryData::potentialShift_pngSize));
-    potentialScaleImage1.setImage(ImageFileFormat::loadFrom(BinaryData::potentialScale_png, BinaryData::potentialScale_pngSize));
-    potentialHeightImage1.setImage(ImageFileFormat::loadFrom(BinaryData::potentialHeight_png, BinaryData::potentialHeight_pngSize));
-    potentialTypeImage2.setImage(ImageFileFormat::loadFrom(BinaryData::potentialShape_png, BinaryData::potentialShape_pngSize));
-    potentialShiftImage2.setImage(ImageFileFormat::loadFrom(BinaryData::potentialShift_png, BinaryData::potentialShift_pngSize));
-    potentialScaleImage2.setImage(ImageFileFormat::loadFrom(BinaryData::potentialScale_png, BinaryData::potentialScale_pngSize));
-    potentialHeightImage2.setImage(ImageFileFormat::loadFrom(BinaryData::potentialHeight_png, BinaryData::potentialHeight_pngSize));
+    potentialTypeImage1.setImage(ImageCache::getFromMemory(BinaryData::potentialShape_png, BinaryData::potentialShape_pngSize));
+    potentialShiftImage1.setImage(ImageCache::getFromMemory(BinaryData::potentialShift_png, BinaryData::potentialShift_pngSize));
+    potentialScaleImage1.setImage(ImageCache::getFromMemory(BinaryData::potentialScale_png, BinaryData::potentialScale_pngSize));
+    potentialHeightImage1.setImage(ImageCache::getFromMemory(BinaryData::potentialHeight_png, BinaryData::potentialHeight_pngSize));
+    potentialTypeImage2.setImage(ImageCache::getFromMemory(BinaryData::potentialShape_png, BinaryData::potentialShape_pngSize));
+    potentialShiftImage2.setImage(ImageCache::getFromMemory(BinaryData::potentialShift_png, BinaryData::potentialShift_pngSize));
+    potentialScaleImage2.setImage(ImageCache::getFromMemory(BinaryData::potentialScale_png, BinaryData::potentialScale_pngSize));
+    potentialHeightImage2.setImage(ImageCache::getFromMemory(BinaryData::potentialHeight_png, BinaryData::potentialHeight_pngSize));
     
     
-    attackImage.setImage(ImageFileFormat::loadFrom(BinaryData::attack_png, BinaryData::attack_pngSize));
-    decayImage.setImage(ImageFileFormat::loadFrom(BinaryData::decay_png, BinaryData::decay_pngSize));
-    sustainImage.setImage(ImageFileFormat::loadFrom(BinaryData::sustain_png, BinaryData::sustain_pngSize));
-    releaseImage.setImage(ImageFileFormat::loadFrom(BinaryData::release_png, BinaryData::release_pngSize));
-    filterFrequencyImage.setImage(ImageFileFormat::loadFrom(BinaryData::filterFreq_png, BinaryData::filterFreq_pngSize));
-    filterResonanceImage.setImage(ImageFileFormat::loadFrom(BinaryData::filterRes_png, BinaryData::filterRes_pngSize));
-    filterEnvelopeImage.setImage(ImageFileFormat::loadFrom(BinaryData::filterEnv_png, BinaryData::filterEnv_pngSize));
-    voiceCountImage.setImage(ImageFileFormat::loadFrom(BinaryData::voiceCount_png, BinaryData::voiceCount_pngSize));
-    portamentoImage.setImage(ImageFileFormat::loadFrom(BinaryData::portamento_png, BinaryData::portamento_pngSize));
-    stereoImage.setImage(ImageFileFormat::loadFrom(BinaryData::stereo_png, BinaryData::stereo_pngSize));
-    reverbImage.setImage(ImageFileFormat::loadFrom(BinaryData::reverb_png, BinaryData::reverb_pngSize));
-    gainImage.setImage(ImageFileFormat::loadFrom(BinaryData::gian_png, BinaryData::gian_pngSize));
+    attackImage.setImage(ImageCache::getFromMemory(BinaryData::attack_png, BinaryData::attack_pngSize));
+    decayImage.setImage(ImageCache::getFromMemory(BinaryData::decay_png, BinaryData::decay_pngSize));
+    sustainImage.setImage(ImageCache::getFromMemory(BinaryData::sustain_png, BinaryData::sustain_pngSize));
+    releaseImage.setImage(ImageCache::getFromMemory(BinaryData::release_png, BinaryData::release_pngSize));
+    filterFrequencyImage.setImage(ImageCache::getFromMemory(BinaryData::filterFreq_png, BinaryData::filterFreq_pngSize));
+    filterResonanceImage.setImage(ImageCache::getFromMemory(BinaryData::filterRes_png, BinaryData::filterRes_pngSize));
+    filterEnvelopeImage.setImage(ImageCache::getFromMemory(BinaryData::filterEnv_png, BinaryData::filterEnv_pngSize));
+    voiceCountImage.setImage(ImageCache::getFromMemory(BinaryData::voiceCount_png, BinaryData::voiceCount_pngSize));
+    portamentoImage.setImage(ImageCache::getFromMemory(BinaryData::portamento_png, BinaryData::portamento_pngSize));
+    stereoImage.setImage(ImageCache::getFromMemory(BinaryData::stereo_png, BinaryData::stereo_pngSize));
+    reverbImage.setImage(ImageCache::getFromMemory(BinaryData::reverb_png, BinaryData::reverb_pngSize));
+    gainImage.setImage(ImageCache::getFromMemory(BinaryData::gian_png, BinaryData::gian_pngSize));
     
 
     // Fixed tooltip label display
@@ -188,11 +188,11 @@ gain(p, GAIN, "dB")
     addAndMakeVisible(tooltipLabel);
     
     // Bottom bar buttons
-    Image linkButtonVersionImage = ImageFileFormat::loadFrom(BinaryData::buttonVersion_png,
+    Image linkButtonVersionImage = ImageCache::getFromMemory(BinaryData::buttonVersion_png,
         BinaryData::buttonVersion_pngSize);
-    Image linkButtonHelpImage = ImageFileFormat::loadFrom(BinaryData::buttonHelp_png,
+    Image linkButtonHelpImage = ImageCache::getFromMemory(BinaryData::buttonHelp_png,
         BinaryData::buttonHelp_pngSize);
-    Image linkButtonDonateImage = ImageFileFormat::loadFrom(BinaryData::buttonDonate_png,
+    Image linkButtonDonateImage = ImageCache::getFromMemory(BinaryData::buttonDonate_png,
         BinaryData::buttonDonate_pngSize);
 
     linkButtonVersion.setImages(false, true, true,
