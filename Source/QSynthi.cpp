@@ -31,7 +31,30 @@ QSynthi::QSynthi(Parameter *parameter) : parameter{ parameter }
 
 list<cfloat> QSynthi::getDisplayedWavetable() {
     std::lock_guard lock(displayAccessMutex);
-    return displayedOscillator->waveTable;
+    
+    // Safety check: ensure displayedOscillator is valid and still playing
+    if (displayedOscillator != nullptr && displayedOscillator->isPlaying()) {
+        return displayedOscillator->waveTable;
+    }
+    
+    // If current displayed oscillator is invalid, try to find a valid one
+    if (displayedOscillator == nullptr || !displayedOscillator->isPlaying()) {
+        // Check if there's a valid oscillator in the queue
+        while (!displayQueue.empty()) {
+            auto nextOsc = displayQueue.front();
+            displayQueue.pop_front();
+            
+            if (nextOsc != nullptr && nextOsc->isPlaying()) {
+                displayedOscillator = nextOsc;
+                return displayedOscillator->waveTable;
+            }
+        }
+        
+        // No valid oscillators found, clear display
+        displayedOscillator = nullptr;
+    }
+    
+    return list<cfloat>(); // Return empty list if no valid oscillator
 }
 
 bool QSynthi::hasDisplayedWavetable() const {
@@ -46,6 +69,13 @@ void QSynthi::prepareToPlay(const float sampleRate)
 {
     this->sampleRate = sampleRate;
     reverb.setSampleRate(sampleRate);
+    
+    // Clear display system to prevent dangling pointers
+    {
+        std::lock_guard lock(displayAccessMutex);
+        displayedOscillator = nullptr;
+        displayQueue.clear();
+    }
     
     playingOscillators = {};
     sleepingOscillators = {};
@@ -62,8 +92,6 @@ void QSynthi::prepareToPlay(const float sampleRate)
     
     stolenNotes = {};
     sustainedNotes = {};
-    
-
 }
 /**
  Coordinates handleMidiEvent(...) and render(...) to process the midiMessages and fill the buffer
@@ -148,9 +176,25 @@ void QSynthi::handleMidiEvent(const MidiMessage& midiEvent)
         playingOscillators.append(oscillator);
         oscillator->noteOn(noteNumber, midiEvent.getVelocity());
         
-        if (displayedOscillator == nullptr)
-            setDisplayedOscillator(oscillator);
-        displayQueue.push_back(oscillator);
+        // Update display system
+        {
+            std::lock_guard lock(displayAccessMutex);
+            if (displayedOscillator == nullptr) {
+                displayedOscillator = oscillator;
+            } else {
+                // Only add to queue if not already present
+                bool alreadyInQueue = false;
+                for (auto& queuedOsc : displayQueue) {
+                    if (queuedOsc == oscillator) {
+                        alreadyInQueue = true;
+                        break;
+                    }
+                }
+                if (!alreadyInQueue) {
+                    displayQueue.push_back(oscillator);
+                }
+            }
+        }
     }
     else if (midiEvent.isNoteOff())
     {
@@ -174,8 +218,13 @@ void QSynthi::handleMidiEvent(const MidiMessage& midiEvent)
             this->sleepingOscillators.append(playingOscillators[i]);
         }
 
-        setDisplayedOscillator(nullptr);
-        displayQueue.clear();
+        // Clear display system
+        {
+            std::lock_guard lock(displayAccessMutex);
+            displayedOscillator = nullptr;
+            displayQueue.clear();
+        }
+        
         playingOscillators = {};
         stolenNotes = {};
         
@@ -196,7 +245,13 @@ void QSynthi::handleMidiEvent(const MidiMessage& midiEvent)
 
 void QSynthi::setDisplayedOscillator(WavetableOscillator *o) {
     std::lock_guard lock(displayAccessMutex);
-    displayedOscillator = o;
+    
+    // Safety check: only set valid oscillators that are playing
+    if (o == nullptr || o->isPlaying()) {
+        displayedOscillator = o;
+    } else {
+        displayedOscillator = nullptr;
+    }
 }
 
 void QSynthi::noteOff(int noteNumber) {
@@ -210,29 +265,58 @@ void QSynthi::noteOff(int noteNumber) {
             if (stolenNotes.length() <= 0) {
                 o->noteOff();
                 sleepingOscillators.append(o);
-                for (auto it = displayQueue.begin(); it != displayQueue.end(); ++it) {
-                    if (*it == o) {
-                        displayQueue.erase(it);
-                        break;
+                
+                // Remove from display queue
+                {
+                    std::lock_guard lock(displayAccessMutex);
+                    for (auto it = displayQueue.begin(); it != displayQueue.end(); ++it) {
+                        if (*it == o) {
+                            displayQueue.erase(it);
+                            break;
+                        }
+                    }
+                    
+                    // Update displayed oscillator if needed
+                    if (displayedOscillator == o) {
+                        displayedOscillator = nullptr;
+                        if (!displayQueue.empty()) {
+                            displayedOscillator = displayQueue.front();
+                            displayQueue.pop_front();
+                        }
                     }
                 }
-                if (displayedOscillator == o) {
-                    setDisplayedOscillator(nullptr);
-                    if (!displayQueue.empty()) {
-                        setDisplayedOscillator(displayQueue.front());
-                        displayQueue.pop_front();
-                    }
-                }
+                
                 playingOscillators.erase(i--);
                 
             } else {
-                
+                // Voice stealing - reuse this oscillator for a stolen note
                 int midiNote = stolenNotes[stolenNotes.length() - 1];
                 stolenNotes.eraseItem(midiNote);
+                
+                // Remove from display queue before reusing
+                {
+                    std::lock_guard lock(displayAccessMutex);
+                    for (auto it = displayQueue.begin(); it != displayQueue.end(); ++it) {
+                        if (*it == o) {
+                            displayQueue.erase(it);
+                            break;
+                        }
+                    }
+                }
                 
                 playingOscillators.erase(i--);
                 playingOscillators.append(o);
                 o->noteOn(midiNote, 127);
+                
+                // Add back to display queue with new note
+                {
+                    std::lock_guard lock(displayAccessMutex);
+                    if (displayedOscillator == nullptr) {
+                        displayedOscillator = o;
+                    } else {
+                        displayQueue.push_back(o);
+                    }
+                }
             }
         }
     }
