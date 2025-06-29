@@ -9,6 +9,9 @@
               pluginDesc="The Quantum Synthesizer" pluginName="QSynthi">
   <MAINGROUP id="BfkBYy" name="QSynthi">
     <GROUP id="{EC3B5050-0D9F-0939-FDAB-6AB6467EEA47}" name="img">
+      <FILE id="LO99Fh" name="Inter-Light.ttf" compile="0" resource="1" file="Source/img/Inter-Light.ttf"/>
+      <FILE id="l7ETt1" name="Inter-Medium.ttf" compile="0" resource="1"
+            file="Source/img/Inter-Medium.ttf"/>
       <FILE id="pXuM4y" name="portamento.png" compile="0" resource="1" file="Source/img/portamento.png"/>
       <FILE id="Tzy15L" name="attack.png" compile="0" resource="1" file="Source/img/attack.png"/>
       <FILE id="WuwcIV" name="buttonDonate.png" compile="0" resource="1"
