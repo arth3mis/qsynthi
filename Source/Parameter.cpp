@@ -57,7 +57,7 @@ AudioProcessorValueTreeState::ParameterLayout Parameter::createParameterLayout()
     
     BOOL_PARAM(APPLY_WAVEFUNC, true);
 
-    FLOAT_PARAM(ACCURACY, NormalisableRange<float>(0.01f, 100.f, 0.01f, 0.25f, false), 1.f);
+    FLOAT_PARAM(ACCURACY, NormalisableRange<float>(0.01f, 100.f, 0.01f, 0.25f, false), 10.f);
     FLOAT_PARAM(SIMULATION_SPEED, NormalisableRange<float>(0.f, 10000.f, 0.1f, 0.15f, false), 42.f);
     FLOAT_PARAM(SIMULATION_OFFSET, NormalisableRange<float>(0.f, 1000.f, 1.f, 1.f, false), 0.f);
 
