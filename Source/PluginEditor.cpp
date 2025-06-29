@@ -363,83 +363,84 @@ void QSynthiAudioProcessorEditor::mouseEnter(const MouseEvent& e)
     if (e.eventComponent == &linkButtonVersion)
         showTooltip("Check for updates");
     else if (e.eventComponent == &linkButtonHelp)
-        showTooltip("Open website for info and ideas");
+        showTooltip("Open website for info and examples");
     else if (e.eventComponent == &linkButtonDonate)
         showTooltip("Donate to support us!");
 
     // Wave
     else if (e.eventComponent == &waveTypeImage || e.eventComponent == &waveType)
-        showTooltip("QSynthi <3");
+        showTooltip("Wave Shape");
     else if (e.eventComponent == &waveShiftImage || e.eventComponent == &waveShift)
-        showTooltip("QSynthi <3");
+        showTooltip("Wave x-Position");
     else if (e.eventComponent == &waveScaleImage || e.eventComponent == &waveScale)
-        showTooltip("QSynthi <3");
+        showTooltip("Wave Stretch");
     else if (e.eventComponent == &simulationSpeedImage || e.eventComponent == &simulationSpeed)
-        showTooltip("QSynthi <3");
+        showTooltip("Simulation speed");
     else if (e.eventComponent == &simulationOffsetImage || e.eventComponent == &simulationOffset)
-        showTooltip("QSynthi <3");
+        showTooltip("Skip into simulation on start (requires more CPU)");
     else if (e.eventComponent == &simulationAccuracyImage || e.eventComponent == &simulationAccuracy)
-        showTooltip("QSynthi <3");
+        showTooltip("Simulation accuracy (requires more CPU)");
     else if (e.eventComponent == &sampleTypeImage || e.eventComponent == &sampleType)
-        showTooltip("QSynthi <3");
+        showTooltip("How to sonify the complex valued simulation");
 
     // Potential
     else if (e.eventComponent == &potentialTypeImage1 || e.eventComponent == &potentialType1)
-        showTooltip("QSynthi <3");
+        showTooltip("Potential 1 Shape");
     else if (e.eventComponent == &potentialShiftImage1 || e.eventComponent == &potentialShift1)
-        showTooltip("QSynthi <3");
+        showTooltip("Potential 1 x-Position");
     else if (e.eventComponent == &potentialScaleImage1 || e.eventComponent == &potentialScale1)
-        showTooltip("QSynthi <3");
+        showTooltip("Potential 1 Stretch");
     else if (e.eventComponent == &potentialHeightImage1 || e.eventComponent == &potentialHeight1)
-        showTooltip("QSynthi <3");
+        showTooltip("Potential 1 Height");
     else if (e.eventComponent == &potentialTypeImage2 || e.eventComponent == &potentialType2)
-        showTooltip("QSynthi <3");
+        showTooltip("Potential 2 Shape");
     else if (e.eventComponent == &potentialShiftImage2 || e.eventComponent == &potentialShift2)
-        showTooltip("QSynthi <3");
+        showTooltip("Potential 2 x-Position");
     else if (e.eventComponent == &potentialScaleImage2 || e.eventComponent == &potentialScale2)
-        showTooltip("QSynthi <3");
+        showTooltip("Potential 2 Stretch");
     else if (e.eventComponent == &potentialHeightImage2 || e.eventComponent == &potentialHeight2)
-        showTooltip("QSynthi <3");
+        showTooltip("Potential 2 Height");
 
     // Synthi
     else if (e.eventComponent == &attackImage || e.eventComponent == &attack)
-        showTooltip("Attack");
+        showTooltip("Attack time");
     else if (e.eventComponent == &decayImage || e.eventComponent == &decay)
-        showTooltip("Decay");
+        showTooltip("Decay time");
     else if (e.eventComponent == &sustainImage || e.eventComponent == &sustain)
-        showTooltip("Sustain");
+        showTooltip("Sustain level");
     else if (e.eventComponent == &releaseImage || e.eventComponent == &release)
-        showTooltip("Release");
+        showTooltip("Release time");
     else if (e.eventComponent == &filterFrequencyImage || e.eventComponent == &filterFrequency)
-        showTooltip("QSynthi <3");
+        showTooltip("Low-pass Filter Frequency");
     else if (e.eventComponent == &filterResonanceImage || e.eventComponent == &filterResonance)
-        showTooltip("QSynthi <3");
+        showTooltip("Low-pass Filter Resonance");
     else if (e.eventComponent == &filterEnvelopeImage || e.eventComponent == &filterEnvelope)
-        showTooltip("QSynthi <3");
+        showTooltip("Filter Envelope amount");
     else if (e.eventComponent == &voiceCountImage || e.eventComponent == &voiceCount)
-        showTooltip("QSynthi <3");
+        showTooltip("Number of Voices");
     else if (e.eventComponent == &portamentoImage || e.eventComponent == &portamento)
-        showTooltip("QSynthi <3");
+            showTooltip("Portamento time (must set Number of Voices to 1)");
     else if (e.eventComponent == &stereoImage || e.eventComponent == &stereoize)
-        showTooltip("QSynthi <3");
+            showTooltip("Stereo amount");
     else if (e.eventComponent == &reverbImage || e.eventComponent == &reverbMix)
-        showTooltip("QSynthi <3");
+            showTooltip("Reverb amount");
     else if (e.eventComponent == &gainImage || e.eventComponent == &gain)
-        showTooltip("QSynthi <3");
+            showTooltip("Volume");
 
     // Headings
     else if (e.eventComponent == &waveText)
-        showTooltip("QSynthi <3");
+            showTooltip("Initial wave of the simulation");
     else if (e.eventComponent == &simulationText)
-        showTooltip("QSynthi <3");
+            showTooltip(String(L"Simulation governed by Schrödinger's Equation"));
     else if (e.eventComponent == &potentialText)
-        showTooltip("QSynthi <3");
+            showTooltip("Potential influences how the simulation behaves");
     else if (e.eventComponent == &envelopeText)
-        showTooltip("QSynthi <3");
+            showTooltip("ADSR Envelope for Volume and Filter");
     else if (e.eventComponent == &filterText)
-        showTooltip("QSynthi <3");
+            showTooltip("Low-Pass Filter (24db/Oct Ladder style)");
     else if (e.eventComponent == &generalText)
-        showTooltip("QSynthi <3");
+            showTooltip("Audio Output settings");
+
 }
 
 void QSynthiAudioProcessorEditor::mouseExit(const MouseEvent& e)

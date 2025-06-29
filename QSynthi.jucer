@@ -9,6 +9,7 @@
               pluginDesc="The Quantum Synthesizer" pluginName="QSynthi">
   <MAINGROUP id="BfkBYy" name="QSynthi">
     <GROUP id="{EC3B5050-0D9F-0939-FDAB-6AB6467EEA47}" name="img">
+      <FILE id="pXuM4y" name="portamento.png" compile="0" resource="1" file="Source/img/portamento.png"/>
       <FILE id="Tzy15L" name="attack.png" compile="0" resource="1" file="Source/img/attack.png"/>
       <FILE id="WuwcIV" name="buttonDonate.png" compile="0" resource="1"
             file="Source/img/buttonDonate.png"/>
@@ -73,7 +74,6 @@
         <FILE id="yCCOoF" name="list.hpp" compile="0" resource="0" file="Source/list.hpp"/>
       </GROUP>
     </GROUP>
-    <FILE id="pXuM4y" name="portamento.png" compile="0" resource="1" file="Source/img/portamento.png"/>
   </MAINGROUP>
   <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_VST3_CAN_REPLACE_VST2="0"/>
   <EXPORTFORMATS>
