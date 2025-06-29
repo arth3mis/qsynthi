@@ -10,7 +10,7 @@ https://qsynthi.com
 
 ---
 
-## Projucer Setup (version 0.8)
+## Projucer Setup (latest version)
 
 ### Windows / Mac
 This project uses the [juce](https://juce.com/) framework with the Projucer.
