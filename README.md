@@ -7,6 +7,9 @@ by Jannis Müller & Arthur Freye
 You can find the plugin's VST3 & AU downloads, examples and our paper here:
 https://qsynthi.com
 
+<a href="https://qsynthi.com">
+  <img src="https://qsynthi.com/wp-content/uploads/2025/06/QSynthi_Logo_with_Text_and_bg-scaled.png" alt="QSynthi Logo">
+</a>
 
 ---
 
