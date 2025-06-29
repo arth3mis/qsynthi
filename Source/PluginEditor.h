@@ -48,12 +48,16 @@ public:
 class CustomLabel : public Label
 {
 public:
-    CustomLabel(const String text) : Label(text, text)
-    {
-        
+    explicit CustomLabel(const String& text, const int typefaceId = 0) : Label(text, text) {
+        this->typefaceId = typefaceId;
     }
     
     void resized() override;
+
+private:
+    int typefaceId;
+
+    static Typeface::Ptr getCustomTypeface(int typefaceId);
 };
 
 class WaveTableComponent : public Component, Timer
@@ -174,7 +178,7 @@ private:
     CustomLabel generalText{"General settings"};
 
     // tooltip
-    CustomLabel tooltipLabel{""};
+    CustomLabel tooltipLabel{"", 1};
     void showTooltip(const juce::String& text);
     void hideTooltip();
 
