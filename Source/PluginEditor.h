@@ -85,9 +85,6 @@ public:
     QSynthiAudioProcessorEditor (QSynthiAudioProcessor&);
     ~QSynthiAudioProcessorEditor() override;
 
-    bool keyPressed(const KeyPress &key) override;
-    bool keyStateChanged(bool isKeyDown) override;
-
     //==============================================================================
     void paint (Graphics&) override;
     void resized() override;

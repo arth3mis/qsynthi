@@ -431,7 +431,7 @@ void QSynthiAudioProcessorEditor::mouseEnter(const MouseEvent& e)
     else if (e.eventComponent == &waveText)
             showTooltip("Initial wave of the simulation");
     else if (e.eventComponent == &simulationText)
-            showTooltip(String(L"Simulation governed by Schrödinger's Equation"));
+            showTooltip(String(L"Simulation governed by SchrÃ¶dinger's Equation"));
     else if (e.eventComponent == &potentialText)
             showTooltip("Potential influences how the simulation behaves");
     else if (e.eventComponent == &envelopeText)

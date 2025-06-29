@@ -2,6 +2,10 @@
 
 by Jannis Müller & Arthur Freye
 
+> Note: You are currently on the `cmake` branch! 
+> Only use this branch for manual builds on Linux. 
+> Switch to `main` branch for Windows/macOS.
+
 
 ## Download & More
 You can find the plugin's VST3 & AU downloads, examples and our paper here:

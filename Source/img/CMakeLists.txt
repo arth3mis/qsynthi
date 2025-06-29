@@ -30,4 +30,7 @@ juce_add_binary_data(BinaryData SOURCES
         waveScale.png
         waveShape.png
         waveShift.png
+        buttonDonate.png
+        buttonHelp.png
+        buttonVersion.png
 )
