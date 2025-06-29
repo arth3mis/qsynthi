@@ -24,10 +24,24 @@ void CustomSlider::resized()
     setTextBoxStyle(Slider::TextEntryBoxPosition::TextBoxRight, false, getWidth()/4, getHeight());
 }
 
+Typeface::Ptr CustomLabel::getCustomTypeface(const int typefaceId)
+{
+    if (typefaceId == 1) {
+        return Typeface::createSystemTypefaceFor(
+            BinaryData::InterMedium_ttf,
+            BinaryData::InterMedium_ttfSize
+        );
+    }
+    return Typeface::createSystemTypefaceFor(
+        BinaryData::InterLight_ttf,
+        BinaryData::InterLight_ttfSize
+    );
+}
+
 void CustomLabel::resized()
 {
     Label::resized();
-    setFont(Font("Inter", "Light", getHeight() - 5));
+    setFont(Font(getCustomTypeface(typefaceId)).withHeight(getHeight() - 5.f));
 }
 
 
@@ -113,27 +127,27 @@ potentialShift2(p, POTENTIAL_SHIFT2, ""),
 potentialScale2(p, POTENTIAL_SCALE2, ""),
 potentialHeight2(p, POTENTIAL_AMOUNT2, ""),
 
-attack(p, ATTACK_TIME, "s"),
-decay(p, DECAY_TIME, "s"),
+attack(p, ATTACK_TIME, " s"),
+decay(p, DECAY_TIME, " s"),
 sustain(p, SUSTAIN_LEVEL, ""),
-release(p, RELEASE_TIME, "s"),
+release(p, RELEASE_TIME, " s"),
 
-filterFrequency(p, FILTER_FREQUENCY, "Hz"),
+filterFrequency(p, FILTER_FREQUENCY, " Hz"),
 filterResonance(p, FILTER_RESONANCE, ""),
 filterEnvelope(p, FILTER_ENVELOPE, ""),
 
 voiceCount(p, VOICE_COUNT, ""),
-portamento(p, PORTAMENTO, "s"),
-stereoize(p, STEREO_AMOUNT, "%"),
-reverbMix(p, REVERB_MIX, "%"),
-gain(p, GAIN, "dB")
+portamento(p, PORTAMENTO, " s"),
+stereoize(p, STEREO_AMOUNT, " %"),
+reverbMix(p, REVERB_MIX, " %"),
+gain(p, GAIN, " dB")
 {
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
 
     Colour highlightFG{ 0xff4C3F50 };
     Colour tooltipFG{ 0xffD6D0DF };
-    
+
     waveStyle = new LookAndFeel_V4(LookAndFeel_V4::ColourScheme{
         0xFF221C24, highlightFG, 0xff141010,
         0x00000000, 0xffffffff, 0xffffffff,
@@ -184,7 +198,7 @@ gain(p, GAIN, "dB")
 
     // Fixed tooltip label display
     tooltipLabel.setJustificationType(Justification::centredLeft);
-    tooltipLabel.setColour(Label::textColourId, Colour(0xFFCCCCDD));
+    tooltipLabel.setColour(Label::textColourId, tooltipFG);
     addAndMakeVisible(tooltipLabel);
     
     // Bottom bar buttons
@@ -230,7 +244,7 @@ gain(p, GAIN, "dB")
         this->addAndMakeVisible(c);
     });
     
-    setSize (800, 610);
+    setSize (850, 650);
     setResizable(true, true);
 }
 
