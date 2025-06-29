@@ -33,4 +33,7 @@ juce_add_binary_data(BinaryData SOURCES
         buttonDonate.png
         buttonHelp.png
         buttonVersion.png
+
+        Inter-Light.ttf
+        Inter-Medium.ttf
 )
