@@ -4,7 +4,7 @@
               addUsingNamespaceToJuceHeader="1" displaySplashScreen="1" jucerFormatVersion="1"
               companyName="AJ" pluginCharacteristicsValue="pluginIsSynth,pluginProducesMidiOut,pluginWantsMidiIn"
               pluginFormats="buildAU,buildStandalone,buildVST3" version="0.9"
-              companyWebsite="www.qsynthi.com" companyEmail="info@qsynthi.com"
+              companyWebsite="https://qsynthi.com" companyEmail="info@qsynthi.com"
               pluginManufacturerCode="Ajfm" pluginCode="Qsyi" pluginManufacturer="AJ"
               pluginDesc="The Quantum Synthesizer" pluginName="QSynthi">
   <MAINGROUP id="BfkBYy" name="QSynthi">
