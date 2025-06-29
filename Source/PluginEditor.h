@@ -96,9 +96,6 @@ private:
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
 
-    std::unordered_set<juce_wchar> keysDown;
-    void midiNote(int noteNumber, bool state);
-    
     QSynthiAudioProcessor& audioProcessor;
     
     LookAndFeel_V4* waveStyle;
